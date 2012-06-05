@@ -12,9 +12,11 @@ var express = require('express')
     , mustache = require('mustache')
     , MongoStore = require('connect-mongodb'); // sessions for express
 
+require('./config.settings'); // include settings
+
 var app = module.exports = express.createServer();
 //var db = require('mongoskin').db('dewey:tehrock@localhost:27017/rockband');
-var db = mongo.db(process.env.MONGOLAB_URI || 'mongodb://localhost:27017/wikinext');
+var db = mongo.db(process.env.MONGOLAB_URI || config.mongo_uri);
 var mongoStore = new MongoStore({db:db.db});
 
 //DAO
@@ -22,13 +24,13 @@ var dao = {};
 dao.users = require('./lib/dao/users.js')(db);
 dao.pages = require('./lib/dao/pages.js')(db);
 
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || config.port;
 
 // configure facebook authentication
 
 everyauth.facebook
-    .appId(process.env.FACEBOOK_APP_ID || "123424751113889")
-    .appSecret(process.env.FACEBOOK_SECRET || "3e6c2e988523337dfa501e661f553e89")
+    .appId(process.env.FACEBOOK_APP_ID || config.FACEBOOK.APP_ID)
+    .appSecret(process.env.FACEBOOK_SECRET || config.FACEBOOK.SECRET)
     .scope('email')
     //.entryPath('/')
     .redirectPath('/home')
