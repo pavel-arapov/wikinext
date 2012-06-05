@@ -1,0 +1,433 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>{{title}}</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="/nowjs/now.js"></script>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/ICanHaz.min.js"></script>
+<script type="text/javascript" src="/js/jsdeferred.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/underscore-min.js"></script>
+<script type="text/javascript" src="/js/backbone-min.js"></script>
+<script type="text/javascript" src="/js/wikinext.main.js"></script>
+<script type="text/javascript" src="/codemirror/codemirror.js"></script>
+<link rel="stylesheet" href="/codemirror/codemirror.css">
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<style>
+
+    body {
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    #filedrag
+    {
+        display: none;
+        font-weight: bold;
+        text-align: center;
+        padding: 1em 0;
+        margin: 1em 0;
+        color: #555;
+        border: 2px dashed #555;
+        border-radius: 7px;
+        cursor: default;
+    }
+
+    #filedrag.hover
+    {
+        color: #f00;
+        border-color: #f00;
+        border-style: solid;
+        box-shadow: inset 0 3px 4px #888;
+    }
+
+    #preview {
+        border: 0px
+    }
+
+</style>
+<script type="text/javascript">
+
+    var page = {
+    {{#page}}
+        _id: "{{_id}}"
+    {{/page}}
+    };
+    /*
+     filedrag.js - HTML5 File Drag & Drop demonstration
+     Featured on SitePoint.com
+     Developed by Craig Buckler (@craigbuckler) of OptimalWorks.net
+     */
+    $(document).ready(function(){
+        (function() {
+            // getElementById
+            function $id(id) {
+                return document.getElementById(id);
+            }
+            // output information
+            function Output(msg) {
+                var m = $id("messages");
+                m.innerHTML = msg + m.innerHTML;
+            }
+            // file drag hover
+            function FileDragHover(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.target.className = (e.type == "dragover" ? "hover" : "");
+            }
+            // file selection
+            function FileSelectHandler(e) {
+
+                // cancel event and hover styling
+                FileDragHover(e);
+
+                // fetch FileList object
+                var files = e.target.files || e.dataTransfer.files;
+
+                // process all File objects
+                for (var i = 0, f; f = files[i]; i++) {
+                    ParseFile(f);
+                    UploadFile(f);
+                }
+
+            }
+            // output file information
+            function ParseFile(file) {
+                Output(
+                        "<p>File information: <strong>" + file.name +
+                                "</strong> type: <strong>" + file.type +
+                                "</strong> size: <strong>" + file.size +
+                                "</strong> bytes</p>"
+                );
+                // display an image
+                if (file.type.indexOf("image") == 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        Output(
+                                "<p><strong>" + file.name + ":</strong><br />" +
+                                        '<img src="' + e.target.result + '" /></p>'
+                        );
+                    }
+                    reader.readAsDataURL(file);
+                }
+
+                // display text
+                if (file.type.indexOf("text") == 0) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        Output(
+                                "<p><strong>" + file.name + ":</strong></p><pre>" +
+                                        e.target.result.replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+                                        "</pre>"
+                        );
+                    }
+                    reader.readAsText(file);
+                }
+
+            }
+
+
+            // upload JPEG files
+            function UploadFile(file) {
+
+                var xhr = new XMLHttpRequest();
+                console.log(file);
+                if (xhr.upload && (file.type == "image/jpeg" || file.type == "image/gif" || file.type == "image/png") && file.size <= $id("MAX_FILE_SIZE").value) {
+                    console.log("upload");
+                    // create progress bar
+                    var o = $id("progress");
+                    var progress = o.appendChild(document.createElement("p"));
+                    progress.appendChild(document.createTextNode("upload " + file.name));
+
+
+                    // progress bar
+                    xhr.upload.addEventListener("progress", function(e) {
+                        var pc = parseInt(100 - (e.loaded / e.total * 100));
+                        progress.style.backgroundPosition = pc + "% 0";
+                    }, false);
+
+                    // file received/failed
+                    xhr.onreadystatechange = function(e) {
+                        if (xhr.readyState == 4) {
+                            progress.className = (xhr.status == 200 ? "success" : "failure");
+                        }
+                    };
+
+                    // start upload
+                    xhr.open("POST", $id("upload").action, true);
+                    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                    xhr.setRequestHeader("x-file-name", encodeURIComponent(file.name));
+                    xhr.setRequestHeader("x-file-type", file.type);
+                    xhr.setRequestHeader("x-file-size", file.size);
+                    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+                    xhr.send(file);
+
+                }
+
+            }
+
+
+            // initialize
+            function Init() {
+
+                var fileselect = $id("fileselect"),
+                        filedrag = $id("filedrag"),
+                        submitbutton = $id("submitbutton");
+
+                // file select
+                fileselect.addEventListener("change", FileSelectHandler, false);
+
+                // is XHR2 available?
+                var xhr = new XMLHttpRequest();
+                if (xhr.upload) {
+
+                    // file drop
+                    filedrag.addEventListener("dragover", FileDragHover, false);
+                    filedrag.addEventListener("dragleave", FileDragHover, false);
+                    filedrag.addEventListener("drop", FileSelectHandler, false);
+                    filedrag.style.display = "block";
+
+                    // remove submit button
+                    submitbutton.style.display = "none";
+                }
+
+            }
+
+            // call initialization file
+            if (window.File && window.FileList && window.FileReader) {
+                Init();
+            }
+
+
+        })();
+
+        var editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
+            mode: "text/html",
+            tabMode: "indent",
+            lineWrapping: true,
+            onChange: function() {
+                //clearTimeout(delay);
+                //delay = setTimeout(updatePreview, 300);
+            }
+        });
+
+        var editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
+            mode: "text/html",
+            tabMode: "indent",
+            lineWrapping: true
+        });
+
+        var editorTemplate = CodeMirror.fromTextArea(document.getElementById("textAreaTemplate"),{
+            mode: "text/html",
+            tabMode: "indent",
+            lineWrapping: true
+        });
+
+
+//        var delay;
+//
+//        function updatePreview() {
+//            var previewFrame = document.getElementById('preview');
+//            var preview =  previewFrame.contentDocument ||  previewFrame.contentWindow.document;
+//            preview.open();
+//            preview.write(editor.getValue());
+//            preview.close();
+//        }
+//        setTimeout(updatePreview, 300);
+
+
+
+    });
+
+</script>
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">WikiNEXT</a>
+            <div class="btn-group pull-right">
+                {{#login}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> Login
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/auth/facebook">Facebook</a></li>
+                </ul>
+                {{/login}}
+                {{#auth}}
+                {{#facebook}}
+                {{#user}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> {{name}}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+                {{/user}}
+                {{/facebook}}
+                {{/auth}}
+
+            </div>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="/create">Create</a></li>
+                    <li><a href="#contact">Share</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+
+    <div class="btn-toolbar">
+        <div class="btn-group">
+            <a class="btn" id="save_button">Save</a>
+        </div>
+        <div class="btn-group">
+            <button class="btn">Heading</button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <!-- dropdown menu links -->
+                <a href="#">Heading 1</a>
+                <a href="#">Heading 2</a>
+                <a href="#">Heading 3</a>
+                <a href="#">Heading 4</a>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <a class="btn" href="#"><i class="icon-align-left"></i></a>
+            <a class="btn" href="#"><i class="icon-align-center"></i></a>
+            <a class="btn" href="#"><i class="icon-align-right"></i></a>
+            <a class="btn" href="#"><i class="icon-align-justify"></i></a>
+        </div>
+    </div>
+</div>
+
+{{#page}}
+<div class="container-fluid">
+<div class="btn-group">
+
+    <div class="btn-group">
+        <div class="controls">
+            <div class="input-append">
+                <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+{{/page}}
+
+{{#page}}
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+
+
+
+
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab1" data-toggle="tab">HTML</a></li>
+        <li><a href="#tab_apps" data-toggle="tab">Applications</a></li>
+        <li><a href="#tab_addapp" data-toggle="tab">Add Application</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab1">
+            <p><textarea id="textAreaArticle" style="visibility: hidden;">{{article}}</textarea></p>
+        </div>
+        <div class="tab-pane" id="tab_apps">
+            {{#apps}}
+                {{name}} /
+            {{/apps}}
+            <p>
+                <div class="span8">
+                    <textarea id="textAreaApplication" style="visibility: hidden;"></textarea>
+                </div>
+                <div class="span4">
+                    <textarea id="textAreaTemplate" style="visibility: hidden;"></textarea>
+                </div>
+            </p>
+        </div>
+        <div class="tab-pane" id="tab_addapp">
+            <p>
+            <form class="well">
+                <label>Add Application</label>
+                <input type="text" class="span3" placeholder="Application name..." id="create_app_name">
+                <span class="help-block">One word name. It will create a new application attached to this page.</span>
+                <button type="button" class="btn" id="create_app">Create</button>
+            </form>
+            </p>
+        </div>
+    </div>
+</div>
+{{/page}}
+
+        </div>
+    </div><!--/row-->
+
+    <hr>
+    <div class="row-fluid">
+    <div class="tabbable">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab">Attach Files</a></li>
+            <li><a href="#tab_2" data-toggle="tab">Attached Files</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+                <p><form id="upload" action="/upload" method="POST" enctype="multipart/form-data">
+                <fieldset>
+                    <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
+
+                    <div class="control-group">
+                        <label for="fileselect" class="control-label">Files to upload:</label>
+                        <input type="file" id="fileselect" name="fileselect[]" multiple="multiple">
+                        <div id="filedrag" style="display: block; ">or drop files here</div>
+                    </div>
+
+                    <div id="submitbutton" style="display: none; ">
+                        <button type="submit">Upload Files</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+                <div id="progress"></div>
+                <div id="messages">
+                    <p>Status Messages</p>
+                </div>
+            </div>
+            <div class="tab-pane" id="tab_2">
+                <p>Howdy, I'm in Section 2.</p>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+
+    <hr>
+
+    <footer><p>WikiNEXT © Pavel Arapov</p></footer>
+
+</div>
+
+</body>
+</html>
