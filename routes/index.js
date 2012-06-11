@@ -11,6 +11,8 @@ var formidable = require('formidable'),
 
 var fs = require('fs');
 
+var encoder = require('../lib/encoderHTML');
+
 var winston = require('winston');
 //winston.add(winston.transports.File, { filename: 'debug.log' });
 
@@ -31,6 +33,10 @@ module.exports = function(dao){
         wiki:function (req, res) {
             //console.log(req.params.id);
             dao.pages.findById(req.params.id).next(function(page){
+                //console.log(page.article);
+                encoder.nl2br(page.article);
+                page.article = encoder.htmlDecode(page.article);
+                console.log(page.article);
                 res.render('wiki.html', {
                     locals:{
                         title:'WikiNEXT V2',
