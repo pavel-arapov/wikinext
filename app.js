@@ -10,7 +10,11 @@ var express = require('express')
     , vie = require('vie')
     , jQuery = require('jquery')
     , mustache = require('mustache')
+    , winston = require('winston')
     , MongoStore = require('connect-mongodb'); // sessions for express
+
+winston.add(winston.transports.File, { filename: 'debug.log' });
+winston.info('Hello again distributed logs');
 
 require('./config.settings'); // include settings
 
@@ -262,36 +266,36 @@ var default_page = {
 
 
 
-// Instantiate VIE
-var VIE = new vie.VIE();
-
-// Enable the RDFa service
-VIE.use(new VIE.RdfaService());
-
-//test VIE
-var html = jQuery('<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
-
+//// Instantiate VIE
+//var VIE = new vie.VIE();
 //
-VIE.load({element: html}).from('rdfa').execute().done(function() {
-    var objectInstance = VIE.entities.get('http://www.example.com/books/wikinomics');
-    console.log(objectInstance.get('dc:title') + " by " + objectInstance.get('dc:creator'));
-});
-
-var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div>');
-var v = new vie.VIE();
-v.use(new VIE.RdfaService());
-v.load({element: html2}).from('rdfa').execute().success(function(entities) {
-    entities.forEach(function(entity) {
-        console.log(entity.toJSONLD());
-        entity.set({'dcterms:title': 'Hello, world'});
-//        entity.save(null, {
-//            success: function(savedModel, response) {
-//                alert("Your article '" + savedModel.get('dcterms:title') + "' was saved to server");
-//            }
-//        });
-    });
-    console.log("We got " + entities.length + " editable objects from the page");
-});
+//// Enable the RDFa service
+//VIE.use(new VIE.RdfaService());
+//
+////test VIE
+//var html = jQuery('<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
+//
+////
+//VIE.load({element: html}).from('rdfa').execute().done(function() {
+//    var objectInstance = VIE.entities.get('http://www.example.com/books/wikinomics');
+//    console.log(objectInstance.get('dc:title') + " by " + objectInstance.get('dc:creator'));
+//});
+//
+//var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div>');
+//var v = new vie.VIE();
+//v.use(new VIE.RdfaService());
+//v.load({element: html2}).from('rdfa').execute().success(function(entities) {
+//    entities.forEach(function(entity) {
+//        console.log(entity.toJSONLD());
+//        entity.set({'dcterms:title': 'Hello, world'});
+////        entity.save(null, {
+////            success: function(savedModel, response) {
+////                alert("Your article '" + savedModel.get('dcterms:title') + "' was saved to server");
+////            }
+////        });
+//    });
+//    console.log("We got " + entities.length + " editable objects from the page");
+//});
 ////test deferred
 //var k = function(){
 //    var d = new Deferred();

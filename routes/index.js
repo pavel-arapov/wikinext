@@ -11,6 +11,9 @@ var formidable = require('formidable'),
 
 var fs = require('fs');
 
+var winston = require('winston');
+//winston.add(winston.transports.File, { filename: 'debug.log' });
+
 module.exports = function(dao){
     return {
         index:function (req, res) {
@@ -42,6 +45,7 @@ module.exports = function(dao){
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
+                winston.info('Session', req.session.auth);
                 //console.log(req.session.auth.userId);
                 data.title = "new page";
                 dao.pages.insert(data, function (error, result) {
