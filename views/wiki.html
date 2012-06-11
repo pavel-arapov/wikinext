@@ -41,11 +41,12 @@
 
     </style>
     <script type="text/javascript">
-        /*
-         filedrag.js - HTML5 File Drag & Drop demonstration
-         Featured on SitePoint.com
-         Developed by Craig Buckler (@craigbuckler) of OptimalWorks.net
-         */
+        var page = {
+        {{#page}}
+        _id: "{{_id}}"
+        {{/page}}
+        };
+
         $(document).ready(function(){
         (function() {
 
@@ -158,6 +159,7 @@
                     xhr.setRequestHeader("x-file-name", encodeURIComponent(file.name));
                     xhr.setRequestHeader("x-file-type", file.type);
                     xhr.setRequestHeader("x-file-size", file.size);
+                    xhr.setRequestHeader("x-page-id", page._id);
                     xhr.setRequestHeader("Content-Type", "application/octet-stream");
                     xhr.send(file);
 

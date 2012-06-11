@@ -11,6 +11,8 @@ var formidable = require('formidable'),
 
 var fs = require('fs');
 
+var path = require('path');
+
 var encoder = require('../lib/encoderHTML');
 
 var winston = require('winston');
@@ -104,18 +106,27 @@ module.exports = function(dao){
                 var fName = req.header('x-file-name');
                 var fSize = req.header('x-file-size');
                 var fType = req.header('x-file-type');
-                var ws = fs.createWriteStream('public/upload/'+fName)
+                var pageid = req.header('x-page-id');
+
+                if (!path.existsSync('public/upload/'+pageid)) {
+                    fs.mkdirSync('public/upload/'+pageid);
+                }
+
+                var ws = fs.createWriteStream('public/upload/'+pageid+'/'+fName)
 
                 req.on('data', function(data) {
-                    console.log('data arrived');
+                    //console.log('data arrived');
                     ws.write(data);
                 });
                 req.on('end', function() {
-                    console.log("finished");
+                    //console.log("finished");
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                         success: true
                     }));
+                    dao.pages.attachImage(pageid, {"path":'public/upload/'+pageid,"type":fType,"name":fName}, function(data){
+                        console.log("information to db was succesefully added")
+                    });
                 });
             }
 
