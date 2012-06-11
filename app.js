@@ -13,10 +13,10 @@ var express = require('express')
     , winston = require('winston')
     , MongoStore = require('connect-mongodb'); // sessions for express
 
-winston.add(winston.transports.File, { filename: 'debug.log' });
-winston.info('Hello again distributed logs');
-
 require('./config.settings'); // include settings
+
+winston.add(winston.transports.File, { filename: config.logger_file });
+winston.info('WikiNEXT is starting');
 
 var app = module.exports = express.createServer();
 //var db = require('mongoskin').db('dewey:tehrock@localhost:27017/rockband');
