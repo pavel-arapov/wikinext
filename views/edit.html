@@ -288,7 +288,9 @@
                 <ul class="nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="/create">Create</a></li>
-                    <li><a href="#contact">Share</a></li>
+                    {{#page}}
+                    <li><a href="/wiki/{{_id}}">View</a></li>
+                    {{/page}}
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
