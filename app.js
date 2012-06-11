@@ -47,9 +47,9 @@ everyauth.facebook
             if (error)
                 return userPromise.fail(error);
             if (found_user){
-                //session.userid = found_user._id;
+                session.userId = found_user._id;
                 found_user.id = found_user._id;
-                console.log(found_user);
+                //console.log(found_user);
                 return userPromise.fulfill(found_user);
             }
             else{
@@ -61,7 +61,7 @@ everyauth.facebook
                 };
                 dao.users.insert(our_user, function(error, inserted_user) {
                     if (error) return userPromise.fail(error);
-                    //session.userid = inserted_user._id;
+                    session.userId = inserted_user._id;
                     inserted_user.id = inserted_user._id;
                     return userPromise.fulfill(inserted_user);
                 });
