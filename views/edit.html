@@ -57,6 +57,8 @@
         _id: "{{_id}}"
     {{/page}}
     };
+
+    var editorHTML;var editorJavaScript;var editorTemplate;
     /*
      filedrag.js - HTML5 File Drag & Drop demonstration
      Featured on SitePoint.com
@@ -205,7 +207,7 @@
 
         })();
 
-        var editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
+        editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
             mode: "text/html",
             tabMode: "indent",
             lineWrapping: true,
@@ -215,13 +217,13 @@
             }
         });
 
-        var editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
+        editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
             mode: "text/html",
             tabMode: "indent",
             lineWrapping: true
         });
 
-        var editorTemplate = CodeMirror.fromTextArea(document.getElementById("textAreaTemplate"),{
+        editorTemplate = CodeMirror.fromTextArea(document.getElementById("textAreaTemplate"),{
             mode: "text/html",
             tabMode: "indent",
             lineWrapping: true
