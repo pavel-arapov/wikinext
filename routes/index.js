@@ -107,7 +107,7 @@ module.exports = function(dao){
                 var fSize = req.header('x-file-size');
                 var fType = req.header('x-file-type');
                 var pageid = req.header('x-page-id');
-                var path_upload = fs.realpathSync('public/upload/');
+                var path_upload = __dirname + '/../public/upload/';
                 if (!path.existsSync(path_upload+pageid)) {
                     fs.mkdirSync(path_upload+pageid);
                 }
