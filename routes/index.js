@@ -107,12 +107,12 @@ module.exports = function(dao){
                 var fSize = req.header('x-file-size');
                 var fType = req.header('x-file-type');
                 var pageid = req.header('x-page-id');
-
-                if (!path.existsSync('public/upload/'+pageid)) {
-                    fs.mkdirSync('public/upload/'+pageid);
+                var path_upload = fs.realpathSync('public/upload/');
+                if (!path.existsSync(path_upload+pageid)) {
+                    fs.mkdirSync(path_upload+pageid);
                 }
 
-                var ws = fs.createWriteStream('public/upload/'+pageid+'/'+fName)
+                var ws = fs.createWriteStream(path_upload+pageid+'/'+fName)
 
                 req.on('data', function(data) {
                     //console.log('data arrived');
