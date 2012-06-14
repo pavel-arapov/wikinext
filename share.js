@@ -57,7 +57,7 @@ app.configure(function () {
     app.use(express.session(
         {
             secret:process.env.SESSION_SECRET || 'wikinextSecret438271872487',
-            cookie: { domain:'.gexsoft.com'},
+            cookie: { domain: config.cookie_domain },
             store:mongoStore
         }));
 //    app.use(everyauth.middleware());
