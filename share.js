@@ -89,7 +89,9 @@ app.get('/home', function(req,res){
     res.redirect(config.host_uri+"/home");
 });
 //app.get('/create',routes.create);
-//app.get('/wiki/:id',routes.wiki);
+app.get('/wiki/:id', function(req,res){
+    res.redirect(config.host_uri+"/wiki/"+req.params.id);
+});
 app.get('/wiki/:id/edit',routes.edit);
 
 //app.post('/upload',routes.upload);
@@ -99,6 +101,6 @@ app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var options = {db: {type: 'none'}, socketio: null}; // See docs for options. {type: 'redis'} to enable persistance.
+var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.attach(app, options);

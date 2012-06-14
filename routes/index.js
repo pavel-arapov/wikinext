@@ -33,7 +33,7 @@ module.exports = function(dao){
 
         },
         wiki:function (req, res) {
-            console.log(req.session);
+            //console.log(req.session);
             dao.pages.findById(req.params.id).next(function(page){
                 res.render('wiki.html', {
                     locals:{

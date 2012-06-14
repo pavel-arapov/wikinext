@@ -12,7 +12,7 @@
 <script type="text/javascript" src="/js/backbone-min.js"></script>
 <!--<script type="text/javascript" src="/js/wikinext.main.js"></script>-->
 <script type="text/javascript" src="/codemirror/codemirror.js"></script>
-<!--<script src="/socket.io/socket.io.js"></script>-->
+<script src="/socket.io/socket.io.js"></script>
 <script src="/channel/bcsocket.js"></script>
 <script src="/share/share.js"></script>
 <script src="/js/codemirror_sharejs.js"></script>
@@ -221,7 +221,7 @@
             }
         });
         sharejs.open('hello', 'text', function(error, doc) {
-            doc.attach_codemirror(editorHTML);
+            doc.attach_codemirror(editorHTML,true);
         });
 
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
