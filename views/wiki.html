@@ -246,9 +246,13 @@
                 <ul class="nav">
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="/create">Create</a></li>
-                    {{#page}}
-                    <li><a href="http://wikinextsync.gexsoft.com/wiki/{{_id}}/edit">Edit</a></li>
-                    {{/page}}
+                    {{#auth}}
+                    {{#facebook}}
+                    {{#user}}
+                    <li><a href="/wiki/{{_id}}/edit">Edit</a></li>
+                    {{/user}}
+                    {{/facebook}}
+                    {{/auth}}
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
