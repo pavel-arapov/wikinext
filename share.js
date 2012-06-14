@@ -99,7 +99,7 @@ sharejs.attach(app, options);
 
 var port = process.env.PORT || config.port_sharejs;
 app.listen(port, function () {
-    console.log("Express server listening on port %d in %s mode", app.address().port_sharejs, app.settings.env);
+    console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
 //var port = process.env.PORT || 3000;
