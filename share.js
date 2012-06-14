@@ -99,6 +99,6 @@ app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var options = {db: {type: 'none'}, socketio: null}; // See docs for options. {type: 'redis'} to enable persistance.
+var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.attach(app, options);
