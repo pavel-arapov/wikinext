@@ -220,7 +220,7 @@
                 //delay = setTimeout(updatePreview, 300);
             }
         });
-        sharejs.open('hello', 'text', function(error, doc) {
+        sharejs.open(page._id, 'text', function(error, doc) {
             doc.attach_codemirror(editorHTML,true);
         });
 
