@@ -59,9 +59,14 @@
             </div>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li class="active"><a href="#">Home</a></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    {{#auth}}
+                    {{#facebook}}
+                    {{#user}}
                     <li><a href="/create">Create</a></li>
-                    <li><a href="#contact">Share</a></li>
+                    {{/user}}
+                    {{/facebook}}
+                    {{/auth}}
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
