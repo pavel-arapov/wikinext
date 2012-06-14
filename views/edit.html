@@ -3,15 +3,18 @@
 <head>
 <title>{{title}}</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
-<script type="text/javascript" src="/nowjs/now.js"></script>
+<!--<script type="text/javascript" src="/nowjs/now.js"></script>-->
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
 <script type="text/javascript" src="/js/jsdeferred.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/underscore-min.js"></script>
 <script type="text/javascript" src="/js/backbone-min.js"></script>
-<script type="text/javascript" src="/js/wikinext.main.js"></script>
+<!--<script type="text/javascript" src="/js/wikinext.main.js"></script>-->
 <script type="text/javascript" src="/codemirror/codemirror.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/share/share.js"></script>
+<script src="/js/codemirror_sharejs.js"></script>
 <link rel="stylesheet" href="/codemirror/codemirror.css">
 <script src="/codemirror/mode/javascript/javascript.js"></script>
 <script src="/codemirror/mode/css/css.js"></script>
@@ -215,6 +218,9 @@
                 //clearTimeout(delay);
                 //delay = setTimeout(updatePreview, 300);
             }
+        });
+        sharejs.open('hello', 'text', function(error, doc) {
+            doc.attach_codemirror(editorHTML);
         });
 
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
