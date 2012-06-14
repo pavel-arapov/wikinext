@@ -143,7 +143,7 @@ app.get('/wiki/:id/edit',function(req,res){
     res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");
 });
 
-app.post('/upload',routes.upload);
+//app.post('/upload',routes.upload);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

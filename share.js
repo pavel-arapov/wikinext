@@ -94,8 +94,7 @@ app.get('/wiki/:id', function(req,res){
 });
 app.get('/wiki/:id/edit',routes.edit);
 app.post('/wiki/:id/save',routes.save);
-
-//app.post('/upload',routes.upload);
+app.post('/upload',routes.upload);
 
 var port = process.env.PORT || config.port_sharejs;
 app.listen(port, function () {

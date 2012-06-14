@@ -124,8 +124,11 @@ module.exports = function(dao){
                     res.end(JSON.stringify({
                         success: true
                     }));
-                    dao.pages.attachImage(pageid, {"path":'public/upload/'+pageid,"type":fType,"name":fName}, function(data){
-                        console.log("information to db was succesefully added")
+                    dao.pages.attachImage(pageid, {"path":'upload/'+pageid,"type":fType,"name":fName}, function(data){
+                        if (data != null)
+                            console.log(data);
+                        else
+                            console.log("information to db was succesefully added")
                     });
                 });
             }

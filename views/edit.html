@@ -170,6 +170,7 @@
                     xhr.setRequestHeader("x-file-name", encodeURIComponent(file.name));
                     xhr.setRequestHeader("x-file-type", file.type);
                     xhr.setRequestHeader("x-file-size", file.size);
+                    xhr.setRequestHeader("x-page-id", page._id);
                     xhr.setRequestHeader("Content-Type", "application/octet-stream");
                     xhr.send(file);
 
@@ -434,7 +435,14 @@
                 </div>
             </div>
             <div class="tab-pane" id="tab_2">
-                <p>Howdy, I'm in Section 2.</p>
+                <p>
+                    {{#page}}
+                    {{#attach}}
+                    {{name}} : {{type}}
+                    <img src='/{{path}}/{{name}}'><br />
+                    {{/attach}}
+                    {{/page}}
+                </p>
             </div>
         </div>
     </div>
