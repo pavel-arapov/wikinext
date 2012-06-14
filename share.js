@@ -107,7 +107,7 @@ sharejs.attach(app, options);
 
 var client = require('share').client;
 
-client.open('4fd5dbf585dcbff208000001', 'text', {host: 'localhost', port: 8000}, function(doc, error) {
+client.open('4fd5dbf585dcbff208000001', 'text', {host: 'localhost', port: config.port_sharejs}, function(doc, error) {
     // Insert some text at the start of the document (position 0):
 //    doc.submitOp({i:"Hi there!\n", p:0});
 
