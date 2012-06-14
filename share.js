@@ -82,10 +82,14 @@ app.configure('production', function () {
 
 var routes = require('./routes')(dao);
 
-app.get('/', routes.index);
-app.get('/home', routes.index);
-app.get('/create',routes.create);
-app.get('/wiki/:id',routes.wiki);
+app.get('/', function(req,res){
+    res.redirect(config.host_uri);
+});
+app.get('/home', function(req,res){
+    res.redirect(config.host_uri+"/home");
+});
+//app.get('/create',routes.create);
+//app.get('/wiki/:id',routes.wiki);
 app.get('/wiki/:id/edit',routes.edit);
 
 //app.post('/upload',routes.upload);
