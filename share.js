@@ -107,7 +107,7 @@ sharejs.attach(app, options);
 
 var client = require('share').client;
 
-client.open('4fd5dbf585dcbff208000001', 'text', {host: 'localhost', port: config.port_sharejs}, function(doc, error) {
+client.open('4fd5dbf585dcbff208000001', 'text', {host: config.host_sync_uri, port: config.port_sharejs}, function(doc, error) {
     // Insert some text at the start of the document (position 0):
 //    doc.submitOp({i:"Hi there!\n", p:0});
 
@@ -117,7 +117,7 @@ client.open('4fd5dbf585dcbff208000001', 'text', {host: 'localhost', port: config
     doc.on('change', function(op) {
         var data = [];
         data['_id'] = '4fd5dbf585dcbff208000001';
-        data['article'] = doc.getText();
+        data['article'] = doc.snapshot;
         dao.pages.update(data, function (error, result) {
             if (error != undefined)
                 console.log("Got an error: " + error);
