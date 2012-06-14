@@ -102,7 +102,7 @@ module.exports = function(dao){
         },
         upload:function(req,res,next){
             if(req.xhr) {
-                console.log('Uploading...');
+                //console.log('Uploading...');
                 var fName = req.header('x-file-name');
                 var fSize = req.header('x-file-size');
                 var fType = req.header('x-file-type');
@@ -167,6 +167,21 @@ module.exports = function(dao){
 //                    console.log("information to db was succesefully added");
 //                });
 //            });
+        },
+        save : function(req,res){
+            var data = {};
+            data['_id'] = req.params.id;
+            if (typeof req.body['article'] !== "undefined")
+                data['article'] = req.body.article;
+            if (typeof req.body['title'] !== "undefined")
+                data['title'] = req.body.title;
+            //console.log(data);
+
+            dao.pages.update(data, function (error, result) {
+                if (error != undefined)
+                    console.log("Got an error: " + error);
+
+            });
         }
 
     };

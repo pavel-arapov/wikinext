@@ -1,19 +1,19 @@
 $(document).ready(function(){
-    $("#save_button").click(function(e){
-        var page_to_send = {
-            '_id':page['_id'],
-            'article':editorHTML.getValue()
-        };
-        now.save_page(page_to_send);
-    });
-
-    $("#update_title").click(function(e){
-        var page_to_send = {
-            '_id':page['_id'],
-            'title':$("#page_title").val()
-        };
-        now.save_page(page_to_send);
-    });
+//    $("#save_button").click(function(e){
+//        var page_to_send = {
+//            '_id':page['_id'],
+//            'article':editorHTML.getValue()
+//        };
+//        now.save_page(page_to_send);
+//    });
+//
+//    $("#update_title").click(function(e){
+//        var page_to_send = {
+//            '_id':page['_id'],
+//            'title':$("#page_title").val()
+//        };
+//        now.save_page(page_to_send);
+//    });
 
     $("#create_app").click(function(e){
         //создаю новое приложение прицепленное к странице

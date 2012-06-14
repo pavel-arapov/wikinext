@@ -69,6 +69,7 @@
      Developed by Craig Buckler (@craigbuckler) of OptimalWorks.net
      */
     $(document).ready(function(){
+
         (function() {
             // getElementById
             function $id(id) {
@@ -224,6 +225,15 @@
             doc.attach_codemirror(editorHTML,true);
         });
 
+        $("#save_button").click(function(){
+            $.post("/wiki/"+page._id+"/save",{article: editorHTML.getValue()},function(){});
+
+        });
+
+        $("#update_title").click(function(e){
+            $.post("/wiki/"+page._id+"/save",{title: $("#page_title").val()},function(){})
+        });
+
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
             mode: "text/html",
             tabMode: "indent",
@@ -293,7 +303,7 @@
             </div>
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li class="active"><a href="#">Home</a></li>
+                    <li class="active"><a href="/">Home</a></li>
                     <li><a href="/create">Create</a></li>
                     {{#page}}
                     <li><a href="/wiki/{{_id}}">View</a></li>
@@ -326,24 +336,21 @@
             <a class="btn" href="#"><i class="icon-align-right"></i></a>
             <a class="btn" href="#"><i class="icon-align-justify"></i></a>
         </div>
-    </div>
-</div>
+        <div class="btn-group">
 
-{{#page}}
-<div class="container-fluid">
-<div class="btn-group">
-
-    <div class="btn-group">
-        <div class="controls">
-            <div class="input-append">
-                <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
+            <div class="btn-group">
+                <div class="controls">
+                    <div class="input-append">
+                        {{#page}}
+                        <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
+                        {{/page}}
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
-
 </div>
-</div>
-{{/page}}
 
 {{#page}}
 
