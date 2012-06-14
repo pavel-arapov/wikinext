@@ -183,7 +183,7 @@ nowjs.on('disconnect', function () {
 
 
 everyone.now.save_page = function(data){
-    console.log(data);
+    //console.log(data);
     var self = this;
     dao.pages.update(data, function (error, result) {
         if (error != undefined)
