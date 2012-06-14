@@ -93,15 +93,12 @@ app.get('/home', function(req,res){
 app.get('/wiki/:id/edit',routes.edit);
 
 //app.post('/upload',routes.upload);
-var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
-// Attach the sharejs REST and Socket.io interfaces to the server
-sharejs.attach(app, options);
 
 var port = process.env.PORT || config.port_sharejs;
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-//var port = process.env.PORT || 3000;
-//server.listen(port);
-//console.log('Server running at http://127.0.0.1:' + port);
+var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
+// Attach the sharejs REST and Socket.io interfaces to the server
+sharejs.attach(app, options);
