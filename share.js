@@ -1,5 +1,6 @@
 require('coffee-script');
 var express = require('express')
+    , socketio = require('socket.io')
     , sharejs = require('share').server
     , mustache = require('mustache')
     , Deferred = require('jsdeferred').Deferred
