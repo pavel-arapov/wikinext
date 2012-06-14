@@ -19,7 +19,5 @@
     , "share" : "0.5.0-pre"
     , "coffee-script": "= 1.1.0"
     , "request": ">= 2.1.1"
-    , "connect": ">= 1.1.1 < 2.0.0"
-    , "socket.io": "0.9.6"
   }
 }
