@@ -51,13 +51,16 @@ module.exports = function(dao){
                 data.userid = req.session.auth.userId;
                 winston.info('Session', req.session.auth);
                 //console.log(req.session.auth.userId);
-                data.title = "new page";
+                if (typeof req.body['page_name'] !== "undefined")
+                    data['title'] = req.body.page_name;
+                else
+                    data.title = "new page";
                 dao.pages.insert(data, function (error, result) {
                     if (error != undefined)
                         console.log("Got an error: " + error);
                     //console.log(result);
                     //console.log(result[0]._id);
-                    res.redirect("/wiki/"+result[0]._id);
+                    res.redirect("/wiki/"+result[0]._id + "/edit");
                     //console.log(result);
 //                    datalog.userid = data.userid;
 //                    datalog.page_info = {};
@@ -176,6 +179,8 @@ module.exports = function(dao){
             data['_id'] = req.params.id;
             if (typeof req.body['article'] !== "undefined")
                 data['article'] = req.body.article;
+            if (typeof req.body['app'] !== "undefined")
+                data['app'] = req.body.app;
             if (typeof req.body['title'] !== "undefined")
                 data['title'] = req.body.title;
             //console.log(data);

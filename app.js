@@ -137,7 +137,7 @@ var routes = require('./routes')(dao);
 
 app.get('/', routes.index);
 app.get('/home', routes.index);
-app.get('/create',routes.create);
+app.post('/create',routes.create);
 app.get('/wiki/:id',routes.wiki);
 app.get('/wiki/:id/edit',function(req,res){
     res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");

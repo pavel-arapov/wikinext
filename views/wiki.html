@@ -41,6 +41,15 @@
 
     </style>
     <script type="text/javascript">
+            var launch_wiki_script = function(){
+                var data = {}
+                {{#page}}
+                    {{{app}}}
+                {{/page}}
+                return data;
+            }
+    </script>
+    <script type="text/javascript">
         var page = {
         {{#page}}
         _id: "{{_id}}"
@@ -48,8 +57,16 @@
         };
 
         $(document).ready(function(){
+            var data = launch_wiki_script();
+            var article = ich.article_template(data);
+            $("#article_show").append(article);
         });
 
+    </script>
+    <script type="text/html" id="article_template">
+        {{#page}}
+            {{{article}}}
+        {{/page}}
     </script>
 </head>
 <body>
@@ -95,7 +112,7 @@
                     {{#auth}}
                     {{#facebook}}
                     {{#user}}
-                    <li><a href="/create">Create</a></li>
+                    <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
                     {{#page}}
                     <li><a href="/wiki/{{_id}}/edit">Edit</a></li>
                     {{/page}}
@@ -117,11 +134,8 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row-fluid">
-        {{#page}}
-            {{title}}<br />
-            {{{article}}}
-        {{/page}}
+    <div class="row-fluid" id="article_show">
+
     </div><!--/row-->
 
     <hr>
@@ -142,6 +156,23 @@
 
     <footer><p>WikiNEXT © Pavel Arapov</p></footer>
 
+</div>
+
+<div class="modal hide" id="create-page-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Create Page</h3>
+    </div>
+    <div class="modal-body">
+        <form id="create-page-form" method="POST" action="/create">
+            <label>Create Page</label>
+            <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="create-page-button">Create</a>
+    </div>
 </div>
 
 </body>

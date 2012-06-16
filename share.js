@@ -93,6 +93,7 @@ app.get('/wiki/:id', function(req,res){
     res.redirect(config.host_uri+"/wiki/"+req.params.id);
 });
 app.get('/wiki/:id/edit',routes.edit);
+app.get('/wiki/:id/app',routes.app);
 app.post('/wiki/:id/save',routes.save);
 app.post('/upload',routes.upload);
 

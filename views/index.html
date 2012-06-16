@@ -19,6 +19,26 @@
         }
 
     </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#create-page-button").click(function () {
+                $('#create-page').modal('hide');
+                $("#create-page-form").submit();
+//                $.post("/createapp",
+//                        {
+//                            name:$("#application_name").val()
+//                        },
+//                        function (data) {
+//                            if (data.res == 'ok')
+//                                location.replace("/editapp/" + data._id);
+//                            else {
+//                                console.log('creation error');
+//                            }
+//
+//                        });
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="navbar navbar-fixed-top">
@@ -63,7 +83,7 @@
                     {{#auth}}
                     {{#facebook}}
                     {{#user}}
-                    <li><a href="/create">Create</a></li>
+                    <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
                     {{/user}}
                     {{/facebook}}
                     {{/auth}}
@@ -91,36 +111,19 @@
         <div class="span9">
             <div class="hero-unit">
                 <h1>Welcome to WikiNEXT</h1>
-                <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+                <p>You need to be login to create/edit and other actions. Please click in right-top corner "Login"</p>
                 <p><a class="btn btn-primary btn-large">Learn more »</a></p>
             </div>
             <div class="row-fluid">
                 <div class="span4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
+                    <h2>Wiki Pages</h2>
+                    <p>Pages can be edit in real-time collaborative mode</p>
+                    <p><a class="btn" href="#">Create Page »</a></p>
                 </div><!--/span-->
                 <div class="span4">
-                    <h2>Heading</h2>
+                    <h2>Applications</h2>
                     <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
-                </div><!--/span-->
-                <div class="span4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
-                </div><!--/span-->
-            </div><!--/row-->
-            <div class="row-fluid">
-                <div class="span4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
-                </div><!--/span-->
-                <div class="span4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
+                    <p><a class="btn" href="#">Create Application »</a></p>
                 </div><!--/span-->
                 <div class="span4">
                     <h2>Heading</h2>
@@ -139,6 +142,24 @@
     <footer><p>WikiNEXT © Pavel Arapov</p></footer>
 
 </div>
+
+<div class="modal hide" id="create-page-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Create Page</h3>
+    </div>
+    <div class="modal-body">
+        <form id="create-page-form" method="POST" action="/create">
+            <label>Create Page</label>
+            <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="create-page-button">Create</a>
+    </div>
+</div>
+
 
 </body>
 </html>

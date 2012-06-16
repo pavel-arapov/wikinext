@@ -226,8 +226,17 @@
             doc.attach_codemirror(editorHTML,true);
         });
 
+        //TODO: can't use 2 sharejs codemirror editors at the same time...
+//        sharejs.open(page._id+"app", 'text', function(error, doc) {
+//            doc.attach_codemirror(editorJavaScript,true);
+//        });
+
         $("#save_button").click(function(){
-            $.post("/wiki/"+page._id+"/save",{article: editorHTML.getValue()},function(){});
+            $.post("/wiki/"+page._id+"/save",{
+                title: $("#page_title").val(),
+                article: editorHTML.getValue(),
+                app: editorJavaScript.getValue()
+            },function(){});
 
         });
 
@@ -236,16 +245,25 @@
         });
 
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
-            mode: "text/html",
+            mode: "javascript",
             tabMode: "indent",
+            lineNumbers: true,
             lineWrapping: true
         });
 
-        editorTemplate = CodeMirror.fromTextArea(document.getElementById("textAreaTemplate"),{
-            mode: "text/html",
-            tabMode: "indent",
-            lineWrapping: true
+        $("#create-page-button").click(function () {
+            $('#create-page').modal('hide');
+            $("#create-page-form").submit();
         });
+
+        $('#edit_tabs a').click(function (e) {
+            //e.preventDefault();
+            editorHTML.refresh();
+            editorJavaScript.refresh();
+        });
+
+        editorHTML.refresh();
+        editorJavaScript.refresh();
 
 
 //        var delay;
@@ -305,7 +323,7 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="/">Home</a></li>
-                    <li><a href="/create">Create</a></li>
+                    <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
                     <li class="active"><a href="#">Edit</a></li>
                     {{#page}}
                     <li><a href="/wiki/{{_id}}">View</a></li>
@@ -338,9 +356,7 @@
             <a class="btn" href="#"><i class="icon-align-right"></i></a>
             <a class="btn" href="#"><i class="icon-align-justify"></i></a>
         </div>
-        <div class="btn-group">
-
-            <div class="btn-group">
+        <div class="btn-group pull-right">
                 <div class="controls">
                     <div class="input-append">
                         {{#page}}
@@ -348,58 +364,34 @@
                         {{/page}}
                     </div>
                 </div>
-            </div>
-
         </div>
     </div>
 </div>
 
-{{#page}}
+
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span12">
-
-
-
-
-<div class="tabbable">
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab">HTML</a></li>
-        <li><a href="#tab_apps" data-toggle="tab">Applications</a></li>
-        <li><a href="#tab_addapp" data-toggle="tab">Add Application</a></li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane active" id="tab1">
-            <p><textarea id="textAreaArticle" style="visibility: hidden;">{{article}}</textarea></p>
-        </div>
-        <div class="tab-pane" id="tab_apps">
-            {{#apps}}
-                {{name}} /
-            {{/apps}}
-            <p>
-                <div class="span8">
-                    <textarea id="textAreaApplication" style="visibility: hidden;"></textarea>
+        <div class="span7">
+            {{#page}}
+            <div class="tabbable">
+                <ul class="nav nav-tabs" id="edit_tabs">
+                    <li class="active"><a href="#tab1" data-toggle="tab">HTML</a></li>
+                    <li><a href="#tab_apps" data-toggle="tab">JavaScript</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab1">
+                        <p><textarea id="textAreaArticle" style="visibility: hidden;">{{article}}</textarea></p>
+                    </div>
+                    <div class="tab-pane" id="tab_apps">
+                        <p><textarea id="textAreaApplication" style="visibility: hidden;">{{app}}</textarea></p>
+                    </div>
                 </div>
-                <div class="span4">
-                    <textarea id="textAreaTemplate" style="visibility: hidden;"></textarea>
-                </div>
-            </p>
+            </div>
+            {{/page}}
         </div>
-        <div class="tab-pane" id="tab_addapp">
-            <p>
-            <form class="well">
-                <label>Add Application</label>
-                <input type="text" class="span3" placeholder="Application name..." id="create_app_name">
-                <span class="help-block">One word name. It will create a new application attached to this page.</span>
-                <button type="button" class="btn" id="create_app">Create</button>
-            </form>
-            </p>
-        </div>
-    </div>
-</div>
-{{/page}}
-
+        <div class="span5">
+            <a href="#" class="btn">Update Preview</a>
         </div>
     </div><!--/row-->
 
@@ -454,6 +446,23 @@
 
     <footer><p>WikiNEXT © Pavel Arapov</p></footer>
 
+</div>
+
+<div class="modal hide" id="create-page-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Create Page</h3>
+    </div>
+    <div class="modal-body">
+        <form id="create-page-form" method="POST" action="/create">
+            <label>Create Page</label>
+            <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="create-page-button">Create</a>
+    </div>
 </div>
 
 </body>
