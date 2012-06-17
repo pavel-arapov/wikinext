@@ -188,8 +188,9 @@ module.exports = function(dao){
             dao.pages.update(data, function (error, result) {
                 if (error != undefined)
                     console.log("Got an error: " + error);
-
             });
+            //res.writeHead(200,{'content-type':'application/json'})
+            res.send({status:"ok"});
         }
 
     };

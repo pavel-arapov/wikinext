@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
 <title>{{title}}</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -232,8 +232,17 @@
                 title: $("#page_title").val(),
                 article: editorHTML.getValue(),
                 app: editorJavaScript.getValue()
-            },function(){});
+            },function(d){
 
+                var m;
+                if (d.status == 'ok'){
+                    m = ich.messageSuccess({mes: "Page has been saved"});
+
+                } else {
+                    m = ich.messageFail({mes: "Page has not been saved"});
+                }
+                $(m).insertBefore("#main_page_module .tabbable");
+            });
         });
 
         $("#update_title").click(function(e){
@@ -277,6 +286,18 @@
 
     });
 
+</script>
+<script type="text/html" id="messageSuccess">
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Success!</strong>{{mes}}
+    </div>
+</script>
+<script type="text/html" id="messageFail">
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Fail!</strong>{{mes}}
+    </div>
 </script>
 </head>
 <body>
@@ -368,7 +389,7 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span7">
+        <div class="span7" id="main_page_module">
             {{#page}}
             <div class="tabbable">
                 <ul class="nav nav-tabs" id="edit_tabs">
