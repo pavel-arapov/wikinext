@@ -216,11 +216,7 @@
         editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
             mode: "text/html",
             tabMode: "indent",
-            lineWrapping: true,
-            onChange: function() {
-                //clearTimeout(delay);
-                //delay = setTimeout(updatePreview, 300);
-            }
+            lineWrapping: true
         });
         sharejs.open(page._id, 'text', function(error, doc) {
             doc.attach_codemirror(editorHTML,true);

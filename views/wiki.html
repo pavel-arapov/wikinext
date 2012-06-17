@@ -11,6 +11,9 @@
     <script type="text/javascript" src="/js/underscore-min.js"></script>
     <script type="text/javascript" src="/js/backbone-min.js"></script>
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
+    <script type="text/javascript" src="/js/rgraph/RGraph.common.core.js"></script>
+    <script type="text/javascript" src="/js/rgraph/RGraph.line.js"></script>
+    <!--[if lt IE 9]><script src="/js/excanvas/excanvas.js"></script><![endif]-->
     <style>
 
         body {
@@ -41,13 +44,40 @@
 
     </style>
     <script type="text/javascript">
-            var launch_wiki_script = function(){
-                var data = {}
-                {{#page}}
+            window.launch_wiki_script = (function(){
+                var __data = {"app_name": "Graph example"};
+                var application = (function(){
+                    {{#page}}
                     {{{app}}}
-                {{/page}}
-                return data;
-            }
+                    {{/page}}
+                    return {
+                        __construct: function() {
+                            //console.log(this);
+                            //console.log(data);
+                            if (typeof construct == 'function'){
+                                console.log('application construct');
+                                __data = construct();
+                            } else
+                            if (typeof data != 'undefined')
+                                __data = data;
+                            return __data;
+                        },
+                        __afterConstruct: function() {
+                            if (typeof afterConstruct == 'function'){
+                                console.log('application after construct');
+                                afterConstruct();
+                            }
+                        }
+                    }})();
+                return {
+                    construct: function(){
+                        return application.__construct();
+                    },
+                    afterConstruct: function(){
+                        application.__afterConstruct();
+                    }
+                };
+            })();
     </script>
     <script type="text/javascript">
         var page = {
@@ -57,11 +87,11 @@
         };
 
         $(document).ready(function(){
-            var data = launch_wiki_script();
+            var data = launch_wiki_script.construct();
             var article = ich.article_template(data);
             $("#article_show").append(article);
+            launch_wiki_script.afterConstruct();
         });
-
     </script>
     <script type="text/html" id="article_template">
         {{#page}}
