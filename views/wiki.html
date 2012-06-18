@@ -81,9 +81,7 @@
     </script>
     <script type="text/javascript">
         var page = {
-        {{#page}}
-        _id: "{{_id}}"
-        {{/page}}
+            _id: "{{#page}}{{_id}}{{/page}}"
         };
 
         $(document).ready(function(){
