@@ -1,4 +1,3 @@
-
 /*
  * GET home page.
  */
@@ -13,15 +12,16 @@ var fs = require('fs');
 
 var path = require('path');
 
-var encoder = require('../lib/encoderHTML');
+//var encoder = require('../lib/encoderHTML');
+var _ = require('underscore');
 
 var winston = require('winston');
 //winston.add(winston.transports.File, { filename: 'debug.log' });
 
-module.exports = function(dao){
+module.exports = function (dao) {
     return {
         index:function (req, res) {
-            dao.pages.findAll().next(function(pages){
+            dao.pages.findAll().next(function (pages) {
                 res.render('index.html', {
                     locals:{
                         title:'WikiNEXT V2',
@@ -34,7 +34,11 @@ module.exports = function(dao){
         },
         wiki:function (req, res) {
             //console.log(req.session);
-            dao.pages.findById(req.params.id).next(function(page){
+            dao.pages.findById(req.params.id).next(function (page) {
+                if (typeof page['created_at'] != 'undefined')
+                    page['created_at'] = new Date(page['created_at']).toDateString();
+                if (typeof page['last_modified_at'] != 'undefined')
+                    page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
                 res.render('wiki.html', {
                     locals:{
                         title:'WikiNEXT V2',
@@ -45,23 +49,26 @@ module.exports = function(dao){
             });
 
         },
-        create:function(req,res){
+        create:function (req, res) {
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
                 winston.info('Session', req.session.auth);
-                //console.log(req.session.auth.userId);
                 if (typeof req.body['page_name'] !== "undefined")
                     data['title'] = req.body.page_name;
                 else
                     data.title = "new page";
-                dao.pages.insert(data, function (error, result) {
-                    if (error != undefined)
-                        console.log("Got an error: " + error);
-                    //console.log(result);
-                    //console.log(result[0]._id);
-                    res.redirect("/wiki/"+result[0]._id + "/edit");
-                    //console.log(result);
+                dao.users.findById(data.userid, function (error, result) {
+                    data.created_by = {
+                        name : result.name
+                    };
+                    dao.pages.insert(data, function (error, result) {
+                        if (error != undefined)
+                            console.log("Got an error: " + error);
+                        //console.log(result);
+                        //console.log(result[0]._id);
+                        res.redirect("/wiki/" + result[0]._id + "/edit");
+                        //console.log(result);
 //                    datalog.userid = data.userid;
 //                    datalog.page_info = {};
 //                    datalog.page_info.id = result[0]._id;
@@ -69,7 +76,7 @@ module.exports = function(dao){
 //                    datalog.pageid = datalog.page_info.id;
 //                    datalog.action = "create";
 //                    datalog.date = new Date();
-                    //console.log(datalog);
+                        //console.log(datalog);
 //                    dao.users.findById(data.userid, function (error, r) {
 //                        datalog.user_info = {};
 //                        datalog.user_info.name = r.name;
@@ -80,117 +87,135 @@ module.exports = function(dao){
 //                        });
 //                    });
 
+                    });
                 });
             } else {
                 res.redirect("/");
             }
         },
-        edit:function(req,res){
+        edit:function (req, res) {
             //console.log("edit");
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
-                dao.pages.findById(req.params.id).next(function(page){
-                    res.render('edit.html', {
-                        locals:{
-                            title:'WikiNEXT V2',
-                            auth:req.session.auth,
-                            login:req.session.auth ? false : true,
-                            page:page
-                        }});
+                dao.users.findById(data.userid, function (error, result) {
+                    data.last_modified_by = {
+                        name: result.name
+                    };
+                    dao.pages.findById(req.params.id).next(function (page) {
+                        if (page.attach instanceof Array) {
+                            var index = 0;
+                            page.attach.forEach(function (item) {
+                                item['index'] = index;
+                                index++;
+                            })
+                        }
+                        res.render('edit.html', {
+                            locals:{
+                                title:'WikiNEXT V2',
+                                auth:req.session.auth,
+                                login:req.session.auth ? false : true,
+                                page:page
+                            }});
+                    });
                 });
             } else {
                 res.redirect("/");
             }
         },
-        upload:function(req,res,next){
-            if(req.xhr) {
-                //console.log('Uploading...');
-                var fName = req.header('x-file-name');
-                var fSize = req.header('x-file-size');
-                var fType = req.header('x-file-type');
-                var pageid = req.header('x-page-id');
-                var path_upload = __dirname + '/../public/upload/';
-                if (!path.existsSync(path_upload+pageid)) {
-                    fs.mkdirSync(path_upload+pageid);
-                }
+        upload:function (req, res) {
+            if (req.session.auth) {
+                var data = {};
+                data.userid = req.session.auth.userId;
+                dao.users.findById(data.userid, function (error, result) {
+                    var username = result.name;
 
-                var ws = fs.createWriteStream(path_upload+pageid+'/'+fName)
+                    if (req.xhr) {
+                        var fName = req.header('x-file-name');
+                        var fSize = req.header('x-file-size');
+                        var fType = req.header('x-file-type');
+                        var pageid = req.header('x-page-id');
+                        var path_upload = __dirname + '/../public/upload/';
+                        if (!path.existsSync(path_upload + pageid)) {
+                            fs.mkdirSync(path_upload + pageid);
+                        }
 
-                req.on('data', function(data) {
-                    //console.log('data arrived');
-                    ws.write(data);
-                });
-                req.on('end', function() {
-                    //console.log("finished");
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({
-                        success: true
-                    }));
-                    dao.pages.attachImage(pageid, {"path":'upload/'+pageid,"type":fType,"name":fName}, function(data){
-                        if (data != null)
-                            console.log(data);
-                        else
-                            console.log("information to db was succesefully added")
-                    });
+                        var ws = fs.createWriteStream(path_upload + pageid + '/' + fName)
+
+                        req.on('data', function (data) {
+                            //console.log('data arrived');
+                            ws.write(data);
+                        });
+                        req.on('end', function () {
+                            //console.log("finished");
+                            res.writeHead(200, { 'Content-Type':'application/json' });
+                            res.end(JSON.stringify({
+                                success:true
+                            }));
+                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date(), "uploaded_by":username}, function (data) {
+                                if (data != null)
+                                    console.log(data);
+                                else
+                                    console.log("information to db was successfully added")
+                            });
+                        });
+                    }
                 });
             }
-
-//            var form = new formidable.IncomingForm();
-//
-//            form.uploadDir = __dirname + '/upload/';
-//
-//            form.on('file', function (field, file) {
-//                //rename the incoming file to the file's name
-//                fs.rename(file.path, form.uploadDir + "/" + file.name);
-//            })
-//                .on('error', function (err) {
-//                    console.log("an error has occured with form upload");
-//                    console.log(err);
-//                    req.resume();
-//                })
-//                .on('aborted', function (err) {
-//                    console.log("user aborted upload");
-//                })
-//                .on('end', function () {
-//                    console.log('-> upload done');
-//                    dao.pages.attachImage(fields.pageid, {"path":file.image.name, "type":file.image.type, "name":file.image.name}, function (data) {
-//                        console.log("information to db was succesefully added")
-//                    });
-//                });
-
-
-
-
-            // parse a file upload
-//            var form = new formidable.IncomingForm();
-//            form.parse(req, function(err, fields, files) {
-//                res.writeHead(200, {'content-type': 'text/plain'});
-//                res.write('received upload:\n\n');
-//                res.end(util.inspect({fields: fields, files: files}));
-//                fs.rename(files.image.path, "public/upload/"+files.image.name, function (err) { throw err; });
-//                dao.pages.attachImage(fields.pageid, {"path":files.image.name,"type":files.image.type,"name":files.image.name}, function(data){
-//                    console.log("information to db was succesefully added");
-//                });
-//            });
         },
-        save : function(req,res){
-            var data = {};
-            data['_id'] = req.params.id;
-            if (typeof req.body['article'] !== "undefined")
-                data['article'] = req.body.article;
-            if (typeof req.body['app'] !== "undefined")
-                data['app'] = req.body.app;
-            if (typeof req.body['title'] !== "undefined")
-                data['title'] = req.body.title;
-            //console.log(data);
+        save:function (req, res) {
+            if (req.session.auth) {
+                var data = {};
+                data.userid = req.session.auth.userId;
+                dao.users.findById(data.userid, function (error, result) {
+                    data['_id'] = req.params.id;
+                    if (typeof req.body['article'] !== "undefined")
+                        data['article'] = req.body.article;
+                    if (typeof req.body['app'] !== "undefined")
+                        data['app'] = req.body.app;
+                    if (typeof req.body['title'] !== "undefined")
+                        data['title'] = req.body.title;
+                    data['last_modified_by'] = result.name;
+                    data['last_modified_at'] = new Date();
 
-            dao.pages.update(data, function (error, result) {
-                if (error != undefined)
-                    console.log("Got an error: " + error);
+                    dao.pages.update(data, function (error, result) {
+                        if (error != undefined)
+                            console.log("Got an error: " + error);
+                    });
+                    res.send({status:"ok"});
+                });
+            }
+        },
+        deleteattach:function (req, res) {
+            var index = req.body.index;
+            var pageid = req.body.pageid;
+            dao.pages.findById(pageid).next(function (page) {
+                if (page.attach instanceof Array) {
+                    //console.log("array");
+                    if (typeof page.attach[index] != 'undefined'){
+                        //console.log("index is good");
+                        var path_upload = __dirname + '/../public/upload/';
+                        if (path.existsSync(path_upload + pageid)) {
+                            //console.log("directory exists");
+                            var filepath = path_upload + pageid + '/' + page.attach[index].name;
+                            if (path.existsSync(filepath)){
+                                //console.log("delete "+filepath);
+                                fs.unlinkSync(filepath);
+                            }
+                        }
+                        dao.pages.deattachFile(pageid, index, function (data) {
+                            if (data != null) {
+                                console.log(data);
+                                res.send({status:"ko"});
+                            }
+                            else {
+                                //console.log("information in db was successfully updated")
+                                res.send({status:"ok"});
+                            }
+                        });
+                    }
+                }
             });
-            //res.writeHead(200,{'content-type':'application/json'})
-            res.send({status:"ok"});
         }
 
     };

@@ -10,6 +10,7 @@
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/underscore-min.js"></script>
 <script type="text/javascript" src="/js/backbone-min.js"></script>
+<script type="text/javascript" src="/js/wikinext.helper.js"></script>
 <!--<script type="text/javascript" src="/js/wikinext.main.js"></script>-->
 <script type="text/javascript" src="/codemirror/codemirror.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -21,6 +22,17 @@
 <script src="/codemirror/mode/css/css.js"></script>
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script type="text/javascript">
+    wikinextHelper.init();
+    Deferred.parallel({
+        messageSuccess:wikinextHelper.http_get("/templates/messageSuccess.html"),
+        messageFail:wikinextHelper.http_get("/templates/messageFail.html")
+    }).next(function (data) {
+                ich.addTemplate("messageSuccess", data.messageSuccess);
+                ich.addTemplate("messageFail", data.messageFail);
+                console.log("templates loaded");
+            });
+</script>
 <style>
 
     body {
@@ -62,12 +74,8 @@
     {{/page}}
     };
 
-    var editorHTML;var editorJavaScript;var editorTemplate;
-    /*
-     filedrag.js - HTML5 File Drag & Drop demonstration
-     Featured on SitePoint.com
-     Developed by Craig Buckler (@craigbuckler) of OptimalWorks.net
-     */
+    var editorHTML;var editorJavaScript;
+
     $(document).ready(function(){
 
         (function() {
@@ -236,10 +244,10 @@
 
                 var m;
                 if (d.status == 'ok'){
-                    m = ich.messageSuccess({mes: "Page has been saved"});
+                    m = ich.messageSuccess({"message": "Page has been saved"});
 
                 } else {
-                    m = ich.messageFail({mes: "Page has not been saved"});
+                    m = ich.messageFail({"message": "Page has not been saved"});
                 }
                 $(m).insertBefore("#main_page_module .tabbable");
             });
@@ -270,34 +278,33 @@
         editorHTML.refresh();
         editorJavaScript.refresh();
 
+        $(".deleteattach").click(function(){
 
-//        var delay;
-//
-//        function updatePreview() {
-//            var previewFrame = document.getElementById('preview');
-//            var preview =  previewFrame.contentDocument ||  previewFrame.contentWindow.document;
-//            preview.open();
-//            preview.write(editor.getValue());
-//            preview.close();
-//        }
-//        setTimeout(updatePreview, 300);
+            var self = this;
+            $.post("/deleteattach",{
+                index:$(self).data("id"),
+                pageid:page._id
+                }, function(data){
 
+                    console.log(data);
+                    if (data.status == 'ok'){
+                        $(self).closest("div").remove();
+                        m = ich.messageSuccess({"message": "Attach file has been removed"});
+                    }
+                    else
+                        m = ich.messageFail({"message": "Attach file has not been removed"});
+                    $(m).insertBefore("#attached_images");
+            })
+        });
 
-
+        $("#update_preview_button").click(function(){
+            ich.addTemplate("preview",editorHTML.getValue());
+            //need to use the same javascript wrapper as wiki.html uses
+            var preview = ich.preview(editorJavaScript.getValue());
+            $("#preview").empty();$("#preview").append(preview);
+        });
     });
 
-</script>
-<script type="text/html" id="messageSuccess">
-    <div class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <strong>Success!</strong>{{mes}}
-    </div>
-</script>
-<script type="text/html" id="messageFail">
-    <div class="alert alert-error">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <strong>Fail!</strong>{{mes}}
-    </div>
 </script>
 </head>
 <body>
@@ -408,7 +415,10 @@
             {{/page}}
         </div>
         <div class="span5">
-            <a href="#" class="btn">Update Preview</a>
+            <a href="#" class="btn" id="update_preview_button">Update Preview</a><hr>
+            <div id="preview">
+
+            </div>
         </div>
     </div><!--/row-->
 
@@ -444,11 +454,13 @@
                 </div>
             </div>
             <div class="tab-pane" id="tab_2">
-                <p>
+                <p id="attached_images">
                     {{#page}}
                     {{#attach}}
-                    {{name}} : {{type}}
-                    <img src='/{{path}}/{{name}}'><br />
+                    <div data-id="{{index}}">
+                    <span class="label label-info">{{name}} : {{type}} was uploaded by {{uploaded_by}} at {{uploaded_at}}</span><br />
+                        <img src='/{{path}}/{{name}}'> <br /><button class="btn btn-danger deleteattach" data-id="{{index}}">Delete {{name}}</button><hr />
+                    </div>
                     {{/attach}}
                     {{/page}}
                 </p>
