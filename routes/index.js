@@ -125,9 +125,13 @@ module.exports = function (dao) {
         },
         upload:function (req, res) {
             if (req.session.auth) {
-                //var data = {};
-                //data.userid = req.session.auth.userId;
-
+                var data = {};
+                data.userid = req.session.auth.userId;
+                //console.log(data.userid);
+                dao.users.findById(data.userid, function (error, result) {
+                    if (error != null)
+                        console.log(error);
+                    var username = result.name;
                     if (req.xhr) {
                         var fName = req.header('x-file-name');
                         var fSize = req.header('x-file-size');
@@ -138,19 +142,19 @@ module.exports = function (dao) {
                             fs.mkdirSync(path_upload + pageid);
                         }
 
-                        var ws = fs.createWriteStream(path_upload + pageid + '/' + fName)
+                        var ws = fs.createWriteStream(path_upload + pageid + '/' + fName);
 
                         req.on('data', function (data) {
-                            //console.log('data arrived');
+                            console.log('data arrived');
                             ws.write(data);
                         });
                         req.on('end', function () {
-                            //console.log("finished");
+                            console.log("finished");
                             res.writeHead(200, { 'Content-Type':'application/json' });
                             res.end(JSON.stringify({
                                 success:true
                             }));
-                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
+                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date(), "uploaded_by":username}, function (data) {
                                 if (data != null)
                                     console.log(data);
                                 else
@@ -158,6 +162,7 @@ module.exports = function (dao) {
                             });
                         });
                     }
+                });
             }
         },
         save:function (req, res) {
