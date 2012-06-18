@@ -319,14 +319,6 @@
             tabMode: "indent",
             lineWrapping: true
         });
-        sharejs.open(page._id, 'text', function(error, doc) {
-            doc.attach_codemirror(editorHTML,true);
-        });
-
-        //TODO: can't use 2 sharejs codemirror editors at the same time...
-//        sharejs.open(page._id+"app", 'text', function(error, doc) {
-//            doc.attach_codemirror(editorJavaScript,true);
-//        });
 
         $("#save_button").click(function(){
             $.post("/wiki/"+page._id+"/save",{
@@ -357,19 +349,41 @@
             lineWrapping: true
         });
 
+        sharejs.open(page._id, 'text', function(error, doc) {
+            doc.attach_codemirror(editorHTML,true);
+        });
+
+        //TODO: can't use 2 sharejs codemirror editors at the same time...
+        sharejs.open(page._id+"app", 'text', function(error, doc) {
+            doc.attach_codemirror(editorJavaScript,true);
+        });
+
         $("#create-page-button").click(function () {
             $('#create-page').modal('hide');
             $("#create-page-form").submit();
         });
 
-        $('#edit_tabs a').click(function (e) {
-            //e.preventDefault();
-            editorHTML.refresh();
-            editorJavaScript.refresh();
-        });
 
-        editorHTML.refresh();
-        editorJavaScript.refresh();
+        $('#edit_tabs a').on('shown', function (e) {
+            //console.log($(e.target).data('id'));
+            if ($(e.target).data('id') == 'html'){
+                editorHTML.refresh();
+//                sharejs.open(page._id+"js", 'text', function(error, doc) {
+//                    doc.detach_codemirror();
+//                });
+//                sharejs.open(page._id, 'text', function(error, doc) {
+//                    doc.attach_codemirror(editorHTML,true);
+//                });
+            } else {
+                editorJavaScript.refresh();
+//                sharejs.open(page._id, 'text', function(error, doc) {
+//                    doc.detach_codemirror();
+//                });
+//                sharejs.open(page._id+"js", 'text', function(error, doc) {
+//                    doc.attach_codemirror(editorJavaScript,true);
+//                });
+            }
+        });
 
         $(".deleteattach").click(function(){
 
@@ -378,8 +392,8 @@
                 index:$(self).data("id"),
                 pageid:page._id
                 }, function(data){
-
-                    console.log(data);
+                    //console.log(data);
+                    var m;
                     if (data.status == 'ok'){
                         $(self).closest("div").remove();
                         m = ich.messageSuccess({"message": "Attach file has been removed"});
@@ -493,8 +507,8 @@
             {{#page}}
             <div class="tabbable">
                 <ul class="nav nav-tabs" id="edit_tabs">
-                    <li class="active"><a href="#tab1" data-toggle="tab">HTML</a></li>
-                    <li><a href="#tab_apps" data-toggle="tab">JavaScript</a></li>
+                    <li class="active"><a href="#tab1" data-toggle="tab" data-id="html">HTML</a></li>
+                    <li><a href="#tab_apps" data-toggle="tab" data-id="javascript">JavaScript</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">

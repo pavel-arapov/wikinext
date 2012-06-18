@@ -65,10 +65,11 @@
                 otText = doc.getText();
                 if (editorText !== otText) {
                     console.error("Texts are out of sync. Most likely this is caused by a bug in this code.");
+                    editorDoc.setValue(otText);
                 }
             }, 0);
         };
-        if (keepEditorContents) {
+        if (keepEditorContents && doc.getText().length == 0) {
             doc.del(0, doc.getText().length);
             doc.insert(0, editorDoc.getValue());
         } else {
@@ -97,7 +98,7 @@
                 count++;
             }
             return myIndex;
-        }
+        };
         doc.on('insert', function (pos, text) {
             suppress = true;
             start = editorDoc.posFromIndex(pos);
