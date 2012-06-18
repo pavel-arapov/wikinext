@@ -202,8 +202,8 @@ module.exports = function (dao) {
                         }
                         dao.pages.deattachFile(pageid, index, function (data) {
                             if (data != null) {
-                                console.log(data);
-                                res.send({status:"ko"});
+                                //console.log(data);
+                                res.send({status:"ko",error:data});
                             }
                             else {
                                 //console.log("information in db was successfully updated")
