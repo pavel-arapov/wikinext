@@ -353,10 +353,12 @@
             doc.attach_codemirror(editorHTML,true);
         });
 
-        //TODO: can't use 2 sharejs codemirror editors at the same time...
         sharejs.open(page._id+"app", 'text', function(error, doc) {
             doc.attach_codemirror(editorJavaScript,true);
         });
+
+//        editorHTML.refresh();
+//        editorJavaScript.refresh();
 
         $("#create-page-button").click(function () {
             $('#create-page').modal('hide');
@@ -365,7 +367,7 @@
 
 
         $('#edit_tabs a').on('shown', function (e) {
-            //console.log($(e.target).data('id'));
+            console.log($(e.target).data('id'));
             if ($(e.target).data('id') == 'html'){
                 editorHTML.refresh();
 //                sharejs.open(page._id+"js", 'text', function(error, doc) {

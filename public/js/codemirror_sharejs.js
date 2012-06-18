@@ -1,10 +1,11 @@
 (function () {
 
     var applyToShareJS;
-    var preActionCodemirrorContent;
+    //var preActionCodemirrorContent;
     applyToShareJS = function (editorDoc, delta, doc) {
         var pos, text;
         change = delta;
+        var preActionCodemirrorContent = editorDoc.getValue();
         while (1) {
             pos = myIndexFromPos(change.from.line, change.from.ch, preActionCodemirrorContent);
             end_pos = myIndexFromPos(change.to.line, change.to.ch, preActionCodemirrorContent);
@@ -75,7 +76,7 @@
         } else {
             editorDoc.setValue(doc.getText());
         }
-        preActionCodemirrorContent = editorDoc.getValue();
+        //preActionCodemirrorContent = editorDoc.getValue();
         check();
         suppress = false;
         editorListener = function (change, tc) {
@@ -101,10 +102,10 @@
         };
         doc.on('insert', function (pos, text) {
             suppress = true;
-            start = editorDoc.posFromIndex(pos);
+            var start = editorDoc.posFromIndex(pos);
             editorDoc.replaceRange(text, start);
             suppress = false;
-            preActionCodemirrorContent = editorDoc.getValue();
+            //preActionCodemirrorContent = editorDoc.getValue();
             return check();
         });
         doc.on('delete', function (pos, text) {
@@ -114,7 +115,7 @@
             end = editorDoc.posFromIndex(pos + text.length);
             editorDoc.replaceRange("", start, end);
             suppress = false;
-            preActionCodemirrorContent = editorDoc.getValue();
+            //preActionCodemirrorContent = editorDoc.getValue();
             return check();
         });
         doc.detach_codemirror = function () {
