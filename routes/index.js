@@ -125,10 +125,8 @@ module.exports = function (dao) {
         },
         upload:function (req, res) {
             if (req.session.auth) {
-                var data = {};
-                data.userid = req.session.auth.userId;
-                dao.users.findById(data.userid, function (error, result) {
-                    var username = result.name;
+                //var data = {};
+                //data.userid = req.session.auth.userId;
 
                     if (req.xhr) {
                         var fName = req.header('x-file-name');
@@ -152,7 +150,7 @@ module.exports = function (dao) {
                             res.end(JSON.stringify({
                                 success:true
                             }));
-                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date(), "uploaded_by":username}, function (data) {
+                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
                                 if (data != null)
                                     console.log(data);
                                 else
@@ -160,7 +158,6 @@ module.exports = function (dao) {
                             });
                         });
                     }
-                });
             }
         },
         save:function (req, res) {
