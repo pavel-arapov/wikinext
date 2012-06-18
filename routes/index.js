@@ -13,6 +13,7 @@ var fs = require('fs');
 var path = require('path');
 
 //var encoder = require('../lib/encoderHTML');
+var crypto = require('crypto');
 var _ = require('underscore');
 
 var winston = require('winston');
@@ -103,13 +104,13 @@ module.exports = function (dao) {
                         name: result.name
                     };
                     dao.pages.findById(req.params.id).next(function (page) {
-                        if (page.attach instanceof Array) {
-                            var index = 0;
-                            page.attach.forEach(function (item) {
-                                item['index'] = index;
-                                index++;
-                            })
-                        }
+//                        if (page.attach instanceof Array) {
+//                            var index = 0;
+//                            page.attach.forEach(function (item) {
+//                                item['index'] = index;
+//                                index++;
+//                            })
+//                        }
                         res.render('edit.html', {
                             locals:{
                                 title:'WikiNEXT V2',
@@ -154,7 +155,7 @@ module.exports = function (dao) {
                             res.end(JSON.stringify({
                                 success:true
                             }));
-                            dao.pages.attachFile(pageid, {"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
+                            dao.pages.attachFile(pageid, {"index": crypto.createHash('md5').update(fName).digest("hex")  ,"path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
                                 if (data != null)
                                     console.log(data);
                                 else
@@ -192,19 +193,23 @@ module.exports = function (dao) {
             var index = req.body.index;
             var pageid = req.body.pageid;
             dao.pages.findById(pageid).next(function (page) {
-                if (page.attach instanceof Array) {
-                    //console.log("array");
-                    if (typeof page.attach[index] != 'undefined'){
-                        //console.log("index is good");
+//                if (page.attach instanceof Array) {
+
+                        //console.log("page was found");
+                        var i = 0;
+                        while(page.attach[i].index != index){
+                            i++;
+                        }
                         var path_upload = __dirname + '/../public/upload/';
                         if (path.existsSync(path_upload + pageid)) {
                             //console.log("directory exists");
-                            var filepath = path_upload + pageid + '/' + page.attach[index].name;
+                            var filepath = path_upload + pageid + '/' + page.attach[i].name;
                             if (path.existsSync(filepath)){
                                 //console.log("delete "+filepath);
                                 fs.unlinkSync(filepath);
                             }
                         }
+
                         dao.pages.deattachFile(pageid, index, function (data) {
                             if (data != null) {
                                 //console.log(data);
@@ -215,8 +220,7 @@ module.exports = function (dao) {
                                 res.send({status:"ok"});
                             }
                         });
-                    }
-                }
+//                }
             });
         }
 
