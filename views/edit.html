@@ -225,7 +225,7 @@
             var dropZone = document.querySelector('#tab1');
             dragZone.addEventListener('dragstart', function (event) {
 //                if (event.target.className) { // img case
-                event.dataTransfer.setData("text", event.target.src);
+                event.dataTransfer.setData("text", '<img src="' + event.target.src + '">');
                 //event.dataTransfer.effectAllowed = event.target.className;
                 //event.target.style.border = "4px solid #cc3300";
 //                } else { // text case
@@ -308,7 +308,7 @@
                 } else if (event.dataTransfer.getData('text/plain')) {
                     text = event.dataTransfer.getData('text/plain');
                 }
-                editorHTML.replaceSelection('<img src="' + text + '">');
+                editorHTML.replaceSelection(text);
 //                }
                 return false;
             }, false);
