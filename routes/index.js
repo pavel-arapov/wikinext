@@ -23,13 +23,14 @@ module.exports = function (dao) {
     return {
         index:function (req, res) {
             var userid = "";
+            var run = {
+                main_pages:dao.pages.findMain()
+            };
             if (req.session.auth) {
                 userid = req.session.auth.userId;
+                run['user_pages'] = dao.pages.findAllByUserId(userid);
             }
-            Deferred.parallel({
-                main_pages:dao.pages.findMain(),
-                user_pages:dao.pages.findAllByUserId(userid)
-            })
+            Deferred.parallel(run)
             .next(function(data){
                 res.render('index.html', {
                     locals:{
