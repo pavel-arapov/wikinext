@@ -24,18 +24,6 @@
             $("#create-page-button").click(function () {
                 $('#create-page').modal('hide');
                 $("#create-page-form").submit();
-//                $.post("/createapp",
-//                        {
-//                            name:$("#application_name").val()
-//                        },
-//                        function (data) {
-//                            if (data.res == 'ok')
-//                                location.replace("/editapp/" + data._id);
-//                            else {
-//                                console.log('creation error');
-//                            }
-//
-//                        });
             });
         });
     </script>
@@ -102,6 +90,10 @@
                     {{#pages}}
                     <li><a href="/wiki/{{_id}}">{{title}}</a></li>
                     {{/pages}}
+                    <li class="nav-header">Your pages</li>
+                    {{#user_pages}}
+                    <li><a href="/wiki/{{_id}}">{{title}}</a></li>
+                    {{/user_pages}}
                 </ul>
             </div><!--/.well -->
         </div><!--/span-->

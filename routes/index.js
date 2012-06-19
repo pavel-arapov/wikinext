@@ -22,13 +22,22 @@ var winston = require('winston');
 module.exports = function (dao) {
     return {
         index:function (req, res) {
-            dao.pages.findAll().next(function (pages) {
+            var userid = "";
+            if (req.session.auth) {
+                userid = req.session.auth.userId;
+            }
+            Deferred.parallel({
+                main_pages:dao.pages.findMain(),
+                user_pages:dao.pages.findAllByUserId(userid)
+            })
+            .next(function(data){
                 res.render('index.html', {
                     locals:{
                         title:'WikiNEXT V2',
                         auth:req.session.auth,
                         login:req.session.auth ? false : true,
-                        pages:pages
+                        pages:data['main_pages'],
+                        user_pages:data['user_pages']
                     }});
             });
 
@@ -40,13 +49,16 @@ module.exports = function (dao) {
                     page['created_at'] = new Date(page['created_at']).toDateString();
                 if (typeof page['last_modified_at'] != 'undefined')
                     page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
-                res.render('wiki.html', {
-                    locals:{
-                        title:'WikiNEXT V2',
-                        auth:req.session.auth,
-                        login:req.session.auth ? false : true,
-                        page:page
-                    }});
+                dao.pages.findByParent(req.params.id).next(function(pages){
+                    res.render('wiki.html', {
+                        locals:{
+                            title:'WikiNEXT V2',
+                            auth:req.session.auth,
+                            login:req.session.auth ? false : true,
+                            page:page,
+                            pages:pages
+                        }});
+                });
             });
 
         },
@@ -66,27 +78,7 @@ module.exports = function (dao) {
                     dao.pages.insert(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
-                        //console.log(result);
-                        //console.log(result[0]._id);
                         res.redirect("/wiki/" + result[0]._id + "/edit");
-                        //console.log(result);
-//                    datalog.userid = data.userid;
-//                    datalog.page_info = {};
-//                    datalog.page_info.id = result[0]._id;
-//                    datalog.page_info.title = data.title;
-//                    datalog.pageid = datalog.page_info.id;
-//                    datalog.action = "create";
-//                    datalog.date = new Date();
-                        //console.log(datalog);
-//                    dao.users.findById(data.userid, function (error, r) {
-//                        datalog.user_info = {};
-//                        datalog.user_info.name = r.name;
-//                        logs.insert(db, datalog, function (error, r) {
-//                            if (error != undefined)
-//                                console.log("Got an error: " + error);
-//
-//                        });
-//                    });
 
                     });
                 });
@@ -104,13 +96,6 @@ module.exports = function (dao) {
                         name: result.name
                     };
                     dao.pages.findById(req.params.id).next(function (page) {
-//                        if (page.attach instanceof Array) {
-//                            var index = 0;
-//                            page.attach.forEach(function (item) {
-//                                item['index'] = index;
-//                                index++;
-//                            })
-//                        }
                         res.render('edit.html', {
                             locals:{
                                 title:'WikiNEXT V2',
