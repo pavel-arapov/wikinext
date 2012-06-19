@@ -184,8 +184,20 @@ module.exports = function (dao) {
                     dao.pages.update(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
+                        var version = {
+                            article: result.article,
+                            app: result.app,
+                            title: result.title,
+                            version: result.version,
+                            saved_by: data['last_modified_by'],
+                            saved_at: new Date()
+                        };
+                        dao.pageversions.insert(req.params.id, data.userid, version,function(error, result){
+                            res.send({status:"ok"});
+                        });
+
                     });
-                    res.send({status:"ok"});
+
                 });
             }
         },

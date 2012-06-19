@@ -407,10 +407,31 @@
         });
 
         $("#update_preview_button").click(function(){
+            delete ich["preview"]; delete ich.templates["preview"];
             ich.addTemplate("preview",editorHTML.getValue());
             //need to use the same javascript wrapper as wiki.html uses
             var preview = ich.preview(editorJavaScript.getValue());
             $("#preview").empty();$("#preview").append(preview);
+        });
+
+        $(".add-tag").click(function(){
+            var selection = editorHTML.getSelection();
+            var result = "";
+            switch($(this).data("tag")){
+                case "header1":
+                    result = "<h1>"+selection+"</h1>";
+                    break;
+                case "header2":
+                    result = "<h2>"+selection+"</h2>";
+                    break;
+                case "header3":
+                    result = "<h3>"+selection+"</h3>";
+                    break;
+                case "header4":
+                    result = "<h4>"+selection+"</h4>";
+                    break;
+            }
+            editorHTML.replaceSelection(result);
         });
     });
 
@@ -477,10 +498,10 @@
             </button>
             <ul class="dropdown-menu">
                 <!-- dropdown menu links -->
-                <a href="#">Heading 1</a>
-                <a href="#">Heading 2</a>
-                <a href="#">Heading 3</a>
-                <a href="#">Heading 4</a>
+                <a href="#" class="add-tag" data-tag="header1">Heading 1</a>
+                <a href="#" class="add-tag" data-tag="header2">Heading 2</a>
+                <a href="#" class="add-tag" data-tag="header3">Heading 3</a>
+                <a href="#" class="add-tag" data-tag="header4">Heading 4</a>
             </ul>
         </div>
         <div class="btn-group">

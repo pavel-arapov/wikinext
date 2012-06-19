@@ -20,6 +20,7 @@ var mongoStore = new MongoStore({db:db.db});
 var dao = {};
 dao.users = require('./lib/dao/users.js')(db);
 dao.pages = require('./lib/dao/pages.js')(db);
+dao.pageversions = require('./lib/dao/pageversions.js')(db);
 
 var app = module.exports = express.createServer();
 
