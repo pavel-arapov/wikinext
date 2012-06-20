@@ -156,6 +156,13 @@
             <a href="/">Home</a> <span class="divider">/</span>
         </li>
         {{#page}}
+        {{#nav}}
+        <li>
+            <a href="/wiki/{{_id}}">{{title}}</a> <span class="divider">/</span>
+        </li>
+        {{/nav}}
+        {{/page}}
+        {{#page}}
         <li class="active">{{title}}</li>
         {{/page}}
     </ul>
@@ -211,6 +218,7 @@
         <form id="create-page-form" method="POST" action="/create">
             <label>Create Page</label>
             <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
+            <input type="hidden" name="parent" value="{{#page}}{{_id}}{{/page}}">
         </form>
     </div>
     <div class="modal-footer">

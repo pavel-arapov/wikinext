@@ -44,24 +44,94 @@ module.exports = function (dao) {
 
         },
         wiki:function (req, res) {
-            //console.log(req.session);
-            dao.pages.findById(req.params.id).next(function (page) {
+            var run = {
+                page:dao.pages.findById(req.params.id),
+                pages:dao.pages.findByParent(req.params.id)
+            };
+            var page,pages;
+            Deferred.parallel(run).next(function(data){
+                page = data['page'];
+                pages = data['pages'];
+                page['nav'] = [];
+            }).
+                next(function(parentid){
+                    function createNav(parentid) {
+                        //console.log('nav');
+                        return dao.pages.findByIdLimited(parentid, {title:1, parent:1}).next(function(parent_page){
+                            //console.log('add nav');
+                            page['nav'].unshift({
+                                _id:parent_page._id.toString(),
+                                title:parent_page.title
+                            });
+                            if (!_.isUndefined(parent_page['parent'])){
+                                return Deferred.call(createNav, parent_page['parent']['oid'].toString());
+                            }
+                        });
+                    }
+                    //console.log('if parent');
+                    if (!_.isUndefined(page.parent)){
+                        //console.log('parent');
+                        return Deferred.call(createNav, page.parent.oid.toString());
+                    }
+                }).
+                next(function(){
+                    //console.log('next');
+//                if (!_.isUndefined(page.parent)) {
+//                    console.log(page.parent.oid);
+//                    var d = function (parentid) {
+//                        return dao.pages.findByIdLimited(parentid, {title:1, parent:1});
+//                    };
+//                    page['nav'] = [];
+//                    next(function (i) {
+//                        function delayloop (i) {
+//                            console.log(i++);
+//                            if (i < 5) {
+//                                return wait(1).next(function () {
+//                                    return call(delayloop, i);
+//                                });
+//                            }
+//                        }
+//                        return call(delayloop, 0);
+//                    })
+//                    //Deferred.next(function(){
+//                        Deferred.call(d(page.parent.oid.toString())).next(function (parent_page) {
+//
+//                        page['nav'].push({
+//                            _id:parent_page._id.toString(),
+//                            title:parent_page.title
+//                        });
+//                        console.log(page);
+////                        while (!_.isUndefined(parent_page['parent'])) {
+////                            d(parent_page['parent']['oid'].toString()).next(function (p) {
+////                                parent_page = p;
+////
+////                            page['nav'].push({
+////                                    _id:parent_page._id.toString(),
+////                                    title:parent_page.title
+////                                }
+////                            )
+////                            });
+////                        }
+//                    });
+//                    //});
+//                }
+
                 if (typeof page['created_at'] != 'undefined')
                     page['created_at'] = new Date(page['created_at']).toDateString();
                 if (typeof page['last_modified_at'] != 'undefined')
                     page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
-                dao.pages.findByParent(req.params.id).next(function(pages){
-                    res.render('wiki.html', {
-                        locals:{
-                            title:'WikiNEXT V2',
-                            auth:req.session.auth,
-                            login:req.session.auth ? false : true,
-                            page:page,
-                            pages:pages
-                        }});
-                });
-            });
 
+                console.log(page);
+
+                res.render('wiki.html', {
+                    locals:{
+                        title:'WikiNEXT V2',
+                        auth:req.session.auth,
+                        login:req.session.auth ? false : true,
+                        page:page,
+                        pages:pages
+                    }});
+            });
         },
         create:function (req, res) {
             if (req.session.auth) {
@@ -72,6 +142,8 @@ module.exports = function (dao) {
                     data['title'] = req.body.page_name;
                 else
                     data.title = "new page";
+                if (!_.isUndefined(req.body.parent))
+                    data.parent = req.body.parent;
                 dao.users.findById(data.userid, function (error, result) {
                     data.created_by = {
                         name : result.name
