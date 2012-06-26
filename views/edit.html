@@ -326,7 +326,6 @@
                 article: editorHTML.getValue(),
                 app: editorJavaScript.getValue()
             },function(d){
-
                 var m;
                 if (d.status == 'ok'){
                     m = ich.messageSuccess({"message": "Page has been saved"});
@@ -357,9 +356,6 @@
             doc.attach_codemirror(editorJavaScript,true);
         });
 
-//        editorHTML.refresh();
-//        editorJavaScript.refresh();
-
         $("#create-page-button").click(function () {
             $('#create-page').modal('hide');
             $("#create-page-form").submit();
@@ -370,20 +366,8 @@
             console.log($(e.target).data('id'));
             if ($(e.target).data('id') == 'html'){
                 editorHTML.refresh();
-//                sharejs.open(page._id+"js", 'text', function(error, doc) {
-//                    doc.detach_codemirror();
-//                });
-//                sharejs.open(page._id, 'text', function(error, doc) {
-//                    doc.attach_codemirror(editorHTML,true);
-//                });
             } else {
                 editorJavaScript.refresh();
-//                sharejs.open(page._id, 'text', function(error, doc) {
-//                    doc.detach_codemirror();
-//                });
-//                sharejs.open(page._id+"js", 'text', function(error, doc) {
-//                    doc.attach_codemirror(editorJavaScript,true);
-//                });
             }
         });
 
@@ -527,22 +511,60 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span7" id="main_page_module">
-            {{#page}}
+
             <div class="tabbable">
                 <ul class="nav nav-tabs" id="edit_tabs">
                     <li class="active"><a href="#tab1" data-toggle="tab" data-id="html">HTML</a></li>
                     <li><a href="#tab_apps" data-toggle="tab" data-id="javascript">JavaScript</a></li>
+                    <li><a href="#tab_jslib" data-toggle="tab">Plugged libraries</a></li>
                 </ul>
                 <div class="tab-content">
+                    {{#page}}
                     <div class="tab-pane active" id="tab1">
                         <p><textarea id="textAreaArticle" style="visibility: hidden;">{{article}}</textarea></p>
                     </div>
                     <div class="tab-pane" id="tab_apps">
                         <p><textarea id="textAreaApplication" style="visibility: hidden;">{{app}}</textarea></p>
                     </div>
+                    {{/page}}
+                    <div class="tab-pane" id="tab_jslib">
+                        <h3>Currently plugged libraries</h3>
+                        <table class="table table-striped table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th><th>Description</th><th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#page}}
+                            {{#jslibrary}}
+                            <tr>
+                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td>
+                            </tr>
+                            {{/jslibrary}}
+                            {{/page}}
+                            </tbody>
+                        </table>
+                        <h3>Libraries available to plug</h3>
+                        <table class="table table-striped table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Name</th><th>Description</th><th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#libraries}}
+                            <tr>
+                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Plug</a></td>
+                            </tr>
+                            {{/libraries}}
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
-            {{/page}}
+
         </div>
         <div class="span5">
             <a href="#" class="btn" id="update_preview_button">Update Preview</a><hr>
