@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-
+d = console.log
 var express = require('express')
     , Deferred = require('jsdeferred').Deferred
     , nowjs = require('now')
@@ -51,7 +51,7 @@ everyauth.facebook
             if (found_user){
                 session.userId = found_user._id;
                 found_user.id = found_user._id;
-                //console.log(found_user);
+                // d(found_user);
                 return userPromise.fulfill(found_user);
             }
             else{

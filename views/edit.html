@@ -417,8 +417,31 @@
             }
             editorHTML.replaceSelection(result);
         });
-    });
 
+
+        $("#jslist a.jsexample").click(function(e){
+            //show expample page
+        });
+
+        $("#jslist a.jsplug").click(function(e){
+            //add plugin to page
+            try {
+                // var page_id = this.parentNode.getAttribute("data-page-id");
+                var js_tr_elm = this.parentNode.parentNode;
+                var jsl_id = js_tr_elm.getAttribute("data-jl-id");
+            } catch 
+                return false;
+
+            $.post("/wiki/" + page._id + "/save", {jsl_id : jsl_id}, function(res) {
+
+            }, "json");
+            // d(jl_id);
+            // d(page_id);
+            html = '<tr><td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td></tr>'
+        });
+
+    });
+d = console.log;
 </script>
 </head>
 <body>
@@ -495,13 +518,13 @@
             <a class="btn" href="#"><i class="icon-align-justify"></i></a>
         </div>
         <div class="btn-group pull-right">
-                <div class="controls">
-                    <div class="input-append">
-                        {{#page}}
-                        <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
-                        {{/page}}
-                    </div>
+            <div class="controls">
+                <div class="input-append">
+                    {{#page}}
+                    <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
+                    {{/page}}
                 </div>
+            </div>
         </div>
     </div>
 </div>
@@ -535,7 +558,7 @@
                                 <th>Name</th><th>Description</th><th>Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="pagejslist">
                             {{#page}}
                             {{#jslibrary}}
                             <tr>
@@ -552,10 +575,10 @@
                                 <th>Name</th><th>Description</th><th>Action</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="jslist">
                             {{#libraries}}
-                            <tr>
-                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Plug</a></td>
+                            <tr data-jl-id="{{ _id }}">
+                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info jsexample">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary jsplug">Plug</a></td>
                             </tr>
                             {{/libraries}}
                             </tbody>

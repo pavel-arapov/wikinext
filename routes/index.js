@@ -45,14 +45,16 @@ module.exports = function (dao) {
         },
         wiki:function (req, res) {
             var run = {
-                page:dao.pages.findById(req.params.id),
-                pages:dao.pages.findByParent(req.params.id)
+                page : dao.pages.findById(req.params.id),
+                pages : dao.pages.findByParent(req.params.id),
+                libraries : dao.jslibraries.findAll(),
             };
             var page,pages;
             Deferred.parallel(run).next(function (data) {
                 page = data['page'];
                 pages = data['pages'];
                 page['nav'] = [];
+                libraries = data['libraries'];
             }).
                 next(function (parentid) {
                     function createNav(parentid) {
@@ -86,11 +88,13 @@ module.exports = function (dao) {
 
                     res.render('wiki.html', {
                         locals:{
-                            title:'WikiNEXT V2',
-                            auth:req.session.auth,
-                            login:req.session.auth ? false : true,
-                            page:page,
-                            pages:pages
+                            page_id : page._id,
+                            title : 'WikiNEXT V2',
+                            auth : req.session.auth,
+                            login : req.session.auth ? false : true,
+                            page : page,
+                            pages : pages,
+                            libraries : libraries,
                         }});
                 });
         },
@@ -157,7 +161,8 @@ module.exports = function (dao) {
                                 auth:req.session.auth,
                                 login:req.session.auth ? false : true,
                                 page:data['page'],
-                                libraries:data['libraries']
+                                page_id : data['page']['_id'],
+                                libraries:data['libraries'],
                             }});
                     });
                 });
@@ -219,6 +224,8 @@ module.exports = function (dao) {
                         data['app'] = req.body.app;
                     if (typeof req.body['title'] !== "undefined")
                         data['title'] = req.body.title;
+                    if (typeof req.body['jsl_id'] !== "undefined")
+                        data['jsl_id'] = req.body.jsl_id;
                     data['last_modified_by'] = result.name;
                     data['last_modified_at'] = new Date();
 
