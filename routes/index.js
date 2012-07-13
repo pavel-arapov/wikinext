@@ -47,7 +47,7 @@ module.exports = function (dao) {
             var run = {
                 page : dao.pages.findById(req.params.id),
                 pages : dao.pages.findByParent(req.params.id),
-                libraries : dao.jslibraries.findAll(),
+                libraries : dao.jslibraries.findAll()
             };
             var page,pages;
             Deferred.parallel(run).next(function (data) {
@@ -94,7 +94,7 @@ module.exports = function (dao) {
                             login : req.session.auth ? false : true,
                             page : page,
                             pages : pages,
-                            libraries : libraries,
+                            libraries : libraries
                         }});
                 });
         },
@@ -162,7 +162,7 @@ module.exports = function (dao) {
                                 login:req.session.auth ? false : true,
                                 page:data['page'],
                                 page_id : data['page']['_id'],
-                                libraries:data['libraries'],
+                                libraries:data['libraries']
                             }});
                     });
                 });

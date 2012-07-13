@@ -429,8 +429,10 @@
                 // var page_id = this.parentNode.getAttribute("data-page-id");
                 var js_tr_elm = this.parentNode.parentNode;
                 var jsl_id = js_tr_elm.getAttribute("data-jl-id");
-            } catch 
-                return false;
+            } catch (error){
+            }
+
+            //    return false;
 
             $.post("/wiki/" + page._id + "/save", {jsl_id : jsl_id}, function(res) {
 
