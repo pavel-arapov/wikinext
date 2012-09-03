@@ -12,7 +12,7 @@ Wiki have 2 node.js apps
 npm install 
 
 Wiki uses config.settings file, it must be in root with syntax below
-config = {
+<pre><code>config = {
     port : 8000,
     port_sharejs : 8001,
     host_uri : "http://localhost:8000",
@@ -26,5 +26,6 @@ config = {
         SECRET : '3e6c2e988523337dfa501e661f553e89'
     }
 };
+</code></pre>
 
 The FB app's key below from mine application, you can use them to test localy, but you need to create your own fb application if you want to use wiki with other domain name.
