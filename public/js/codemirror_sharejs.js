@@ -3,9 +3,9 @@
     var applyToShareJS;
     //var preActionCodemirrorContent;
     applyToShareJS = function (editorDoc, delta, doc) {
-        var pos, text;
+        var pos, text, end_pos, action, change;
         change = delta;
-        var preActionCodemirrorContent = editorDoc.getValue();
+        var preActionCodemirrorContent = doc.getText();
         while (1) {
             pos = myIndexFromPos(change.from.line, change.from.ch, preActionCodemirrorContent);
             end_pos = myIndexFromPos(change.to.line, change.to.ch, preActionCodemirrorContent);
@@ -44,7 +44,7 @@
                     throw new Error("unknown action: " + delta.action);
             }
 
-            preActionCodemirrorContent = doc.getText();
+            //preActionCodemirrorContent = doc.getText();
             if (!change.next)
                 break;
             change = change.next;
@@ -86,10 +86,10 @@
         };
         editorDoc.setOption("onChange", editorListener);
         myIndexFromPos = function (line, ch, value) {
-            myIndex = 0;
-            count = 0;
-            lines = value.split("\n");
-            for (i = 0; i < lines.length; i++) {
+            var myIndex = 0;
+            var count = 0;
+            var lines = value.split("\n");
+            for (var i = 0; i < lines.length; i++) {
                 if (count < line)
                     myIndex += lines[i].length + 1
                 else {
