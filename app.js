@@ -63,7 +63,7 @@ everyauth.facebook
                 };
                 dao.users.insert(our_user, function(error, inserted_user) {
                     if (error) return userPromise.fail(error);
-                    session.userId = inserted_user._id;
+                    session.userId = inserted_user._id+"";
                     inserted_user.id = inserted_user._id;
                     return userPromise.fulfill(inserted_user);
                 });

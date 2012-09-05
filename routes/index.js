@@ -110,9 +110,7 @@ module.exports = function (dao) {
                 if (!_.isUndefined(req.body.parent))
                     data.parent = req.body.parent;
                 dao.users.findById(data.userid, function (error, result) {
-                    data.created_by = {
-                        name : result.name
-                    };
+                    data.created_by = result.name;
                     dao.pages.insert(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
