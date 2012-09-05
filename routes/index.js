@@ -110,9 +110,7 @@ module.exports = function (dao) {
                 if (!_.isUndefined(req.body.parent))
                     data.parent = req.body.parent;
                 dao.users.findById(data.userid, function (error, result) {
-                    data.created_by = {
-                        name: result.name
-                    };
+                    data.created_by = result.name;
                     dao.pages.insert(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
@@ -246,6 +244,40 @@ module.exports = function (dao) {
 
                     });
 
+                });
+            }
+        },
+        clone:function (req, res) {
+            if (req.session.auth) {
+                var run = {
+                    page : dao.pages.findById(req.params.id)
+                };
+                var page;
+                Deferred.parallel(run).next(function (data_orig) {
+                    var data = {};
+                    data.userid = req.session.auth.userId;
+                    dao.users.findById(data.userid, function (error, result) {
+                        if (typeof data_orig['article'] !== "undefined")
+                            data['article'] = data_orig.article;
+                        if (typeof data_orig['app'] !== "undefined")
+                            data['app'] = data_orig.app;
+                        if (typeof data_orig['title'] !== "undefined")
+                            data['title'] = data_orig.title;
+                        if (typeof data_orig['jsl_id'] !== "undefined")
+                            data['jsl_id'] = data_orig.jsl_id;
+                        data['last_modified_by'] = result.name;
+                        data['last_modified_at'] = new Date();
+                        data['created_by'] = result.name;
+                        data['created_ay'] = new Date();
+                        data['cloned_from'] = data_orig._id;
+
+                        dao.pages.insert(data, function (error, result) {
+                            if (error != undefined)
+                                console.log("Got an error: " + error);
+                            res.redirect("/wiki/" + result[0]._id + "/edit");
+                        });
+
+                    });
                 });
             }
         },
