@@ -252,8 +252,8 @@ module.exports = function (dao) {
                 var run = {
                     page : dao.pages.findById(req.params.id)
                 };
-                var page;
-                Deferred.parallel(run).next(function (data_orig) {
+                Deferred.parallel(run).next(function (arr) {
+                    var data_orig = arr['page'];
                     var data = {};
                     data.userid = req.session.auth.userId;
                     dao.users.findById(data.userid, function (error, result) {
