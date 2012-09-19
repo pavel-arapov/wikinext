@@ -22,6 +22,11 @@
 <script src="/codemirror/mode/css/css.js"></script>
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+<link href="/css/style.css" rel="stylesheet/less">
+
+<script src="/js/less-1.3.0.min.js"></script>
+
 <script type="text/javascript">
     wikinextHelper.init();
     Deferred.parallel({
@@ -61,8 +66,8 @@
         box-shadow: inset 0 3px 4px #888;
     }
 
-    #preview {
-        border: 0px
+    #preview_in {
+        border: 0px;
     }
 
 </style>
@@ -76,7 +81,36 @@
 
     var editorHTML;var editorJavaScript;
 
+    var fontList = {
+        'Arial':'Arial',
+        'Arial Black':'Arial Black',
+        'Book Antiqua' : 'Book Antiqua',
+        'Comic Sans MS' : 'Comic Sans MS',
+        'Courier New' :  'Courier New',
+        'Georgia' : 'Georgia',
+        'Helvetica':'Helvetica',
+        'Impact':'Impact',
+        'Tahoma':'Tahoma',
+        'Times New Roman':'Times New Roman',
+        'Trebuchet MS':'Trebuchet MS',
+        'Verdana': 'Verdana'
+    };
+
+
+    var currentFont = 'Arial';
+
     $(document).ready(function(){
+
+        for(var t in fontList){
+            $('#fontlist').append($('<li><a href="javascript:void(0)" data-tool="font" data-font="'+t+'" style="font-family:'+t+'">'+fontList[t]+'</a></li>'));
+        }
+
+        $('#currentFont').html(fontList[currentFont]);
+
+        $("#fontlist a").click(function(){
+            currentFont = $(this).data('font');
+            $('#currentFont').html(fontList[currentFont]);
+        });
 
         (function() {
             // getElementById
@@ -391,11 +425,12 @@
         });
 
         $("#update_preview_button").click(function(){
+            console.log("update preview");
             delete ich["preview"]; delete ich.templates["preview"];
             ich.addTemplate("preview",editorHTML.getValue());
             //need to use the same javascript wrapper as wiki.html uses
             var preview = ich.preview(editorJavaScript.getValue());
-            $("#preview").empty();$("#preview").append(preview);
+            $("#preview_in").empty();$("#preview_in").append(preview);
         });
 
         $(".add-tag").click(function(){
@@ -413,6 +448,33 @@
                     break;
                 case "header4":
                     result = "<h4>"+selection+"</h4>";
+                    break;
+                case "strong":
+                        result = "<strong>"+selection+"</strong>";
+                    break;
+                case "italic":
+                        result = "<em>"+selection+"</em>";
+                    break;
+                case "underline":
+                        result = "<u>"+selection+"</u>";
+                    break;
+                case "strike":
+                        result = "<s>"+selection+"</s>";
+                    break;
+                case "font":
+                        result = "<span style='font-family:"+currentFont+";'>"+selection+"</span>";
+                    break;
+                case "align-center":
+                        result = "<div align='center'>"+selection+"</div>";
+                    break;
+                case "align-justify":
+                    result = "<div align='justify'>"+selection+"</div>";
+                    break;
+                case "align-right":
+                    result = "<div align='right'>"+selection+"</div>";
+                    break;
+                case "align-left":
+                    result = "<div align='left'>"+selection+"</div>";
                     break;
             }
             editorHTML.replaceSelection(result);
@@ -443,7 +505,7 @@
         });
 
     });
-d = console.log;
+//d = console.log;
 </script>
 </head>
 <body>
@@ -496,9 +558,9 @@ d = console.log;
         </div>
     </div>
 
-    <div class="btn-toolbar">
+    <div class="btn-toolbar" id="toolbar">
         <div class="btn-group">
-            <a class="btn" id="save_button">Save</a>
+            <button class="btn" data-tool="save" id="save_button"><i class="icon-16x16"></i> Save</button>
         </div>
         <div class="btn-group">
             <button class="btn">Heading</button>
@@ -514,10 +576,22 @@ d = console.log;
             </ul>
         </div>
         <div class="btn-group">
-            <a class="btn" href="#"><i class="icon-align-left"></i></a>
-            <a class="btn" href="#"><i class="icon-align-center"></i></a>
-            <a class="btn" href="#"><i class="icon-align-right"></i></a>
-            <a class="btn" href="#"><i class="icon-align-justify"></i></a>
+            <a class="btn add-tag" data-tag="align-left" href="#"><i class="icon-align-left"></i></a>
+            <a class="btn add-tag" data-tag="align-center" href="#"><i class="icon-align-center"></i></a>
+            <a class="btn add-tag" data-tag="align-right" href="#"><i class="icon-align-right"></i></a>
+            <a class="btn add-tag" data-tag="align-justify" href="#"><i class="icon-align-justify"></i></a>
+        </div>
+        <div class="btn-group">
+            <button class="btn add-tag" data-tag="strong" data-tool="strong" title="Bold"><i class="icon-16x16"></i></button>
+            <button class="btn add-tag" data-tag="italic" data-tool="em" title="Italic"><i class="icon-16x16"></i></button>
+            <button class="btn add-tag" data-tag="underline" data-tool="u" title="Underline"><i class="icon-16x16"></i></button>
+            <button class="btn add-tag" data-tag="strike" data-tool="del" title="Strikethrough"><i class="icon-16x16"></i></button>
+        </div>
+        <div class="btn-group">
+            <button class="btn add-tag" data-tag="font" data-tool="font"><i class="icon-16x16"></i> <span id="currentFont">Arial Black</span></button>
+            <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+            <ul class="dropdown-menu" id="fontlist">
+            </ul>
         </div>
         <div class="btn-group pull-right">
             <div class="controls">
@@ -593,7 +667,7 @@ d = console.log;
         </div>
         <div class="span5">
             <a href="#" class="btn" id="update_preview_button">Update Preview</a><hr>
-            <div id="preview">
+            <div id="preview_in">
 
             </div>
         </div>

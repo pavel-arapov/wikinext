@@ -1,7 +1,7 @@
 /**
  * Module dependencies.
  */
-d = console.log
+//d = console.log
 var express = require('express')
     , Deferred = require('jsdeferred').Deferred
     , nowjs = require('now')

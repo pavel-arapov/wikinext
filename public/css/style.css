@@ -1,0 +1,69 @@
+@import 'mixins.less';
+
+.btn-group.hide {
+    display: none;
+}
+
+#toolbar {
+    margin: 6px 0 0 5px;
+    white-space: nowrap;
+}
+
+#toolbar > * {
+    vertical-align: middle;
+}
+
+.icon-16x16 {
+    background-position: 0px 0px;
+    width: 16px;
+    height: 16px;
+}
+
+#toolbar .btn {
+    padding: 4px 6px;
+}
+
+#toolbar select {
+    margin-bottom: 0;
+    width: auto;
+}
+
+.colorpicker input {
+    width: auto;
+    line-height: normal;
+.box-shadow(0);
+.transition(none);
+    }
+
+.colorpicker input:focus {
+    outline: none;
+.box-shadow(none);
+    }
+
+#toolbar button[data-tool='strong'] > i {
+    background-image: url(../img/bold.png);
+}
+
+#toolbar button[data-tool='em'] > i {
+    background-image: url(../img/italic.png);
+}
+
+#toolbar button[data-tool='u'] > i {
+    background-image: url(../img/underline.png);
+}
+
+#toolbar button[data-tool='del'] > i {
+    background-image: url(../img/strike.png);
+}
+
+#toolbar button[data-tool='save'] > i {
+    background-image: url(../img/file-save.png);
+}
+
+#toolbar button[data-tool='font'] > i {
+    background-image: url(../img/text-font.png);
+}
+
+#toolbar li > a.disabled {
+    color: rgb(169,162,141);
+}
