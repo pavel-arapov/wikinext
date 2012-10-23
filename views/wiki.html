@@ -91,7 +91,9 @@
             $("#article_show").append(article);
             launch_wiki_script.afterConstruct();
 
-                $("body").find('[data-wikinext]').each(function(dom_element){
+                $("body").find('[data-wikinext]').each(function(){
+
+                    var dom_element = this;
                     //all items for macros replace/content augmentation
                     //content (find all headers and construct anchors before them and list with links to it
                     var ul = null;
