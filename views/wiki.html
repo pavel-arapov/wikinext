@@ -90,6 +90,55 @@
             var article = ich.article_template(data);
             $("#article_show").append(article);
             launch_wiki_script.afterConstruct();
+
+                $("body").find('[data-wikinext]').each(function(dom_element){
+                    //all items for macros replace/content augmentation
+                    //content (find all headers and construct anchors before them and list with links to it
+                    var ul = null;
+                    var lasth1 = null;
+                    var lasth1ul = null;
+                    var lasth2 = null;
+                    var lasth2ul = null;
+
+                    $("h1, h2, h3").each(function() {
+
+                        switch (this.tagName.toLowerCase()) {
+                            case "h1":
+                                if (!ul) {
+                                    ul = $("<ul>");
+                                }
+                                lasth1 = $("<li>").html($(this).html()).appendTo(ul);
+                                break;
+                            case "h2":
+                                if (!lasth1) {
+                                    // Deal with invalid condition, h2 with no h1 before it
+                                }
+                                else {
+                                    if (!lasth1ul) {
+                                        lasth1ul = $("<ul>").appendTo(lasth1);
+                                    }
+                                    lasth2 = $("<li>").html($(this).html()).appendTo(lasth1ul);
+                                }
+                                break;
+                            case "h3":
+                                if (!lasth2) {
+                                    // Deal with invalid condition, h3 with no h2 before it
+                                }
+                                else {
+                                    if (!lasth2ul) {
+                                        lasth2ul = $("<ul>").appendTo(lasth2);
+                                    }
+                                    $("<li>").html($(this).html()).appendTo(lasth2ul);
+                                }
+                                break;
+                        }
+
+                    });
+                    if (ul) {
+                        dom_element.append(ul);
+                    }
+                });
+
         });
     </script>
     <script type="text/html" id="article_template">
@@ -149,6 +198,7 @@
                     {{/user}}
                     {{/facebook}}
                     {{/auth}}
+                    <li><a href="/search">Search</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -200,9 +250,24 @@
             {{/page}}
         </p>
     </div>
-
+    <p>Tags:
+        <a href="#"><span class="label label-info">Tag</span></a>
+        <a href="#"><span class="label label-info">Tag</span></a>
+        <a href="#"><span class="label label-info">Tag</span></a>
+        <a href="#"><span class="label label-info">Tag</span></a>
+        {{#page}}
+        | <i class="icon-user"></i> <a href="#">{{created_by}}</a>
+        | <i class="icon-calendar"></i> {{created_at}}
+        {{#last_modified_by}}
+        | <i class="icon-user"></i> <a href="#">{{last_modified_by}}</a>
+        | <i class="icon-calendar"></i> {{last_modified_at}}
+        {{/last_modified_by}}
+        | <i class="icon-comment"></i> <a href="#">3 Comments</a>
+        | <i class="icon-share"></i> <a href="#">39 Shares</a>
+        {{/page}}
+    </p>
     <blockquote class="pull-right">
-        <small>{{#page}}Created by {{created_by}} at {{created_at}}{{#last_modified_by}}<br/> Last modified by {{last_modified_by}} at {{last_modified_at}} {{/last_modified_by}}{{/page}}</small>
+        <small>Keep do it</small>
     </blockquote>
 
     <hr>

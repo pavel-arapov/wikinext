@@ -4,6 +4,7 @@ var express = require('express')
     , mustache = require('mustache')
     , Deferred = require('jsdeferred').Deferred
     , mongo = require('mongoskin')
+    , parseCookie = require('connect').utils.parseCookie
     , MongoStore = require('connect-mongodb');
 
 require('./config.settings'); // include settings
@@ -105,7 +106,90 @@ app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var options = {db: {type: 'none'}}; // See docs for options. {type: 'redis'} to enable persistance.
+var timeout;
+
+var sharejs_auth = function(agent,action){
+    //var d = new Deferred();
+    //console.log(agent);
+    //console.log(action);
+    console.log("auth");
+    var finished = false;
+
+    var wait_result = function() {
+        console.log("wait result");
+        if (!finished){
+            console.log("wait");
+            //setTimeout(wait_result,500);
+        } else
+        {
+            console.log("done");
+        }
+    };
+
+    //function auth(agent,action){
+      //  var d = new Deferred();
+    if (action.type == 'connect'){
+        var id = unescape(parseCookie(agent.headers.cookie)['connect.sid']);
+        //console.log("Session ID: "+id);
+        //console.log(this.user);
+        action.accept();
+        mongoStore.get(id, function(err, sess){
+            if (err){
+                console.log(err.toString());
+                console.log("reject");
+                //action.reject();
+                //d.fail(err);
+            }
+            else{
+                //console.log("That user who joined? his userId is "+sess.auth.userId);
+                //console.log(sess);
+                //clients[self.user.clientId].sess = sess;
+                //console.log(sess);
+                console.log("accept");
+                //action.accept();
+                //d.call(sess);
+            }
+            finished = true;
+        });
+        //wait_result();
+//        while (!finished){
+//            setTimeout(function(){},10);
+//        }
+        //setTimeout(wait_result,500);
+
+        console.log("return");
+       // return d;
+    //}
+
+
+//        Deferred.next(function () {
+//            console.log("Hello!");
+//            return Deferred.wait(5);
+//        }).
+//            next(function () {
+//                console.log("World!");
+//            });
+
+        //Deferred.next(function () {
+        //    return auth(agent,action)}
+        //).next(function () {console.log("finished")});
+    }
+    else {
+        action.accept();
+    }
+    console.log("exit");
+    return action;
+    //return d;
+    //action.accept();
+};
+
+var share_js_deferred = function (agent, action){
+    Deferred.next(function() {
+        return sharejs_auth(agent,action);
+    });
+}
+
+var options = {db: {type: 'none'}, auth: sharejs_auth}; // See docs for options. {type: 'redis'} to enable persistance.
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.attach(app, options);
 
