@@ -3,6 +3,7 @@
 <head>
 <title>{{title}}</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/bootstrap-wysihtml5-0.0.2.css">
 <!--<script type="text/javascript" src="/nowjs/now.js"></script>-->
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
@@ -22,6 +23,8 @@
 <script src="/codemirror/mode/css/css.js"></script>
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+<script src="js/bootstrap-wysihtml5-0.0.2.min.js"></script>
 
 <link href="/css/style.css" rel="stylesheet/less">
 
@@ -353,6 +356,8 @@
             tabMode: "indent",
             lineWrapping: true
         });
+
+        $(document.getElementById("textAreaArticle")).wysihtml5();
 
         $("#save_button").click(function(){
             $.post("/wiki/"+page._id+"/save",{
