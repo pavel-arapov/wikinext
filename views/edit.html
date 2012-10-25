@@ -357,7 +357,7 @@
             lineWrapping: true
         });
 
-        $(document.getElementById("textAreaArticle")).wysihtml5();
+        $("#textAreaArticle").wysihtml5();
 
         $("#save_button").click(function(){
             $.post("/wiki/"+page._id+"/save",{
