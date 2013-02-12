@@ -1,9 +1,9 @@
 WikiNEXT
 ========
 
-## WikiNEXT - JavaScript Semantic Application Wiki
+## JavaScript Semantic Application Wiki
 
-Wiki have 2 node.js apps
+Wiki has 2 node.js applications
 - app.js (main wiki application)
 - share.js (Share.JS library that give the possibility to edit the pages in real-time due to OT 
 
@@ -28,4 +28,5 @@ Wiki uses config.settings file, it must be in root with syntax below
 };
 </code></pre>
 
-The FB app's key below from mine application, you can use them to test localy, but you need to create your own fb application if you want to use wiki with other domain name.
+The facebook application's key below from mine application, you can use them to test localy. 
+You need to create your own facebool application, if you want to use wiki with other domain name.
