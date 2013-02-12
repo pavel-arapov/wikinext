@@ -24,7 +24,8 @@
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
-<script src="/js/bootstrap-wysihtml5-0.0.2.min.js"></script>
+<script src="/js/wysihtml5-0.3.0_rc2.js"></script>
+<script src="/js/bootstrap-wysihtml5-0.0.2.js"></script>
 
 <link href="/css/style.css" rel="stylesheet/less">
 
@@ -357,7 +358,6 @@
             lineWrapping: true
         });
 
-        $("#textAreaArticle").wysihtml5();
 
         $("#save_button").click(function(){
             $.post("/wiki/"+page._id+"/save",{
@@ -432,10 +432,11 @@
         $("#update_preview_button").click(function(){
             console.log("update preview");
             delete ich["preview"]; delete ich.templates["preview"];
-            ich.addTemplate("preview",editorHTML.getValue());
+            ich.addTemplate("preview",editorHTML.getValue()+"<br>");
             //need to use the same javascript wrapper as wiki.html uses
             var preview = ich.preview(editorJavaScript.getValue());
-            $("#preview_in").empty();$("#preview_in").append(preview);
+            $("#preview_in").empty();
+            $("#preview_in").append(preview);
         });
 
         $(".add-tag").click(function(){
@@ -509,6 +510,19 @@
             html = '<tr><td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td></tr>'
         });
 
+        $("#editor-wysiwyg").click(function(){
+            //editorHTML.toTextArea();
+            $("#textAreaArticle").show();
+            $("#textAreaArticle").wysihtml5();
+        });
+
+        $("editor-html").click(function(){
+            editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
+                mode: "text/html",
+                tabMode: "indent",
+                lineWrapping: true
+            });
+        });
     });
 //d = console.log;
 </script>
@@ -628,7 +642,12 @@
                 <div class="tab-content">
                     {{#page}}
                     <div class="tab-pane active" id="tab1">
-                        <p><textarea id="textAreaArticle" style="visibility: hidden;">{{article}}</textarea></p>
+                        <!--<div class="btn-group">-->
+                            <!--<button class="btn" id="editor-wysiwyg">Wysiwyg Editor</button>-->
+                            <!--<button class="btn" id="editor-html">HTML Code</button>-->
+                        <!--</div>-->
+                        <!--<br>-->
+                        <p><textarea id="textAreaArticle" style="width: 810px; height: 200px;" placeholder="Enter text ...">{{article}}</textarea></p>
                     </div>
                     <div class="tab-pane" id="tab_apps">
                         <p><textarea id="textAreaApplication" style="visibility: hidden;">{{app}}</textarea></p>
@@ -684,7 +703,6 @@
             <div class="users_online"></div>
         </div>
     </div><!--/row-->
-
     <hr>
     <div class="row-fluid">
     <div class="tabbable">
