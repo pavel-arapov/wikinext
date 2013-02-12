@@ -8,6 +8,8 @@
         var preActionCodemirrorContent = doc.getText();
         while (1) {
             pos = myIndexFromPos(change.from.line, change.from.ch, preActionCodemirrorContent);
+            if (change.from.line - change.to.line == 0 && change.to.ch > change.text.length)
+                change.to.ch = change.text.length;
             end_pos = myIndexFromPos(change.to.line, change.to.ch, preActionCodemirrorContent);
             action = '';
             if (change.text[0] == "" && change.text.length == 1) {
@@ -24,7 +26,7 @@
             }
             switch (action) {
                 case 'insertText':
-                    if (pos != end_pos)
+                    if (pos != end_pos && pos != 0)
                         doc.del(pos, end_pos - pos);
                     doc.insert(pos, change.text[0]);
                     break;
@@ -66,7 +68,9 @@
                 otText = doc.getText();
                 if (editorText !== otText) {
                     console.error("Texts are out of sync. Most likely this is caused by a bug in this code.");
+                    editorDoc.setOption("onChange", null);
                     editorDoc.setValue(otText);
+                    editorDoc.setOption("onChange", editorListener);
                 }
             }, 0);
         };

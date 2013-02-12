@@ -433,7 +433,7 @@
             console.log("update preview");
             delete ich["preview"]; delete ich.templates["preview"];
             ich.addTemplate("preview",editorHTML.getValue()+"<br>");
-            //need to use the same javascript wrapper as wiki.html uses
+            //TODO need to use the same javascript wrapper as wiki.html uses
             var preview = ich.preview(editorJavaScript.getValue());
             $("#preview_in").empty();
             $("#preview_in").append(preview);
