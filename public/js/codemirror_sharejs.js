@@ -8,8 +8,8 @@
         var preActionCodemirrorContent = doc.getText();
         while (1) {
             pos = myIndexFromPos(change.from.line, change.from.ch, preActionCodemirrorContent);
-            if (change.from.line - change.to.line == 0 && change.to.ch > change.text.length)
-                change.to.ch = change.text.length;
+            //if (change.from.line - change.to.line == 0 && change.to.ch > change.text.length)
+            //    change.to.ch = change.text.length;
             end_pos = myIndexFromPos(change.to.line, change.to.ch, preActionCodemirrorContent);
             action = '';
             if (change.text[0] == "" && change.text.length == 1) {
