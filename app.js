@@ -136,6 +136,7 @@ app.configure('production', function () {
 // Routes
 
 var routes = require('./routes')(dao);
+var cp = require('./routes/controlpanel.js')(dao);
 
 app.get('/', routes.index);
 app.get('/home', routes.index);
@@ -145,6 +146,9 @@ app.get('/wiki/:id/clone',routes.clone);
 app.get('/wiki/:id/edit',function(req,res){
     res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");
 });
+
+app.get('/cp/jslibraries', cp.jslibraries);
+app.post('/cp/jslibraries/add', cp.add_js_library);
 
 //app.post('/upload',routes.upload);
 

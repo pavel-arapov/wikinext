@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/html">
 <head>
 <title>{{title}}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/css/bootstrap-wysihtml5-0.0.2.css">
 <!--<script type="text/javascript" src="/nowjs/now.js"></script>-->
@@ -488,26 +489,30 @@
 
 
         $("#jslist a.jsexample").click(function(e){
-            //show expample page
+            //show example page
         });
 
         $("#jslist a.jsplug").click(function(e){
+            console.log("trying add jslibrary "+$(this).data("id"));
+            $.post("/attachlibrary", {
+                pageid: page._id,
+                libraryid: $(this).data("id")
+            }, function(res) {
+                console.log(res);
+            });
             //add plugin to page
-            try {
                 // var page_id = this.parentNode.getAttribute("data-page-id");
-                var js_tr_elm = this.parentNode.parentNode;
-                var jsl_id = js_tr_elm.getAttribute("data-jl-id");
-            } catch (error){
-            }
+                //var js_tr_elm = this.parentNode.parentNode;
+                //var jsl_id = js_tr_elm.getAttribute("data-jl-id");
 
             //    return false;
 
-            $.post("/wiki/" + page._id + "/save", {jsl_id : jsl_id}, function(res) {
-
-            }, "json");
+//            $.post("/wiki/" + page._id + "/save", {jsl_id : jsl_id}, function(res) {
+//
+//            }, "json");
             // d(jl_id);
             // d(page_id);
-            html = '<tr><td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td></tr>'
+            //html = '<tr><td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td></tr>'
         });
 
         $("#editor-wysiwyg").click(function(){
@@ -642,11 +647,11 @@
                 <div class="tab-content">
                     {{#page}}
                     <div class="tab-pane active" id="tab1">
-                        <div class="btn-group">
-                            <button class="btn" id="editor-wysiwyg">Wysiwyg Editor</button>
-                            <button class="btn" id="editor-html">HTML Code</button>
-                        </div>
-                        <br>
+                        <!--<div class="btn-group">-->
+                            <!--<button class="btn" id="editor-wysiwyg">Wysiwyg Editor</button>-->
+                            <!--<button class="btn" id="editor-html">HTML Code</button>-->
+                        <!--</div>-->
+                        <!--<br>-->
                         <p><textarea id="textAreaArticle" style="width: 810px; height: 200px;" placeholder="Enter text ...">{{article}}</textarea></p>
                     </div>
                     <div class="tab-pane" id="tab_apps">
@@ -654,24 +659,7 @@
                     </div>
                     {{/page}}
                     <div class="tab-pane" id="tab_jslib">
-                        <h3>Currently plugged libraries</h3>
-                        <table class="table table-striped table-condensed">
-                            <thead>
-                            <tr>
-                                <th>Name</th><th>Description</th><th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="pagejslist">
-                            {{#page}}
-                            {{#jslibrary}}
-                            <tr>
-                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td>
-                            </tr>
-                            {{/jslibrary}}
-                            {{/page}}
-                            </tbody>
-                        </table>
-                        <h3>Libraries available to plug</h3>
+                        <h3>Libraries available</h3>
                         <table class="table table-striped table-condensed">
                             <thead>
                             <tr>
@@ -681,7 +669,11 @@
                             <tbody id="jslist">
                             {{#libraries}}
                             <tr data-jl-id="{{ _id }}">
-                                <td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info jsexample">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary jsplug">Plug</a></td>
+                                <td>{{name}}</td><td>{{description}}</td>
+                                <td>
+                                    <!--<a href="#" class="btn btn-info jsexample">Example of usage</a>&nbsp;-->
+                                    <a href="#" class="btn btn-primary jsplug" data-id="{{_id}}">{{plugged}}</a>
+                                </td>
                             </tr>
                             {{/libraries}}
                             </tbody>

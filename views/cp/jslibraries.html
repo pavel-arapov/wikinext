@@ -23,8 +23,13 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#create-page-button").click(function () {
-                $('#create-page').modal('hide');
+                $('#create-page-dialog').modal('hide');
                 $("#create-page-form").submit();
+            });
+
+            $("#add-library-button").click(function () {
+                $('#add-library-dialog').modal('hide');
+                $("#add-library-form").submit();
             });
         });
     </script>
@@ -84,44 +89,25 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span3">
-            <div class="well sidebar-nav">
-                <ul class="nav nav-list">
-                    <li class="nav-header">Main</li>
-                    {{#pages}}
-                    <li><a href="/wiki/{{_id}}">{{title}}</a></li>
-                    {{/pages}}
-                    <li class="nav-header">Your pages</li>
-                    {{#user_pages}}
-                    <li><a href="/wiki/{{_id}}">{{title}}</a></li>
-                    {{/user_pages}}
-                </ul>
-            </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span9">
-            <div class="hero-unit">
-                <h1>Welcome to WikiNEXT</h1>
-                <p>You need to be login to create/edit and other actions. Please click in right-top corner "Login"</p>
-                <p><a class="btn btn-primary btn-large">Learn more »</a></p>
-            </div>
-            <div class="row-fluid">
-                <div class="span4">
-                    <h2>Wiki Pages</h2>
-                    <p>Pages can be edit in real-time collaborative mode</p>
-                    <p><a class="btn" href="#">Create Page »</a></p>
-                </div><!--/span-->
-                <div class="span4">
-                    <h2>Applications</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">Create Application »</a></p>
-                </div><!--/span-->
-                <div class="span4">
-                    <h2>Heading</h2>
-                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                    <p><a class="btn" href="#">View details »</a></p>
-                </div><!--/span-->
-            </div><!--/row-->
-        </div><!--/span-->
+        <p>
+            <a class="btn btn-primary" type="button" id="add-library" data-toggle="modal" href="#add-library-dialog">Add Library</a>
+        </p>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            {{#libraries}}
+            <tr>
+                <td>{{_id}}</td>
+                <td>{{name}}</td>
+                <td>{{description}}</td>
+                <td>actions...</td>
+            </tr>
+            {{/libraries}}
+        </table>
     </div><!--/row-->
 
     <hr>
@@ -129,8 +115,27 @@
         <p>Everything is permitted</p>
         <small>Just do it!</small>
     </blockquote>
-    <footer><p>WikiNEXT © Pavel Arapov</p></footer>
+    <footer><p>WikiNEXT &copy; Pavel Arapov</p></footer>
 
+</div>
+
+<div class="modal hide" id="add-library-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Add Library</h3>
+    </div>
+    <div class="modal-body">
+        <form id="add-library-form" method="POST" action="/cp/jslibraries/add">
+            <label>Name (file name)</label>
+            <input type="text" class="span3" placeholder="Type the name…" id="name" name="name"><br>
+            <label>Description</label>
+            <input type="text" class="span3" placeholder="Type a description…" id="description" name="description">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="add-library-button">Create</a>
+    </div>
 </div>
 
 <div class="modal hide" id="create-page-dialog">

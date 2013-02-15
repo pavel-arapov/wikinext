@@ -100,6 +100,8 @@ app.get('/wiki/:id/app',routes.app);
 app.post('/wiki/:id/save',routes.save);
 app.post('/upload',routes.upload);
 app.post('/deleteattach',routes.deleteattach);
+app.post('/attachlibrary',routes.attach_library);
+app.post('/deattachlibrary', routes.deattach_library);
 
 var port = process.env.PORT || config.port_sharejs;
 app.listen(port, function () {
