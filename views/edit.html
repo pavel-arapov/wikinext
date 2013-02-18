@@ -34,14 +34,6 @@
 
 <script type="text/javascript">
     wikinextHelper.init();
-    Deferred.parallel({
-        messageSuccess:wikinextHelper.http_get("/templates/messageSuccess.html"),
-        messageFail:wikinextHelper.http_get("/templates/messageFail.html")
-    }).next(function (data) {
-                ich.addTemplate("messageSuccess", data.messageSuccess);
-                ich.addTemplate("messageFail", data.messageFail);
-                console.log("templates loaded");
-            });
 </script>
 <style>
 
