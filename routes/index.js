@@ -71,7 +71,7 @@ module.exports = function (dao) {
                 pages:dao.pages.findByParent(req.params.id),
                 libraries:dao.jslibraries.findAll()
             };
-            var page, pages;
+            var page, pages, libraries;
             Deferred.parallel(run).next(function (data) {
                 page = data['page'];
                 pages = data['pages'];
@@ -105,6 +105,16 @@ module.exports = function (dao) {
                         page['created_at'] = new Date(page['created_at']).toDateString();
                     if (typeof page['last_modified_at'] != 'undefined')
                         page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
+
+                    // plugged libraries
+                    page['js'] = [];
+                    if (_.isArray(page['libraries'])) {
+                        _.each(libraries,function(value,key){
+                            if (in_array(value._id.toString(),page['libraries'])){
+                                page['js'].push({src:value.name});
+                            }
+                        });
+                    }
 
                     console.log(page);
 
@@ -340,7 +350,7 @@ module.exports = function (dao) {
                     }
                     else {
                         //console.log("information in db was successfully updated")
-                        res.send({status:"ok"});
+
                     }
                 });
 //                }
@@ -369,7 +379,18 @@ module.exports = function (dao) {
                 // do we have already this library attached to the page?
                 if (_.isArray(data['page']['libraries'])) {
                     if (!in_array(libraryid,data['page']['libraries'])) {
-                        dao.pages.plugJSLibrary(pageid,libraryid);
+                        dao.pages.plugJSLibrary(pageid,libraryid).next(function(){
+                            res.send({status:"ok"});
+                        }).error(function(error){
+                                res.send({status:"ko",error:error})
+                            });
+                    }
+                    else {
+                        dao.pages.unplugJSLibrary(pageid, libraryid).next(function(){
+                            res.send({status:"ok"});
+                        }).error(function(error){
+                                res.send({status:"ko",error:error});
+                            });
                     }
                 }
                 else {
@@ -378,15 +399,6 @@ module.exports = function (dao) {
 
             });
 
-        },
-        /**
-         * Deattach js library from the page
-         * @param req
-         * @param res
-         */
-        deattach_library:function (req, res) {
-
         }
-
     };
 };

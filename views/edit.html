@@ -492,27 +492,20 @@
             //show example page
         });
 
-        $("#jslist a.jsplug").click(function(e){
-            console.log("trying add jslibrary "+$(this).data("id"));
+        $("#jslist a.jsplug").click(function (e) {
+            var button = $(this);
+            //console.log("trying add jslibrary "+button.data("id"));
             $.post("/attachlibrary", {
                 pageid: page._id,
-                libraryid: $(this).data("id")
-            }, function(res) {
+                libraryid: button.data("id")
+            }, function (res) {
+                console.log(button.text());
+                if (button.text() == "plug")
+                    button.text("unplug");
+                else
+                    button.text("plug");
                 console.log(res);
             });
-            //add plugin to page
-                // var page_id = this.parentNode.getAttribute("data-page-id");
-                //var js_tr_elm = this.parentNode.parentNode;
-                //var jsl_id = js_tr_elm.getAttribute("data-jl-id");
-
-            //    return false;
-
-//            $.post("/wiki/" + page._id + "/save", {jsl_id : jsl_id}, function(res) {
-//
-//            }, "json");
-            // d(jl_id);
-            // d(page_id);
-            //html = '<tr><td>{{title}}</td><td>{{description}}</td><td><a href="#" class="btn btn-info">Example of usage</a>&nbsp;<a href="#" class="btn btn-primary">Remove</a></td></tr>'
         });
 
         $("#editor-wysiwyg").click(function(){

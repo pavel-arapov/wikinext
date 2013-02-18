@@ -12,9 +12,14 @@
     <script type="text/javascript" src="/js/underscore-min.js"></script>
     <script type="text/javascript" src="/js/backbone-min.js"></script>
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
-    <script type="text/javascript" src="/js/rgraph/RGraph.common.core.js"></script>
-    <script type="text/javascript" src="/js/rgraph/RGraph.line.js"></script>
-    <script type="text/javascript" src="/js/sparql.js"></script>
+    <!--<script type="text/javascript" src="/js/rgraph/RGraph.common.core.js"></script>-->
+    <!--<script type="text/javascript" src="/js/rgraph/RGraph.line.js"></script>-->
+    <!--<script type="text/javascript" src="/js/sparql.js"></script>-->
+    {{#page}}
+    {{#js}}
+    <script type="text/javascript" src="/js/{{src}}"></script>
+    {{/js}}
+    {{/page}}
     <!--[if lt IE 9]><script src="/js/excanvas/excanvas.js"></script><![endif]-->
     <style>
 
