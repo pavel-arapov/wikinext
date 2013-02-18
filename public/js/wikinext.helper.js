@@ -66,6 +66,11 @@ var wikinextHelper = (function () {
             });
             return d;
         },
+        /**
+         * Nice for time/date from milliseconds
+         * @param millisecs milliseconds - timestamp
+         * @return {string} understandable format of time
+         */
         timeFormat:function (millisecs) {
             var secs = Math.floor(millisecs / 1000);
             var hr = Math.floor(secs / 3600);
@@ -83,6 +88,11 @@ var wikinextHelper = (function () {
             }
             return hr + ':' + min + ':' + sec;
         },
+        /**
+         * Create HTML output for SPARQL JSON Result
+         * @param result
+         * @return {*}
+         */
         sparqlOnFly:function (result) {
             var html = jQuery('<div></div>');
             var a;
@@ -105,6 +115,74 @@ var wikinextHelper = (function () {
                 })
             });
             return html;
+        },
+        /**
+         * Macro to create content table based on Headers
+         */
+        updateContent: function () {
+            // looking for data-wikinext to create a place for content table
+            $("body").find('[data-wikinext]').each(function () {
+                var dom_element = this;
+                //all items for macros replace/content augmentation
+                //content (find all headers and construct anchors before them and list with links to it
+                var ul = null;
+                var lasth1 = null;
+                var lasth1ul = null;
+                var lasth2 = null;
+                var lasth2ul = null;
+                $("h1, h2, h3").each(function () {
+
+                    switch (this.tagName.toLowerCase()) {
+                        case "h1":
+                            if (!ul) {
+                                ul = $("<ul>");
+                            }
+                            lasth1 = $("<li>").html($(this).html()).appendTo(ul);
+                            break;
+                        case "h2":
+                            if (!lasth1) {
+                                // Deal with invalid condition, h2 with no h1 before it
+                            }
+                            else {
+                                if (!lasth1ul) {
+                                    lasth1ul = $("<ul>").appendTo(lasth1);
+                                }
+                                lasth2 = $("<li>").html($(this).html()).appendTo(lasth1ul);
+                            }
+                            break;
+                        case "h3":
+                            if (!lasth2) {
+                                // Deal with invalid condition, h3 with no h2 before it
+                            }
+                            else {
+                                if (!lasth2ul) {
+                                    lasth2ul = $("<ul>").appendTo(lasth2);
+                                }
+                                $("<li>").html($(this).html()).appendTo(lasth2ul);
+                            }
+                            break;
+                    }
+
+                });
+                if (ul) {
+                    $(dom_element).append(ul);
+                }
+            });
+        },
+        /**
+         * Saving SPARQL JSON result to a page cache system
+         * @param pageid    id of a page
+         * @param name      query name
+         * @param result    result
+         */
+        saveToCache: function (pageid, name, result) {
+            this.http_post("/update_cache",{
+                pageid: pageid,
+                name: name,
+                result: result
+            }).next(function(data){
+                    console.log(data);
+                })
         }
     }
 })();

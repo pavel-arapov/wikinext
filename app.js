@@ -150,6 +150,7 @@ app.get('/wiki/:id/edit',function(req,res){
 app.get('/cp/jslibraries', cp.jslibraries);
 app.post('/cp/jslibraries/add', cp.add_js_library);
 
+app.post('/update_cache',routes.update_cache);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

@@ -21,9 +21,6 @@
     <script type="text/javascript" src="/js/{{src}}"></script>
     {{/js}}
     {{/page}}
-    <script type="text/javascript">
-        wikinextHelper.init();
-    </script>
     <!--[if lt IE 9]><script src="/js/excanvas/excanvas.js"></script><![endif]-->
     <style>
 
@@ -87,6 +84,16 @@
                     }
                 };
             })();
+                    $(document).ready(function(){
+                        // start wiki
+                        wikinextHelper.init().next(function(){});
+                        var data = launch_wiki_script.construct();
+                        var article = ich.article_template(data);
+                        $("#article_show").append(article);
+                        launch_wiki_script.afterConstruct();
+                        wikinextHelper.updateContent();
+                    });
+                    //});
     </script>
     <script type="text/javascript">
         var page = {

@@ -38,66 +38,6 @@ $(document).ready(function(){
 //        $("#textAreaTemplate").html(app.templates[0].template);
 //    };
 
-    //macros
-
-    function updateContent() {
-        $("body").find('[data-wikinext]').each(function(){
-
-            var dom_element = this;
-            //all items for macros replace/content augmentation
-            //content (find all headers and construct anchors before them and list with links to it
-            var ul = null;
-            var lasth1 = null;
-            var lasth1ul = null;
-            var lasth2 = null;
-            var lasth2ul = null;
-
-            $("h1, h2, h3").each(function() {
-
-                switch (this.tagName.toLowerCase()) {
-                    case "h1":
-                        if (!ul) {
-                            ul = $("<ul>");
-                        }
-                        lasth1 = $("<li>").html($(this).html()).appendTo(ul);
-                        break;
-                    case "h2":
-                        if (!lasth1) {
-                            // Deal with invalid condition, h2 with no h1 before it
-                        }
-                        else {
-                            if (!lasth1ul) {
-                                lasth1ul = $("<ul>").appendTo(lasth1);
-                            }
-                            lasth2 = $("<li>").html($(this).html()).appendTo(lasth1ul);
-                        }
-                        break;
-                    case "h3":
-                        if (!lasth2) {
-                            // Deal with invalid condition, h3 with no h2 before it
-                        }
-                        else {
-                            if (!lasth2ul) {
-                                lasth2ul = $("<ul>").appendTo(lasth2);
-                            }
-                            $("<li>").html($(this).html()).appendTo(lasth2ul);
-                        }
-                        break;
-                }
-
-            });
-            if (ul) {
-                $(dom_element).append(ul);
-            }
-        });
-    }
-
-    // start wiki
-    var data = launch_wiki_script.construct();
-    var article = ich.article_template(data);
-    $("#article_show").append(article);
-    launch_wiki_script.afterConstruct();
-    updateContent();
 });
 now.ready(function () {
 //    console.log("now is ready");

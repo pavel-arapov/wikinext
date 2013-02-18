@@ -399,6 +399,26 @@ module.exports = function (dao) {
 
             });
 
+        },
+        update_cache:function (req,res) {
+            // id of the page
+            var pageid = req.body.pageid;
+            // query name
+            var name = req.body.name;
+            // query result
+            var result = req.body.result;
+            dao.pages.findById(pageid).next(function(page){
+                if (!_.isObject(page.cache))
+                    page.cache = {};
+                result.cache_updated = new Date();
+                page.cache[name] = result;
+                //console.log(page.cache);
+                dao.pages.updateCache(pageid,page.cache).next(function(){
+                    res.send({status:"ok"});
+                }).error(function(error){
+                        res.send({status:"ko",error: error});
+                    });
+            });
         }
     };
 };
