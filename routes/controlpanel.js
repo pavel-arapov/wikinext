@@ -79,6 +79,28 @@ module.exports = function (dao) {
             } else {
                 res.redirect("/");
             }
+        },
+        users:function(req,res) {
+            if (req.session.auth) {
+                // load necessary data
+                var run = {
+                    users:dao.users.findAll()
+                };
+                var users;
+                Deferred.parallel(run).next(function (data) {
+                    users = data['users'];
+                }).next(function () {
+                        //page's construction
+                        console.log(users);
+                        res.render('cp/users.html', {
+                            locals:{
+                                title:'WikiNEXT V2',
+                                auth:req.session.auth,
+                                login:req.session.auth ? false : true,
+                                users:users
+                            }});
+                    });
+            }
         }
     }
 };

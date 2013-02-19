@@ -138,21 +138,29 @@ app.configure('production', function () {
 var routes = require('./routes')(dao);
 var cp = require('./routes/controlpanel.js')(dao);
 
+//base navigation
 app.get('/', routes.index);
 app.get('/home', routes.index);
-app.post('/create',routes.create);
 app.get('/wiki/:id',routes.wiki);
 app.get('/wiki/:id/clone',routes.clone);
 app.get('/wiki/:id/edit',function(req,res){
     res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");
 });
 
+// control panel
+// js libraries
 app.get('/cp/jslibraries', cp.jslibraries);
 app.post('/cp/jslibraries/add', cp.add_js_library);
 app.post('/cp/jslibraries/delete',cp.delete_js_library);
+// users
+app.get('/cp/users', cp.users);
 
+// API function
+// cache
 app.post('/update_cache',routes.update_cache);
 app.post('/load_cache',routes.load_cache);
+// page
+app.post('/create',routes.create);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

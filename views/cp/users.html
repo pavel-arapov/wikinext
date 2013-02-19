@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/nowjs/now.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
+    <script type="text/javascript" src="/js/jsdeferred.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/js/backbone-min.js"></script>
+    <script type="text/javascript" src="/js/wikinext.main.js"></script>
+    <script type="text/javascript" src="/js/wikinext.helper.js"></script>
+    <style>
+
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            wikinextHelper.init();
+
+            $("#create-page-button").click(function () {
+                $('#create-page-dialog').modal('hide');
+                $("#create-page-form").submit();
+            });
+
+            $(".delete-user").click(function() {
+                wikinextHelper.http_post("/cp/users/delete",{userid:$(this).data("id")}).next(
+                        function(data){
+                            if (data.status == "ok")
+                                window.location = window.location;
+                        }
+                );
+            })
+        });
+    </script>
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">WikiNEXT</a>
+            <div class="btn-group pull-right">
+                {{#login}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> Login
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/auth/facebook">Facebook</a></li>
+                </ul>
+                {{/login}}
+                {{#auth}}
+                {{#facebook}}
+                {{#user}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> {{name}}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+                {{/user}}
+                {{/facebook}}
+                {{/auth}}
+
+            </div>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    {{#auth}}
+                    {{#facebook}}
+                    {{#user}}
+                    <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
+                    {{/user}}
+                    {{/facebook}}
+                    {{/auth}}
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Link</th>
+                <th>Facebook ID</th>
+                <th>Actions</th>
+            </tr>
+            {{#users}}
+            <tr>
+                <td>{{_id}}</td>
+                <td>{{name}}</td>
+                <td><a href="{{link}}">{{link}}</a></td>
+                <td>{{fbid}}</td>
+                <td><a class="btn btn-danger delete-user" type="button" data-id="{{_id}}">delete</a></td>
+            </tr>
+            {{/users}}
+        </table>
+    </div><!--/row-->
+
+    <hr>
+    <blockquote class="pull-right">
+        <p>Everything is permitted</p>
+        <small>Just do it!</small>
+    </blockquote>
+    <footer><p>WikiNEXT &copy; Pavel Arapov</p></footer>
+
+</div>
+
+<div class="modal hide" id="create-page-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Create Page</h3>
+    </div>
+    <div class="modal-body">
+        <form id="create-page-form" method="POST" action="/create">
+            <label>Create Page</label>
+            <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="create-page-button">Create</a>
+    </div>
+</div>
+
+
+</body>
+</html>
