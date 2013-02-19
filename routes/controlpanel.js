@@ -71,7 +71,7 @@ module.exports = function (dao) {
         delete_js_library:function(req,res) {
             if (req.session.auth) {
                 var jslib = req.body.jslibid;
-                dao.jslibraries.delete(jslib,function(error){
+                dao.jslibraries.remove(jslib,function(error){
                     console.log(error);
                 });
                 res.send({status:"ok"});
@@ -91,7 +91,7 @@ module.exports = function (dao) {
                     users = data['users'];
                 }).next(function () {
                         //page's construction
-                        console.log(users);
+                        //console.log(users);
                         res.render('cp/users.html', {
                             locals:{
                                 title:'WikiNEXT V2',

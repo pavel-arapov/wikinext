@@ -394,7 +394,11 @@ module.exports = function (dao) {
                     }
                 }
                 else {
-                    dao.pages.plugJSLibrary(pageid,libraryid);
+                    dao.pages.plugJSLibrary(pageid,libraryid).next(function(){
+                        res.send({status:"ok"});
+                    }).error(function(error){
+                            res.send({status:"ko",error:error})
+                        });;
                 }
 
             });
