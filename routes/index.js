@@ -400,6 +400,11 @@ module.exports = function (dao) {
             });
 
         },
+        /**
+         * Update page's cache
+         * @param req
+         * @param res
+         */
         update_cache:function (req,res) {
             // id of the page
             var pageid = req.body.pageid;
@@ -418,6 +423,22 @@ module.exports = function (dao) {
                 }).error(function(error){
                         res.send({status:"ko",error: error});
                     });
+            });
+        },
+        /**
+         * Load page's cache
+         * @param req
+         * @param res
+         */
+        load_cache: function(req,res) {
+            // id of the page
+            var pageid = req.body.pageid;
+            // looking for a page
+            dao.pages.findById(pageid).next(function(page){
+                if (!_.isObject(page.cache))
+                    page.cache = {};
+                // sending cache to a client
+                res.send({cache:page.cache});
             });
         }
     };

@@ -183,6 +183,28 @@ var wikinextHelper = (function () {
             }).next(function(data){
                     console.log(data);
                 })
+        },
+        /**
+         * Loading page's cache
+         * @param pageid
+         */
+        loadCache : function (pageid) {
+            var d = Deferred();
+            this.http_post("/load_cache", {
+                pageid: pageid
+            }).next(function(cache){
+                    d.call(cache);
+                });
+            return d;
+        },
+        /**
+         * API REST create page
+         * @param title Title of a page
+         */
+        createPage: function (title) {
+            this.http_post("/create", {
+                page_name: title
+            })
         }
     }
 })();
