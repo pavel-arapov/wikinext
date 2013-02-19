@@ -62,6 +62,23 @@ module.exports = function (dao) {
             } else {
                 res.redirect("/");
             }
+        },
+        /**
+         * Delete js library
+         * @param req
+         * @param res
+         */
+        delete_js_library:function(req,res) {
+            if (req.session.auth) {
+                var jslib = req.body.jslibid;
+                dao.jslibraries.delete(jslib,function(error){
+                    console.log(error);
+                });
+                res.send({status:"ok"});
+                //res.redirect("/cp/jslibraries");
+            } else {
+                res.redirect("/");
+            }
         }
     }
 };

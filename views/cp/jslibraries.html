@@ -12,6 +12,7 @@
     <script type="text/javascript" src="/js/underscore-min.js"></script>
     <script type="text/javascript" src="/js/backbone-min.js"></script>
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
+    <script type="text/javascript" src="/js/wikinext.helper.js"></script>
     <style>
 
         body {
@@ -22,6 +23,8 @@
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
+            wikinextHelper.init();
+
             $("#create-page-button").click(function () {
                 $('#create-page-dialog').modal('hide');
                 $("#create-page-form").submit();
@@ -31,6 +34,15 @@
                 $('#add-library-dialog').modal('hide');
                 $("#add-library-form").submit();
             });
+
+            $(".delete-library").click(function() {
+                wikinextHelper.http_post("/cp/jslibraries/delete",{jslibid:$(this).data("id")}).next(
+                        function(data){
+                            if (data.status == "ok")
+                                window.location = window.location;
+                        }
+                );
+            })
         });
     </script>
 </head>
@@ -104,7 +116,7 @@
                 <td>{{_id}}</td>
                 <td>{{name}}</td>
                 <td>{{description}}</td>
-                <td>actions...</td>
+                <td><a class="btn btn-danger delete-library" type="button" data-id="{{_id}}">delete</a></td>
             </tr>
             {{/libraries}}
         </table>

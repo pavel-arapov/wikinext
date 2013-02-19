@@ -149,6 +149,7 @@ app.get('/wiki/:id/edit',function(req,res){
 
 app.get('/cp/jslibraries', cp.jslibraries);
 app.post('/cp/jslibraries/add', cp.add_js_library);
+app.post('/cp/jslibraries/delete',cp.delete_js_library);
 
 app.post('/update_cache',routes.update_cache);
 app.post('/load_cache',routes.load_cache);
