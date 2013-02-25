@@ -4,6 +4,8 @@
     <title>{{title}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/prettify.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/prettify.js"></script>
     <script type="text/javascript" src="/nowjs/now.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
@@ -13,9 +15,6 @@
     <script type="text/javascript" src="/js/backbone-min.js"></script>
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
     <script type="text/javascript" src="/js/wikinext.helper.js"></script>
-    <!--<script type="text/javascript" src="/js/rgraph/RGraph.common.core.js"></script>-->
-    <!--<script type="text/javascript" src="/js/rgraph/RGraph.line.js"></script>-->
-    <!--<script type="text/javascript" src="/js/sparql.js"></script>-->
     {{#page}}
     {{#js}}
     <script type="text/javascript" src="/js/{{src}}"></script>
@@ -106,7 +105,7 @@
         {{/page}}
     </script>
 </head>
-<body>
+<body onload="prettyPrint()">
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
