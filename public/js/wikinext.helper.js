@@ -232,7 +232,7 @@ var wikinextHelper = (function () {
             });
         },
         preparePrettify: function (article) {
-            $(article).find("prettyprint").each(function() {
+            $(article).find(".prettyprint").each(function() {
                 $(this).text(htmlEncode($(this).html()));
             })
 
