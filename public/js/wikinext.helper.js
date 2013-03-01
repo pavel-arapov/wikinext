@@ -121,7 +121,7 @@ var wikinextHelper = (function () {
          */
         updateContent: function () {
             // looking for data-wikinext to create a place for content table
-            $("body").find('[data-wikinext]').each(function () {
+            $("#article_show").find('[data-wikinext]').each(function () {
                 var dom_element = this;
                 //all items for macros replace/content augmentation
                 //content (find all headers and construct anchors before them and list with links to it
