@@ -10,6 +10,68 @@ var wikinextHelper = (function () {
         }
     }
 
+    // encode an input string into either numerical or HTML entities
+    function htmlEncode(s,dbl){
+
+        if(this.isEmpty(s)) return "";
+
+        // do we allow double encoding? E.g will &amp; be turned into &amp;amp;
+        dbl = dbl || false; //default to prevent double encoding
+
+        // if allowing double encoding we do ampersands first
+        if(dbl){
+            if(this.EncodeType=="numerical"){
+                s = s.replace(/&/g, "&#38;");
+            }else{
+                s = s.replace(/&/g, "&amp;");
+            }
+        }
+
+        // convert the xss chars to numerical entities ' " < >
+        s = this.XSSEncode(s,false);
+
+        if(this.EncodeType=="numerical" || !dbl){
+            // Now call function that will convert any HTML entities to numerical codes
+            s = this.HTML2Numerical(s);
+        }
+
+        // Now encode all chars above 127 e.g unicode
+        s = this.numEncode(s);
+
+        // now we know anything that needs to be encoded has been converted to numerical entities we
+        // can encode any ampersands & that are not part of encoded entities
+        // to handle the fact that I need to do a negative check and handle multiple ampersands &&&
+        // I am going to use a placeholder
+
+        // if we don't want double encoded entities we ignore the & in existing entities
+        if(!dbl){
+            s = s.replace(/&#/g,"##AMPHASH##");
+
+            if(this.EncodeType=="numerical"){
+                s = s.replace(/&/g, "&#38;");
+            }else{
+                s = s.replace(/&/g, "&amp;");
+            }
+
+            s = s.replace(/##AMPHASH##/g,"&#");
+        }
+
+        // replace any malformed entities
+        s = s.replace(/&#\d*([^\d;]|$)/g, "$1");
+
+        if(!dbl){
+            // safety check to correct any double encoded &amp;
+            s = this.correctEncoding(s);
+        }
+
+        // now do we need to convert our numerical encoded string into entities
+        if(this.EncodeType=="entity"){
+            s = this.NumericalToHTML(s);
+        }
+
+        return s;
+    }
+
     var relations = {
         "http://www.w3.org/2000/01/rdf-schema#label" : "schema_label",
         "http://www.w3.org/2002/07/owl#sameAs" : "schema_label",
@@ -168,6 +230,12 @@ var wikinextHelper = (function () {
                     $(dom_element).append(ul);
                 }
             });
+        },
+        preparePrettify: function () {
+            $("body").find("prettyprint").each(function() {
+                this.val(htmlEncode(this.val()));
+            })
+
         },
         /**
          * Saving SPARQL JSON result to a page cache system
