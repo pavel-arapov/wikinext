@@ -385,7 +385,7 @@ var wikinextHelper = (function () {
         },
         preparePrettify: function (article) {
             $(article).find(".prettyprint").each(function() {
-                $(this).text(htmlEncoder.XSSEncode($(this).html()),true);
+                $(this).html(htmlEncoder.XSSEncode($(this).html()),true);
             })
 
         },
