@@ -215,27 +215,27 @@ module.exports = function (dao) {
                     var pageid = req.header('x-page-id');
                     var path_upload = __dirname + '/../public/upload/';
                     if (!fs.existsSync(path_upload + pageid)) {
-                        console.log("mkdir: "+path_upload + pageid);
+                        winston.info("mkdir: "+path_upload + pageid);
                         fs.mkdirSync(path_upload + pageid);
                     }
 
                     var ws = fs.createWriteStream(path_upload + pageid + '/' + fName);
 
                     req.on('data', function (data) {
-                        console.log('data arrived');
+                        winston.info('data arrived');
                         ws.write(data);
                     });
                     req.on('end', function () {
-                        console.log("finished");
+                        winston.info("finished");
                         res.writeHead(200, { 'Content-Type':'application/json' });
                         res.end(JSON.stringify({
                             success:true
                         }));
                         dao.pages.attachFile(pageid, {"index":crypto.createHash('md5').update(fName).digest("hex"), "path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
                             if (data != null)
-                                console.log(data);
+                                winston.info(data);
                             else
-                                console.log("information to db was successfully added")
+                                winston.info("information to db was successfully added")
                         });
                     });
                 }
