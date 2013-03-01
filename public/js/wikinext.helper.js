@@ -130,7 +130,7 @@ var wikinextHelper = (function () {
                 var lasth1ul = null;
                 var lasth2 = null;
                 var lasth2ul = null;
-                $("h1, h2, h3").each(function () {
+                $("#article_show").find("h1, h2, h3").each(function () {
 
                     switch (this.tagName.toLowerCase()) {
                         case "h1":
