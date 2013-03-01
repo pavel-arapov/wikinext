@@ -214,7 +214,8 @@ module.exports = function (dao) {
                     var fType = req.header('x-file-type');
                     var pageid = req.header('x-page-id');
                     var path_upload = __dirname + '/../public/upload/';
-                    if (!path.existsSync(path_upload + pageid)) {
+                    if (!fs.existsSync(path_upload + pageid)) {
+                        console.log("mkdir: "+path_upload + pageid);
                         fs.mkdirSync(path_upload + pageid);
                     }
 
@@ -334,10 +335,10 @@ module.exports = function (dao) {
                     i++;
                 }
                 var path_upload = __dirname + '/../public/upload/';
-                if (path.existsSync(path_upload + pageid)) {
+                if (fs.existsSync(path_upload + pageid)) {
                     //console.log("directory exists");
                     var filepath = path_upload + pageid + '/' + page.attach[i].name;
-                    if (path.existsSync(filepath)) {
+                    if (fs.existsSync(filepath)) {
                         //console.log("delete "+filepath);
                         fs.unlinkSync(filepath);
                     }

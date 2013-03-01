@@ -114,7 +114,7 @@ var sharejs_auth = function(agent,action){
     //var d = new Deferred();
     //console.log(agent);
     //console.log(action);
-    console.log("auth");
+    //console.log("auth");
     var finished = false;
 
     var wait_result = function() {
@@ -147,7 +147,7 @@ var sharejs_auth = function(agent,action){
                 //console.log(sess);
                 //clients[self.user.clientId].sess = sess;
                 //console.log(sess);
-                console.log("accept");
+                //console.log("accept");
                 //action.accept();
                 //d.call(sess);
             }
@@ -179,7 +179,7 @@ var sharejs_auth = function(agent,action){
     else {
         action.accept();
     }
-    console.log("exit");
+    //console.log("exit");
     return action;
     //return d;
     //action.accept();
