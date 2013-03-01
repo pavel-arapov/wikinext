@@ -89,9 +89,9 @@
                         wikinextHelper.init().next(function(){});
                         var data = launch_wiki_script.construct();
                         var article = ich.article_template(data);
+                        wikinextHelper.preparePrettify(article);
                         $("#article_show").append(article);
                         launch_wiki_script.afterConstruct();
-                        wikinextHelper.preparePrettify();
                         wikinextHelper.updateContent();
                     });
                     //});

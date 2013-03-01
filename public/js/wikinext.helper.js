@@ -231,9 +231,9 @@ var wikinextHelper = (function () {
                 }
             });
         },
-        preparePrettify: function () {
-            $("body").find("prettyprint").each(function() {
-                this.val(htmlEncode(this.val()));
+        preparePrettify: function (article) {
+            $(article).find("prettyprint").each(function() {
+                $(this).text(htmlEncode($(this).html()));
             })
 
         },
