@@ -399,7 +399,7 @@ module.exports = function (dao) {
                         res.send({status:"ok"});
                     }).error(function(error){
                             res.send({status:"ko",error:error})
-                        });;
+                        });
                 }
 
             });
@@ -445,6 +445,30 @@ module.exports = function (dao) {
                 // sending cache to a client
                 res.send({cache:page.cache});
             });
+        },
+        /**
+         * Delete page
+         * @param req
+         * @param res
+         */
+        remove:function(req,res) {
+            // id of the page
+            var pageid = req.params.id;
+            if (req.session.auth) {
+                // current user
+                var userid = req.session.auth.userId;
+
+                dao.pages.findById(pageid).next(function(page) {
+                    // only owner of a page can delete it
+                    if (page.userid == userid) {
+                        dao.pages.remove(pageid,function(msg){
+                            console.log(msg);
+                            res.send({status:"ok"});
+                            //res.redirect("/home");
+                        });
+                    }
+                });
+            }
         }
     };
 };

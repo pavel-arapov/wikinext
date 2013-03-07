@@ -31,6 +31,12 @@ $(document).ready(function(){
         $("#create-page-form").submit();
     });
 
+    $("#delete-page-button").click(function (){
+        $.get("/wiki/"+page['_id']+"/remove",function(status){
+           document.location = "/home";
+        });
+    });
+
 //    now.app_was_created = function(app){
 //        console.log(app);
 //        ich.addTemplate(app.templates[0].name,app.templates[0].template);
@@ -40,5 +46,5 @@ $(document).ready(function(){
 
 });
 now.ready(function () {
-//    console.log("now is ready");
+    console.log("now is ready");
 });
