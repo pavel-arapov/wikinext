@@ -56,12 +56,9 @@
             window.launch_wiki_script = (function(){
                 var __data = {"app_name": "Graph example"};
                 var application = (function(){
-                    // {{#page}}
-
+                    {{#page}}
                     {{{app}}}
-
-                    // {{/page}}
-                    //
+                    {{/page}}
                     return {
                         __construct: function() {
                             if (typeof construct == 'function'){
