@@ -452,6 +452,10 @@ var wikinextHelper = (function () {
                         //_.each(pages,function(value,key) {
                         for (var i = 0; i< pages.length; i++) {
                             var value = pages[i];
+                            if (_.isUndefined(value.pages)) {
+                                value.pages = [];
+                                value.url = "/wiki/"+value._id;
+                            }
                             if (!_.isUndefined(value.parent) && value.parent.$id == parent._id) {
                                 parent.pages.push(value);
                                 sort_it_by_parent(value, pages);
@@ -459,8 +463,10 @@ var wikinextHelper = (function () {
                         }
                     };
                     _.each(result.pages, function(value,key) {
-                        value.pages = [];
-                        value.url = "/wiki/"+value._id;
+                        if (_.isUndefined(value.pages)) {
+                            value.pages = [];
+                            value.url = "/wiki/"+value._id;
+                        }
                         if (_.isUndefined(value.parent)) {
                             sorted.push(value);
                             sort_it_by_parent(value, result.pages);
