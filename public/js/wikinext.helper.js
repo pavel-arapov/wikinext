@@ -231,8 +231,22 @@ var wikinextHelper = (function () {
 
     var rdftypes = {
         "uri": "ns_type",
-        "literal": "schema_label"
+        "literal": "schema_label",
+        "typed-literal" : "schema_label"
     };
+
+    function checkExtention(sFileName) {
+        var _validFileExtensions = [".jpg", ".jpeg", ".bmp", ".gif", ".png"];
+        var blnValid = false;
+        for (var j = 0; j < _validFileExtensions.length; j++) {
+            var sCurExtension = _validFileExtensions[j];
+            if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+                blnValid = true;
+                break;
+            }
+        }
+        return blnValid;
+    }
 
     return {
         init: function () {
@@ -247,6 +261,7 @@ var wikinextHelper = (function () {
                 owl_sameas: this.http_get("/templates/rdftypes/owl_sameas.html"),
                 schema_label: this.http_get("/templates/rdftypes/schema_label.html"),
                 schema_comment: this.http_get("/templates/rdftypes/schema_label.html"),
+                image_show: this.http_get("/templates/rdftypes/image_show.html"),
                 // treeview templates
                 treeview: this.http_get("/templates/treeview.html"),
                 treeview_folder: this.http_get("/templates/treeview_folder.html")
@@ -258,6 +273,7 @@ var wikinextHelper = (function () {
                     ich.addTemplate("owl_sameas", data.owl_sameas);
                     ich.addTemplate("ns_type", data.ns_type);
                     ich.addTemplate("schema_comment", data.schema_comment);
+                    ich.addTemplate("image_show", data.image_show);
 
                     ich.addTemplate("treeview", data.treeview);
                     ich.addTemplate("treeview_folder", data.treeview_folder);
@@ -325,8 +341,10 @@ var wikinextHelper = (function () {
                 var found_value = value;
                 _.each(vars, function (name) {
                     if (!_.isUndefined(found_value[name])) {
-                        var template = ich.templates[rdftypes[found_value[name].type]];
-                        if (typeof template != 'undefined') {
+                        if (found_value[name].type == 'uri' && checkExtention(found_value[name].value))
+                            a = ich.image_show(found_value[name]);
+                        else
+                        if (typeof ich.templates[rdftypes[found_value[name].type]] != 'undefined') {
                             a = ich[rdftypes[found_value[name].type]](found_value[name]);
                         }
                         else

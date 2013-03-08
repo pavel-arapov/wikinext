@@ -36,6 +36,8 @@ function SPARQL()
     //The SPARQL request
     this.sparql 		= "";
 
+    this.ajax = null;
+
     //Arrays to build the request
     this.prefixes 		= [];
     this.distinctSelect = false;
@@ -44,7 +46,7 @@ function SPARQL()
     this.orders			= [];
     this.limitNb		= null;
     this.offsetNb		= null;
-    this.unions 		= []; //array of SPARQL object
+    this.unions 		= false;
 
 
     /**
@@ -53,17 +55,18 @@ function SPARQL()
      *
      **/
 
-    this.prefixe 		= function(ns, x) 	{ this.prefixes.push("PREFIX " + ns + ": <" + x + ">"); return this; };
-    this.distinct		= function(bool)	{ this.distinctSelect = bool; return this;}
-    this.variable 		= function(x) 		{ this.variables.push(x); return this; };
-    this.where 			= function(x, y, z) { this.wheres.push(x + " " + y + " " + z); return this; };
-    this.optionalWhere 	= function(x, y, z) { this.wheres.push("OPTIONAL {" + x + " " + y + " " + z + "}"); return this; };
-    this.union 			= function(x) 		{ this.unions.push(x); return this; };
-    this.filter 		= function(x) 		{ this.wheres.push("FILTER ( " + x + " )"); return this; };
-    this.orderBy 		= function(x) 		{ this.variables.push(x); return this; };
-    this.limit 			= function(x) 		{ this.limitNb = x; return this; };
-    this.offset 		= function(x) 		{ this.offestNb = x; return this; };
-    this.setInfo		= function(x) 		{ this.info = x; return this; };
+    this.prefixe 				= function(ns, x) 	{ this.prefixes.push("PREFIX " + ns + ": <" + x + ">"); return this; };
+    this.distinct				= function(bool)	{ this.distinctSelect = bool; return this;};
+    this.variable 				= function(x) 		{ this.variables.push(x); return this; };
+    this.where 					= function(x, y, z) { this.wheres.push(x + " " + y + " " + z); return this; };
+    this.optionalWhere 			= function(x, y, z) { this.wheres.push("OPTIONAL {" + x + " " + y + " " + z + "}"); return this; };
+    this.complexeOptionalWhere 	= function(x) 		{ this.wheres.push("OPTIONAL " + x.buildWhere()); return this; };
+    this.union 					= function(x) 		{ if(!this.unions) { this.unions = true; this.wheres.push(x.buildWhere()); }else{ this.wheres.push("UNION " + x.buildWhere()); } return this; };
+    this.filter 				= function(x) 		{ this.wheres.push("FILTER ( " + x + " )"); return this; };
+    this.orderBy 				= function(x) 		{ this.orders.push(x); return this; };
+    this.limit 					= function(x) 		{ this.limitNb = x; return this; };
+    this.offset 				= function(x) 		{ this.offestNb = x; return this; };
+    this.setInfo				= function(x) 		{ this.info = x; return this; };
 
     this.build 		= function() {
         var sp = "";
@@ -94,35 +97,37 @@ function SPARQL()
         //WHERES
         sp += "\nWHERE";
 
-        if(this.unions.length > 0) sp += "\n{";
+        //if(this.unions.length > 0) sp += "\n{";
 
         var w = this.buildWhere();
 
         sp += w;
 
         //UNIONS
-        var first = true;
-        for(var i = 0; i < this.unions.length; i++)
-        {
-            var u = this.unions[i].buildWhere();
+        /*var first = true;
+         for(var i = 0; i < this.unions.length; i++)
+         {
+         var u = this.unions[i].buildWhere();
 
-            if(u != "")
-            {
-                if(first)
-                {
-                    first = false;
-                    if(w != "") sp += "UNION";
-                }else sp += "UNION";
+         if(u != "")
+         {
+         if(first)
+         {
+         first = false;
+         if(w != "") sp += "UNION";
+         }else sp += "UNION";
 
-                sp += u;
-            }
-        }
+         sp += u;
+         }
+         }
 
-        if(this.unions.length > 0) sp += "\n}\n";
+         if(this.unions.length > 0) sp += "\n}\n";
+         */
 
         //ORDER BY
         if(this.orders.length > 0)
         {
+            sp += "ORDER BY ";
             var first = true;
             for(var i = 0; i < this.orders.length; i++)
             {
@@ -150,7 +155,7 @@ function SPARQL()
         for(var i = 0; i < this.wheres.length; i++)
         {
             sp += this.wheres[i];
-            if(i < this.wheres.length - 1) sp += " .";
+            if(i < this.wheres.length - 1 && sp[sp.length-2] != '}') sp += " .";
 
             sp += "\n";
         }
@@ -160,40 +165,27 @@ function SPARQL()
         return sp;
     };
 
-    this.execute = function(callback, generateDBPedia) {
+    this.execute = function(callback) {
 
         if(this.sparql == "") this.sparql = this.build();
+        //console.log(this.sparql);
         var cur = this;
         var data = {};
         data[this.formatParam] = this.format;
         data[this.queryParam] = this.sparql;
-        $.ajax({
+        this.ajax = $.ajax({
             type: this.method,
             url: this.baseUrl,
             data: data,
             dataType: this.format
         }).done(function( data ) {
-                var ret = data;
-                if(generateDBPedia == true && cur.format == 'json')
-                {
-                    ret = [];
-                    var vars = [];
-                    for(var i = 0; i < data.results.bindings.length; i++)
-                    {
-                        var obj = {};
-                        for(var j = 0; j < data.head.vars.length; j++)
-                        {
-                            obj[data.head.vars[j]] = data.results.bindings[i][data.head.vars[j]]['value'];
-                        }
-
-                        ret.push(obj);
-                    }
-
-                }
-
-                callback(ret, cur.info);
+                callback(data, cur.info);
                 cur.sparql = "";
             });
+    }
+
+    this.abort = function() {
+        if(this.ajax != null) this.ajax.abort();
     }
 
 }
