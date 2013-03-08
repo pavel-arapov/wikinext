@@ -162,6 +162,9 @@ app.post('/update_cache',routes.update_cache);
 app.post('/load_cache',routes.load_cache);
 // page
 app.post('/create',routes.create);
+app.post('/change_parent',routes.updateParent);
+// tree
+app.get('/links',routes.loadPagesTree);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

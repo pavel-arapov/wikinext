@@ -102,6 +102,9 @@ app.post('/upload',routes.upload);
 app.post('/deleteattach',routes.deleteattach);
 app.post('/attachlibrary',routes.attach_library);
 app.post('/update_cache',routes.update_cache);
+app.post('/change_parent',routes.updateParent);
+// tree
+app.get('/links',routes.loadPagesTree);
 
 var port = process.env.PORT || config.port_sharejs;
 app.listen(port, function () {

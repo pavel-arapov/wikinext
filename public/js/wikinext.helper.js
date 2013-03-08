@@ -248,7 +248,10 @@ var wikinextHelper = (function () {
                 ns_type:this.http_get("/templates/rdftypes/ns_type.html"),
                 owl_sameas:this.http_get("/templates/rdftypes/owl_sameas.html"),
                 schema_label:this.http_get("/templates/rdftypes/schema_label.html"),
-                schema_comment:this.http_get("/templates/rdftypes/schema_label.html")
+                schema_comment:this.http_get("/templates/rdftypes/schema_label.html"),
+                // treeview templates
+                treeview:this.http_get("/templates/treeview.html"),
+                treeview_folder:this.http_get("/templates/treeview_folder.html")
             }).next(function (data) {
                     ich.addTemplate("messageSuccess", data.messageSuccess);
                     ich.addTemplate("messageFail", data.messageFail);
@@ -258,7 +261,11 @@ var wikinextHelper = (function () {
                     ich.addTemplate("ns_type",data.ns_type);
                     ich.addTemplate("schema_comment",data.schema_comment);
 
+                    ich.addTemplate("treeview",data.treeview);
+                    ich.addTemplate("treeview_folder",data.treeview_folder);
+
                     console.log("templates loaded");
+                    self.constructTreeView();
                 });
             return d;
         },
@@ -425,6 +432,57 @@ var wikinextHelper = (function () {
             this.http_post("/create", {
                 page_name: title
             })
+        },
+        changeParentPage:function (pageid,parentid) {
+            var d = Deferred();
+            this.http_post("/change_parent", {pageid:pageid,parentid:parentid}).next(function(data){
+                d.call(data);
+            });
+            return d;
+        },
+        constructTreeView: function() {
+            // need to load tree from server
+            this.http_get("/links").next(function(result){
+                if (result.status == 'ok') {
+                    // construction
+                    // page = {_id,title,parent}
+                    //console.log(result.pages);
+                    var sorted = [];
+                    var sort_it_by_parent = function(parent, pages) {
+                        //_.each(pages,function(value,key) {
+                        for (var i = 0; i< pages.length; i++) {
+                            var value = pages[i];
+                            if (!_.isUndefined(value.parent) && value.parent.$id == parent._id) {
+                                parent.pages.push(value);
+                                sort_it_by_parent(value, pages);
+                            }
+                        }
+                    };
+                    _.each(result.pages, function(value,key) {
+                        value.pages = [];
+                        value.url = "/wiki/"+value._id;
+                        if (_.isUndefined(value.parent)) {
+                            sorted.push(value);
+                            sort_it_by_parent(value, result.pages);
+                        }
+                    });
+
+                    //console.log(sorted);
+                    var forTemplate = {};
+                    forTemplate.pages = sorted;
+                    console.log(forTemplate);
+                    //var html = { treeview_content:  };
+                    //console.log(html);
+                    $("#treeview-content").append(ich.treeview_folder(forTemplate));
+
+//                    var print_tree = function(children) {
+//                        for (var i = 0; i< children.length; i++) {
+//                            //if (children[i])
+//                        }
+//                    }
+
+                }
+            });
         }
     }
 })();

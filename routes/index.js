@@ -19,9 +19,9 @@ var _ = require('underscore');
 var winston = require('winston');
 //winston.add(winston.transports.File, { filename: 'debug.log' });
 
-function in_array (needle, haystack, argStrict) {
+function in_array(needle, haystack, argStrict) {
     var key = '',
-        strict = !! argStrict;
+        strict = !!argStrict;
 
     if (strict) {
         for (key in haystack) {
@@ -43,10 +43,10 @@ function in_array (needle, haystack, argStrict) {
 
 module.exports = function (dao) {
     return {
-        index:function (req, res) {
+        index: function (req, res) {
             var userid = "";
             var run = {
-                main_pages:dao.pages.findMain()
+                main_pages: dao.pages.findMain()
             };
             if (req.session.auth) {
                 userid = req.session.auth.userId;
@@ -55,21 +55,21 @@ module.exports = function (dao) {
             Deferred.parallel(run)
                 .next(function (data) {
                     res.render('index.html', {
-                        locals:{
-                            title:'WikiNEXT V2',
-                            auth:req.session.auth,
-                            login:req.session.auth ? false : true,
-                            pages:data['main_pages'],
-                            user_pages:data['user_pages']
+                        locals: {
+                            title: 'WikiNEXT V2',
+                            auth: req.session.auth,
+                            login: req.session.auth ? false : true,
+                            pages: data['main_pages'],
+                            user_pages: data['user_pages']
                         }});
                 });
 
         },
-        wiki:function (req, res) {
+        wiki: function (req, res) {
             var run = {
-                page:dao.pages.findById(req.params.id),
-                pages:dao.pages.findByParent(req.params.id),
-                libraries:dao.jslibraries.findAll()
+                page: dao.pages.findById(req.params.id),
+                pages: dao.pages.findByParent(req.params.id),
+                libraries: dao.jslibraries.findAll()
             };
             var page, pages, libraries;
             Deferred.parallel(run).next(function (data) {
@@ -81,11 +81,11 @@ module.exports = function (dao) {
                 next(function (parentid) {
                     function createNav(parentid) {
                         //console.log('nav');
-                        return dao.pages.findByIdLimited(parentid, {title:1, parent:1}).next(function (parent_page) {
+                        return dao.pages.findByIdLimited(parentid, {title: 1, parent: 1}).next(function (parent_page) {
                             //console.log('add nav');
                             page['nav'].unshift({
-                                _id:parent_page._id.toString(),
-                                title:parent_page.title
+                                _id: parent_page._id.toString(),
+                                title: parent_page.title
                             });
                             if (!_.isUndefined(parent_page['parent'])) {
                                 return Deferred.call(createNav, parent_page['parent']['oid'].toString());
@@ -109,9 +109,9 @@ module.exports = function (dao) {
                     // plugged libraries
                     page['js'] = [];
                     if (_.isArray(page['libraries'])) {
-                        _.each(libraries,function(value,key){
-                            if (in_array(value._id.toString(),page['libraries'])){
-                                page['js'].push({src:value.name});
+                        _.each(libraries, function (value, key) {
+                            if (in_array(value._id.toString(), page['libraries'])) {
+                                page['js'].push({src: value.name});
                             }
                         });
                     }
@@ -119,18 +119,18 @@ module.exports = function (dao) {
                     console.log(page);
 
                     res.render('wiki.html', {
-                        locals:{
-                            page_id:page._id,
-                            title:'WikiNEXT V2',
-                            auth:req.session.auth,
-                            login:req.session.auth ? false : true,
-                            page:page,
-                            pages:pages,
-                            libraries:libraries
+                        locals: {
+                            page_id: page._id,
+                            title: 'WikiNEXT V2',
+                            auth: req.session.auth,
+                            login: req.session.auth ? false : true,
+                            page: page,
+                            pages: pages,
+                            libraries: libraries
                         }});
                 });
         },
-        create:function (req, res) {
+        create: function (req, res) {
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
@@ -159,24 +159,24 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        edit:function (req, res) {
+        edit: function (req, res) {
             //console.log("edit");
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
                 dao.users.findById(data.userid, function (error, result) {
                     data.last_modified_by = {
-                        name:result.name
+                        name: result.name
                     };
                     var run = {
-                        page:dao.pages.findById(req.params.id),
-                        libraries:dao.jslibraries.findAll()
+                        page: dao.pages.findById(req.params.id),
+                        libraries: dao.jslibraries.findAll()
                     };
                     Deferred.parallel(run).next(function (data) {
                         winston.info(data['libraries']);
                         winston.info(data['page']);
-                        _.each(data['libraries'],function(value,key){
-                            if (in_array(value._id.toString(),data['page']['libraries'])){
+                        _.each(data['libraries'], function (value, key) {
+                            if (in_array(value._id.toString(), data['page']['libraries'])) {
                                 data['libraries'][key].plugged = "unplug";
                             }
                             else {
@@ -185,13 +185,13 @@ module.exports = function (dao) {
                         });
 
                         res.render('edit.html', {
-                            locals:{
-                                title:'WikiNEXT V2',
-                                auth:req.session.auth,
-                                login:req.session.auth ? false : true,
-                                page:data['page'],
-                                page_id:data['page']['_id'],
-                                libraries:data['libraries']
+                            locals: {
+                                title: 'WikiNEXT V2',
+                                auth: req.session.auth,
+                                login: req.session.auth ? false : true,
+                                page: data['page'],
+                                page_id: data['page']['_id'],
+                                libraries: data['libraries']
                             }});
                     });
                 });
@@ -199,7 +199,7 @@ module.exports = function (dao) {
                 res.redirect("/");
             }
         },
-        upload:function (req, res) {
+        upload: function (req, res) {
             if (req.session.auth) {
                 //var data = {};
                 //data.userid = req.session.auth.userId;
@@ -215,7 +215,7 @@ module.exports = function (dao) {
                     var pageid = req.header('x-page-id');
                     var path_upload = __dirname + '/../public/upload/';
                     if (!fs.existsSync(path_upload + pageid)) {
-                        winston.info("mkdir: "+path_upload + pageid);
+                        winston.info("mkdir: " + path_upload + pageid);
                         fs.mkdirSync(path_upload + pageid);
                     }
 
@@ -227,11 +227,11 @@ module.exports = function (dao) {
                     });
                     req.on('end', function () {
                         winston.info("finished");
-                        res.writeHead(200, { 'Content-Type':'application/json' });
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({
-                            success:true
+                            success: true
                         }));
-                        dao.pages.attachFile(pageid, {"index":crypto.createHash('md5').update(fName).digest("hex"), "path":'upload/' + pageid, "type":fType, "name":fName, "uploaded_at":new Date()}, function (data) {
+                        dao.pages.attachFile(pageid, {"index": crypto.createHash('md5').update(fName).digest("hex"), "path": 'upload/' + pageid, "type": fType, "name": fName, "uploaded_at": new Date()}, function (data) {
                             if (data != null)
                                 winston.info(data);
                             else
@@ -247,7 +247,7 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        save:function (req, res) {
+        save: function (req, res) {
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
@@ -268,15 +268,15 @@ module.exports = function (dao) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
                         var version = {
-                            article:result.article,
-                            app:result.app,
-                            title:result.title,
-                            version:result.version,
-                            saved_by:data['last_modified_by'],
-                            saved_at:new Date()
+                            article: result.article,
+                            app: result.app,
+                            title: result.title,
+                            version: result.version,
+                            saved_by: data['last_modified_by'],
+                            saved_at: new Date()
                         };
                         dao.pageversions.insert(req.params.id, data.userid, version, function (error, result) {
-                            res.send({status:"ok"});
+                            res.send({status: "ok"});
                         });
 
                     });
@@ -289,10 +289,10 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        clone:function (req, res) {
+        clone: function (req, res) {
             if (req.session.auth) {
                 var run = {
-                    page:dao.pages.findById(req.params.id)
+                    page: dao.pages.findById(req.params.id)
                 };
                 Deferred.parallel(run).next(function (arr) {
                     var data_orig = arr['page'];
@@ -323,7 +323,7 @@ module.exports = function (dao) {
                 });
             }
         },
-        deleteattach:function (req, res) {
+        deleteattach: function (req, res) {
             var index = req.body.index;
             var pageid = req.body.pageid;
             dao.pages.findById(pageid).next(function (page) {
@@ -347,7 +347,7 @@ module.exports = function (dao) {
                 dao.pages.deattachFile(pageid, index, function (data) {
                     if (data != null) {
                         //console.log(data);
-                        res.send({status:"ko", error:data});
+                        res.send({status: "ko", error: data});
                     }
                     else {
                         //console.log("information in db was successfully updated")
@@ -362,43 +362,43 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        attach_library:function (req, res) {
+        attach_library: function (req, res) {
             // received from page
             var pageid = req.body.pageid;
             var libraryid = req.body.libraryid;
 
             // need to find all information in our database
             var find_information = {
-                page : dao.pages.findById(pageid),
+                page: dao.pages.findById(pageid),
                 library: dao.jslibraries.findById(libraryid)
             };
 
             // run queries
-            Deferred.parallel(find_information).next(function(data){
+            Deferred.parallel(find_information).next(function (data) {
                 //console.log(data['page']);
                 //console.log(data['library']);
                 // do we have already this library attached to the page?
                 if (_.isArray(data['page']['libraries'])) {
-                    if (!in_array(libraryid,data['page']['libraries'])) {
-                        dao.pages.plugJSLibrary(pageid,libraryid).next(function(){
-                            res.send({status:"ok"});
-                        }).error(function(error){
-                                res.send({status:"ko",error:error})
+                    if (!in_array(libraryid, data['page']['libraries'])) {
+                        dao.pages.plugJSLibrary(pageid, libraryid).next(function () {
+                            res.send({status: "ok"});
+                        }).error(function (error) {
+                                res.send({status: "ko", error: error})
                             });
                     }
                     else {
-                        dao.pages.unplugJSLibrary(pageid, libraryid).next(function(){
-                            res.send({status:"ok"});
-                        }).error(function(error){
-                                res.send({status:"ko",error:error});
+                        dao.pages.unplugJSLibrary(pageid, libraryid).next(function () {
+                            res.send({status: "ok"});
+                        }).error(function (error) {
+                                res.send({status: "ko", error: error});
                             });
                     }
                 }
                 else {
-                    dao.pages.plugJSLibrary(pageid,libraryid).next(function(){
-                        res.send({status:"ok"});
-                    }).error(function(error){
-                            res.send({status:"ko",error:error})
+                    dao.pages.plugJSLibrary(pageid, libraryid).next(function () {
+                        res.send({status: "ok"});
+                    }).error(function (error) {
+                            res.send({status: "ko", error: error})
                         });
                 }
 
@@ -410,23 +410,23 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        update_cache:function (req,res) {
+        update_cache: function (req, res) {
             // id of the page
             var pageid = req.body.pageid;
             // query name
             var name = req.body.name;
             // query result
             var result = req.body.result;
-            dao.pages.findById(pageid).next(function(page){
+            dao.pages.findById(pageid).next(function (page) {
                 if (!_.isObject(page.cache))
                     page.cache = {};
                 result.cache_updated = new Date();
                 page.cache[name] = result;
                 //console.log(page.cache);
-                dao.pages.updateCache(pageid,page.cache).next(function(){
-                    res.send({status:"ok"});
-                }).error(function(error){
-                        res.send({status:"ko",error: error});
+                dao.pages.updateCache(pageid, page.cache).next(function () {
+                    res.send({status: "ok"});
+                }).error(function (error) {
+                        res.send({status: "ko", error: error});
                     });
             });
         },
@@ -435,15 +435,15 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        load_cache: function(req,res) {
+        load_cache: function (req, res) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid).next(function(page){
+            dao.pages.findById(pageid).next(function (page) {
                 if (!_.isObject(page.cache))
                     page.cache = {};
                 // sending cache to a client
-                res.send({cache:page.cache});
+                res.send({cache: page.cache});
             });
         },
         /**
@@ -451,24 +451,44 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        remove:function(req,res) {
+        remove: function (req, res) {
             // id of the page
             var pageid = req.params.id;
             if (req.session.auth) {
                 // current user
                 var userid = req.session.auth.userId;
 
-                dao.pages.findById(pageid).next(function(page) {
+                dao.pages.findById(pageid).next(function (page) {
                     // only owner of a page can delete it
                     if (page.userid == userid) {
-                        dao.pages.remove(pageid,function(msg){
+                        dao.pages.remove(pageid, function (msg) {
                             console.log(msg);
-                            res.send({status:"ok"});
+                            res.send({status: "ok"});
                             //res.redirect("/home");
                         });
                     }
                 });
             }
+        },
+        updateParent: function (req, res) {
+            // id of the page
+            var pageid = req.body.pageid;
+            // id of the parent page
+            var parentid = req.body.parentid;
+            if (req.session.auth && pageid != parentid) {
+                dao.pages.updateParent(pageid, parentid).next(function (page) {
+                    //res.redirect("/wiki/" + pageid);
+                    res.send({status:"ok"});
+                }).error(function (error) {
+                        console.log(error);
+                    });
+            }
+
+        },
+        loadPagesTree: function (req, res) {
+            dao.pages.findAllLinks().next(function (pages) {
+                res.send({status: "ok", pages: pages});
+            });
         }
     };
 };
