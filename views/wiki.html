@@ -54,7 +54,7 @@
     </style>
     <script type="text/javascript">
             window.launch_wiki_script = (function(){
-                var __data = {"app_name": "Graph example"};
+                var __data = {};
                 var application = (function(){
                     {{#page}}
                     {{{app}}}
@@ -214,10 +214,7 @@
         </p>
     </div>
     <p>Tags:
-        <a href="#"><span class="label label-info">Tag</span></a>
-        <a href="#"><span class="label label-info">Tag</span></a>
-        <a href="#"><span class="label label-info">Tag</span></a>
-        <a href="#"><span class="label label-info">Tag</span></a>
+        <a href="#"><span class="label label-info">no Tags</span></a>
         {{#page}}
         | <i class="icon-user"></i> <a href="#">{{created_by}}</a>
         | <i class="icon-calendar"></i> {{created_at}}
@@ -225,7 +222,7 @@
         | <i class="icon-user"></i> <a href="#">{{last_modified_by}}</a>
         | <i class="icon-calendar"></i> {{last_modified_at}}
         {{/last_modified_by}}
-        | <i class="icon-comment"></i> <a href="#">3 Comments</a>
+        | <i class="icon-comment"></i> <a href="#">0 Comments</a>
         | <i class="icon-share"></i> <a href="#">Version {{version}}</a>
         {{/page}}
     </p>
@@ -265,21 +262,6 @@
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Close</a>
         <a href="#" class="btn btn-primary" id="delete-page-button">Delete</a>
-    </div>
-</div>
-
-<div class="modal hide" id="select-page-dialog">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">?</button>
-        <h3>Select a page</h3>
-    </div>
-    <div class="modal-body">
-        <div class="css-treeview" id="treeview-content">
-        </div>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">Close</a>
-        <a href="#" class="btn btn-primary" id="select-page-button">Select</a>
     </div>
 </div>
 

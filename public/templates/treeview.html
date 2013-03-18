@@ -1,5 +1,23 @@
-<div class="css-treeview">
-    <ul>
-    {{treeview_content}}
-    </ul>
+<div class="modal hide" id="select-page-dialog">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">?</button>
+        <h3>Select a page</h3>
+    </div>
+    <div class="modal-body">
+        <div class="css-treeview" id="treeview-content">
+            {{#pages}}
+            <li>
+                <input type="checkbox" id="item-{{_id}}" /><label for="item-{{_id}}">{{title}}</label>
+                <ul>
+                    {{> treeview_folder}}
+                    <li><a href="#" class="treeview_item" data-id="{{_id}}" data-url="{{url}}">{{title}}</a></li>
+                </ul>
+            </li>
+            {{/pages}}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" id="select-page-button">Select</a>
+    </div>
 </div>

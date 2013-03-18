@@ -1,6 +1,8 @@
 var wikinextHelper = (function () {
     var countLoading = 0;
 
+    var selectDialogCallback = function(data) {};
+
     function loaderCount(count) {
         countLoading += count;
         if (countLoading > 0) {
@@ -490,23 +492,33 @@ var wikinextHelper = (function () {
                             sort_it_by_parent(value, result.pages);
                         }
                     });
-
-                    //console.log(sorted);
                     var forTemplate = {};
                     forTemplate.pages = sorted;
-                    console.log(forTemplate);
-                    //var html = { treeview_content:  };
-                    //console.log(html);
-                    $("#treeview-content").append(ich.treeview_folder(forTemplate));
 
-//                    var print_tree = function(children) {
-//                        for (var i = 0; i< children.length; i++) {
-//                            //if (children[i])
-//                        }
-//                    }
-
+                    $("body").append(ich.treeview(forTemplate));
+                    // click on a page
+                    $(".treeview_item").click(function(){
+                        //console.log($(this).data('url'));
+                        var data = {
+                            url : $(this).data('url'),
+                            id : $(this).data('id')
+                        };
+                        // send data to a callback function
+                        selectDialogCallback(data);
+                        // hide dialog
+                        $("#select-page-dialog").modal('hide');
+                    });
                 }
             });
+        },
+        /**
+         * Select Page Dialog invoke
+         * @param callback - function has 1 parameter - object, currently has only url and id ( data['url'] )
+         */
+        selectPageDialog : function(callback) {
+            $("#select-page-dialog").modal('show');
+            selectDialogCallback = callback;
+
         }
     }
 })();
