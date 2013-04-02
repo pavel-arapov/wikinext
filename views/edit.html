@@ -504,8 +504,9 @@
         });
 
         $("#editor-wysiwyg").click(function(){
-            //editorHTML.toTextArea();
-            $("#textAreaArticle").show();
+            editorHTML.toTextArea();
+            //$("#textAreaArticle").hide();
+            //$("#textAreaArticle").show();
             $("#textAreaArticle").wysihtml5();
         });
 
