@@ -351,6 +351,7 @@
         editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
             mode: "text/html",
             tabMode: "indent",
+            viewportMargin: "Infinity",
             lineWrapping: true
         });
 
@@ -379,6 +380,7 @@
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
             mode: "javascript",
             tabMode: "indent",
+            viewportMargin: "Infinity",
             lineNumbers: true,
             lineWrapping: true
         });
