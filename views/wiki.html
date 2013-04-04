@@ -10,7 +10,7 @@
     <script type="text/javascript" src="/js/prettify.js"></script>
     <script type="text/javascript" src="/nowjs/now.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/ICanHaz.js"></script>
+    <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
     <script type="text/javascript" src="/js/jsdeferred.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/underscore-min.js"></script>
@@ -89,7 +89,6 @@
                         // start wiki
                         wikinextHelper.init().next(function(){});
                         var data = launch_wiki_script.construct();
-                        ich.grabTemplates();
                         var article = ich.article_template(data);
                         $("#article_show").append(article);
                         wikinextHelper.preparePrettify($("#article_show"));
@@ -107,23 +106,6 @@
         {{#page}}
             {{{article}}}
         {{/page}}
-    </script>
-    <script type="text/javascript">
-        var i,
-                l,
-                scripts = document.getElementById("article_template").getElementsByTagName('script'),
-                script,
-                trash = [];
-        for (i = 0, l = scripts.length; i < l; i++) {
-            script = scripts[i];
-            if (script && script.innerHTML && script.id && (script.type === "text/html" || script.type === "text/x-icanhaz")) {
-                ich.addTemplate(script.id, trim(script.innerHTML));
-                trash.unshift(script);
-            }
-        }
-        for (i = 0, l = trash.length; i < l; i++) {
-            trash[i].parentNode.removeChild(trash[i]);
-        }
     </script>
 </head>
 <body onload="prettyPrint();">
