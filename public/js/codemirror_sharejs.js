@@ -88,7 +88,7 @@
             applyToShareJS(editorDoc, tc, doc);
             return check();
         };
-        editorDoc.setOption("onChange", editorListener);
+        editorDoc.on("change", editorListener);
         myIndexFromPos = function (line, ch, value) {
             var myIndex = 0;
             var count = 0;

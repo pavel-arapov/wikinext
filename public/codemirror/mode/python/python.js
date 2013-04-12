@@ -1,16 +1,16 @@
 CodeMirror.defineMode("python", function(conf, parserConf) {
     var ERRORCLASS = 'error';
-    
+
     function wordRegexp(words) {
         return new RegExp("^((" + words.join(")|(") + "))\\b");
     }
     
-    var singleOperators = new RegExp("^[\\+\\-\\*/%&|\\^~<>!]");
-    var singleDelimiters = new RegExp('^[\\(\\)\\[\\]\\{\\}@,:`=;\\.]');
-    var doubleOperators = new RegExp("^((==)|(!=)|(<=)|(>=)|(<>)|(<<)|(>>)|(//)|(\\*\\*))");
-    var doubleDelimiters = new RegExp("^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&=)|(\\|=)|(\\^=))");
-    var tripleDelimiters = new RegExp("^((//=)|(>>=)|(<<=)|(\\*\\*=))");
-    var identifiers = new RegExp("^[_A-Za-z][_A-Za-z0-9]*");
+    var singleOperators = parserConf.singleOperators || new RegExp("^[\\+\\-\\*/%&|\\^~<>!]");
+    var singleDelimiters = parserConf.singleDelimiters || new RegExp('^[\\(\\)\\[\\]\\{\\}@,:`=;\\.]');
+    var doubleOperators = parserConf.doubleOperators || new RegExp("^((==)|(!=)|(<=)|(>=)|(<>)|(<<)|(>>)|(//)|(\\*\\*))");
+    var doubleDelimiters = parserConf.doubleDelimiters || new RegExp("^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&=)|(\\|=)|(\\^=))");
+    var tripleDelimiters = parserConf.tripleDelimiters || new RegExp("^((//=)|(>>=)|(<<=)|(\\*\\*=))");
+    var identifiers = parserConf.identifiers|| new RegExp("^[_A-Za-z][_A-Za-z0-9]*");
 
     var wordOperators = wordRegexp(['and', 'or', 'not', 'is', 'in']);
     var commonkeywords = ['as', 'assert', 'break', 'class', 'continue',
@@ -160,7 +160,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
         var singleline = delimiter.length == 1;
         var OUTCLASS = 'string';
         
-        return function tokenString(stream, state) {
+        function tokenString(stream, state) {
             while (!stream.eol()) {
                 stream.eatWhile(/[^'"\\]/);
                 if (stream.eat('\\')) {
@@ -183,7 +183,9 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
                 }
             }
             return OUTCLASS;
-        };
+        }
+        tokenString.isString = true;
+        return tokenString;
     }
     
     function indent(stream, state, type) {
@@ -227,7 +229,7 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
             while (state.scopes[0].offset !== _indent) {
                 state.scopes.shift();
             }
-            return false
+            return false;
         } else {
             if (type === 'py') {
                 state.scopes[0].offset = stream.indentation();
@@ -323,9 +325,9 @@ CodeMirror.defineMode("python", function(conf, parserConf) {
             return style;
         },
         
-        indent: function(state, textAfter) {
+        indent: function(state) {
             if (state.tokenize != tokenBase) {
-                return 0;
+                return state.tokenize.isString ? CodeMirror.Pass : 0;
             }
             
             return state.scopes[0].offset;

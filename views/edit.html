@@ -348,10 +348,19 @@
             }, false);
         })();
 
-        editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
-            mode: "text/html",
+
+        // Define an extended mixed-mode that understands vbscript and
+        // leaves mustache/handlebars embedded templates in html mode
+        var mixedMode = {
+            name: "htmlmixed",
+            scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,
+                mode: null},
+                {matches: /(text|application)\/(x-)?vb(a|script)/i,
+                    mode: "vbscript"}]
+        };
+        var editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"), {
+            mode: mixedMode,
             tabMode: "indent",
-            viewportMargin: "Infinity",
             lineWrapping: true
         });
 
@@ -378,11 +387,9 @@
         });
 
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
-            mode: "javascript",
-            tabMode: "indent",
-            viewportMargin: "Infinity",
             lineNumbers: true,
-            lineWrapping: true
+            matchBrackets: true,
+            continueComments: "Enter"
         });
 
         sharejs.open(page._id, 'text', function(error, doc) {
@@ -435,6 +442,7 @@
             var preview = ich.preview(editorJavaScript.getValue());
             $("#preview_in").empty();
             $("#preview_in").append(preview);
+            $('#preview_dialog').modal('show');
         });
 
         $(".add-tag").click(function(){
@@ -515,9 +523,9 @@
         $("#editor-html").click(function(){
             editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
                 mode: "text/html",
-                tabMode: "indent",
-                lineWrapping: true
+                tabMode: "indent"
             });
+            $("#textAreaArticle").wysihtml5({})
         });
 
         $("#changeParent").click(function () {
@@ -655,7 +663,7 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="span7" id="main_page_module">
+        <div class="span12" id="main_page_module">
 
             <div class="tabbable">
                 <ul class="nav nav-tabs" id="edit_tabs">
@@ -703,16 +711,24 @@
             </div>
 
         </div>
-        <div class="span4">
-            <p class="muted">Preview panel</p>
-            <div id="preview_in">
+        <div class="modal hide fade" id="preview_dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Preview dialog</h3>
+            </div>
+            <div class="modal-body">
+                <p><div id="preview_in">
 
+            </div></p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" data-dismiss="modal">Close</a>
             </div>
         </div>
-        <div class="span1">
-            <p class="muted">Currently edit</p>
-            <div class="users_online"></div>
-        </div>
+        <!--<div class="span1">-->
+            <!--<p class="muted">Currently edit</p>-->
+            <!--<div class="users_online"></div>-->
+        <!--</div>-->
     </div><!--/row-->
     <hr>
     <div class="row-fluid">
