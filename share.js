@@ -131,61 +131,25 @@ var sharejs_auth = function(agent,action){
         }
     };
 
-    //function auth(agent,action){
-      //  var d = new Deferred();
-    if (action.type == 'connect'){
-        var id = unescape(parseCookie(agent.headers.cookie)['connect.sid']);
-        //console.log("Session ID: "+id);
-        //console.log(this.user);
-        action.accept();
-        mongoStore.get(id, function(err, sess){
-            if (err){
-                console.log(err.toString());
-                console.log("reject");
-                //action.reject();
-                //d.fail(err);
-            }
-            else{
-                //console.log("That user who joined? his userId is "+sess.auth.userId);
-                //console.log(sess);
-                //clients[self.user.clientId].sess = sess;
-                //console.log(sess);
-                //console.log("accept");
-                //action.accept();
-                //d.call(sess);
-            }
-            finished = true;
-        });
-        //wait_result();
-//        while (!finished){
-//            setTimeout(function(){},10);
-//        }
-        //setTimeout(wait_result,500);
-
-        console.log("return");
-       // return d;
-    //}
-
-
-//        Deferred.next(function () {
-//            console.log("Hello!");
-//            return Deferred.wait(5);
-//        }).
-//            next(function () {
-//                console.log("World!");
-//            });
-
-        //Deferred.next(function () {
-        //    return auth(agent,action)}
-        //).next(function () {console.log("finished")});
-    }
-    else {
-        action.accept();
-    }
-    //console.log("exit");
+//    if (action.type == 'connect'){
+//        var id = unescape(parseCookie(agent.headers.cookie)['connect.sid']);
+//        action.accept();
+//        mongoStore.get(id, function(err, sess){
+//            if (err){
+//                console.log(err.toString());
+//                console.log("reject");
+//            }
+//            else{
+//            }
+//            finished = true;
+//        });
+//
+//        console.log("return");
+//    }
+//    else {
+//        action.accept();
+//    }
     return action;
-    //return d;
-    //action.accept();
 };
 
 var share_js_deferred = function (agent, action){

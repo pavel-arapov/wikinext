@@ -95,6 +95,15 @@
                         wikinextHelper.preparePrettify($("#article_show"));
                         launch_wiki_script.afterConstruct();
                         wikinextHelper.updateContent();
+
+                        $("#goto").click(function () {
+                            // invoking select page dialog
+                            wikinextHelper.selectPageDialog(function (data) {
+                                // go to another page
+                                location.href = '/wiki/'+data['id'];
+                            });
+                            return false;
+                        });
                     });
                     //});
     </script>
@@ -153,7 +162,7 @@
                     {{#facebook}}
                     {{#user}}
                     <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
-                    <li><a data-toggle="modal" href="#select-page-dialog">Select Page</a></li>
+                    <li><a href="#" id="goto">Go To Page</a></li>
                     {{#page}}
                     <li><a href="/wiki/{{_id}}/edit">Edit</a></li>
                     <li><a href="/wiki/{{_id}}/clone">Clone</a></li>
