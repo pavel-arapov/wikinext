@@ -565,7 +565,7 @@
             var errors = JSLINT.data().errors;
             console.log(errors);
             _.each(errors, function (value) {
-                if (!_.isUndefined(value)) {
+                if (value != null) {
                     var info = editorJavaScript.lineInfo(value.line - 1);
                     editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
                 }
