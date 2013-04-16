@@ -165,9 +165,9 @@ module.exports = function (dao) {
                 var data = {};
                 data.userid = req.session.auth.userId;
                 dao.users.findById(data.userid, function (error, result) {
-                    data.last_modified_by = {
-                        name: result.name
-                    };
+//                    data.last_modified_by = {
+//                        name: result.name
+//                    };
                     var run = {
                         page: dao.pages.findById(req.params.id),
                         libraries: dao.jslibraries.findAll()

@@ -78,7 +78,7 @@ app.configure('development', function () {
 });
 
 app.configure('production', function () {
-    app.use(express.errorHandler());
+    app.use(express.errorHandler({ dumpExceptions:true, showStack:true }));
 });
 
 // Routes
@@ -151,12 +151,12 @@ var sharejs_auth = function(agent,action){
 //    }
     return action;
 };
-
-var share_js_deferred = function (agent, action){
-    Deferred.next(function() {
-        return sharejs_auth(agent,action);
-    });
-}
+//
+//var share_js_deferred = function (agent, action){
+//    Deferred.next(function() {
+//        return sharejs_auth(agent,action);
+//    });
+//}
 
 var options = {db: {type: 'none'}, auth: sharejs_auth}; // See docs for options. {type: 'redis'} to enable persistance.
 // Attach the sharejs REST and Socket.io interfaces to the server
