@@ -561,7 +561,9 @@
 
         $("#jslint").click(function () {
             editorJavaScript.clearGutter("errors");
-            JSLINT(editorJavaScript.getValue(), {});
+            JSLINT(editorJavaScript.getValue(), {
+                es5: true, white: true, devel: true, browser: true
+            });
             var errors = JSLINT.data().errors;
             console.log(errors);
             _.each(errors, function (value) {
