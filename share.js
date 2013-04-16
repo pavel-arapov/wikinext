@@ -4,10 +4,14 @@ var express = require('express')
     , mustache = require('mustache')
     , Deferred = require('jsdeferred').Deferred
     , mongo = require('mongoskin')
+    , winston = require('winston')
     , parseCookie = require('connect').utils.parseCookie
     , MongoStore = require('connect-mongodb');
 
 require('./config.settings'); // include settings
+
+winston.add(winston.transports.File, { filename: config.logger_file });
+winston.info('WikiNEXTSync is starting');
 
 //var server = connect(
 //    connect.logger(),
@@ -94,6 +98,9 @@ app.get('/home', function(req,res){
 //app.get('/create',routes.create);
 app.get('/wiki/:id', function(req,res){
     res.redirect(config.host_uri+"/wiki/"+req.params.id);
+});
+app.get('/logout', function(req,res){
+    res.redirect(config.host_uri+"/logout");
 });
 app.get('/wiki/:id/edit',routes.edit);
 app.get('/wiki/:id/app',routes.app);

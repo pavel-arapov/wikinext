@@ -172,15 +172,15 @@ module.exports = function (dao) {
                         page: dao.pages.findById(req.params.id),
                         libraries: dao.jslibraries.findAll()
                     };
-                    Deferred.parallel(run).next(function (data) {
-                        winston.info(data['libraries']);
-                        winston.info(data['page']);
-                        _.each(data['libraries'], function (value, key) {
-                            if (in_array(value._id.toString(), data['page']['libraries'])) {
-                                data['libraries'][key].plugged = "unplug";
+                    Deferred.parallel(run).next(function (d) {
+                        //winston.info(d['libraries']);
+                        //winston.info(d['page']);
+                        _.each(d['libraries'], function (value, key) {
+                            if (in_array(value._id.toString(), d['page']['libraries'])) {
+                                d['libraries'][key].plugged = "unplug";
                             }
                             else {
-                                data['libraries'][key].plugged = "plug";
+                                d['libraries'][key].plugged = "plug";
                             }
                         });
 
@@ -189,9 +189,9 @@ module.exports = function (dao) {
                                 title: 'WikiNEXT V2',
                                 auth: req.session.auth,
                                 login: req.session.auth ? false : true,
-                                page: data['page'],
-                                page_id: data['page']['_id'],
-                                libraries: data['libraries']
+                                page: d['page'],
+                                page_id: d['page']['_id'],
+                                libraries: d['libraries']
                             }});
                     });
                 });
