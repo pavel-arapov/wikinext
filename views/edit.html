@@ -559,17 +559,19 @@
             });
         });
 
-        $("#jslint").click(function(){
+        $("#jslint").click(function () {
             editorJavaScript.clearGutter("errors");
             JSLINT(editorJavaScript.getValue(), {});
             var errors = JSLINT.data().errors;
             console.log(errors);
-            _.each(errors, function(value){
-                var info = editorJavaScript.lineInfo(value.line - 1);
-                editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
+            _.each(errors, function (value) {
+                if (!_.isUndefined(value)) {
+                    var info = editorJavaScript.lineInfo(value.line - 1);
+                    editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
+                }
             });
-            $('.error a').tooltip({container:'body', placement:'right'});
-        })
+            $('.error a').tooltip({container: 'body', placement: 'right'});
+        });
 
         function makeMarker(reason) {
             var marker = document.createElement("div");
