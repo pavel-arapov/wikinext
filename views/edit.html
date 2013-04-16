@@ -14,6 +14,7 @@
 <script type="text/javascript" src="/js/underscore-min.js"></script>
 <script type="text/javascript" src="/js/backbone-min.js"></script>
 <script type="text/javascript" src="/js/wikinext.helper.js"></script>
+<script type="text/javascript" src="/js/jslint.js"></script>
 <!--<script type="text/javascript" src="/js/wikinext.main.js"></script>-->
 <script type="text/javascript" src="/codemirror/codemirror.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -70,6 +71,11 @@
     #preview_in {
         border: 0px;
     }
+
+
+    .errors {width: .8em;}
+    .error a { color: #822; }
+
 
 </style>
 <script type="text/javascript">
@@ -390,7 +396,8 @@
         editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
             lineNumbers: true,
             matchBrackets: true,
-            continueComments: "Enter"
+            continueComments: "Enter",
+            gutters: ["CodeMirror-linenumbers", "errors"]
         });
 
         sharejs.open(page._id, 'text', function(error, doc) {
@@ -550,7 +557,26 @@
                 var result = "<a href='"+data['url']+"'>"+selection+"</a>";;
                 editorHTML.replaceSelection(result);
             });
+        });
+
+        $("#jslint").click(function(){
+            editorJavaScript.clearGutter("errors");
+            JSLINT(editorJavaScript.getValue(), {});
+            var errors = JSLINT.data().errors;
+            console.log(errors);
+            _.each(errors, function(value){
+                var info = editorJavaScript.lineInfo(value.line - 1);
+                editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
+            });
+            $('.error a').tooltip({container:'body', placement:'right'});
         })
+
+        function makeMarker(reason) {
+            var marker = document.createElement("div");
+            marker.innerHTML = '<a href="#" data-toggle="tooltip" title="'+reason+'">●</a>';
+            marker.className = "error";
+            return marker;
+        }
     });
 //d = console.log;
 </script>
@@ -646,13 +672,16 @@
             <button class="btn" title="Insert wiki link" id="insert-wiki-link"><i class="icon-folder-open"></i></button>
         </div>
         <div class="btn-group">
+            <button class="btn" id="jslint">JSLint</button>
+        </div>
+        <div class="btn-group">
             <button class="btn" id="update_preview_button">Update Preview</button>
         </div>
         <div class="btn-group pull-right">
             <div class="controls">
                 <div class="input-append">
                     {{#page}}
-                    <input class="span2" id="page_title" size="16" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
+                    <input class="span2" id="page_title" size="24" type="text" value="{{title}}"><button class="btn" type="button" id="update_title">Update</button>
                     {{/page}}
                 </div>
             </div>
