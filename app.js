@@ -4,7 +4,7 @@
 //d = console.log
 var express = require('express')
     , Deferred = require('jsdeferred').Deferred
-    , nowjs = require('now')
+//    , nowjs = require('now')
     , mongo = require('mongoskin')
     , everyauth = require('everyauth')
     , vie = require('vie')
@@ -171,91 +171,91 @@ app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var everyone = nowjs.initialize(app, {socketio:{transports:['websocket', 'xhr-polling', 'jsonp-polling']}});
+//var everyone = nowjs.initialize(app, {socketio:{transports:['websocket', 'xhr-polling', 'jsonp-polling']}});
 
 
 // looking for a same user session for nowjs
 
 var clients = {};
-nowjs.on('connect', function () {
-    var self = this;
-    clients[self.user.clientId] = {};
-    var id = unescape(this.user.cookie['connect.sid']);
-    //console.log("Session ID: "+id);
-    //console.log(this.user);
-    mongoStore.get(id, function(err, sess){
-        if (err)
-            console.log(err.toString());
-        else{
-            //console.log("That user who joined? his userId is "+sess.auth.userId);
-            //console.log(sess);
-            clients[self.user.clientId].sess = sess;
-        }
-    });
-});
+//nowjs.on('connect', function () {
+//    var self = this;
+//    clients[self.user.clientId] = {};
+//    var id = unescape(this.user.cookie['connect.sid']);
+//    //console.log("Session ID: "+id);
+//    //console.log(this.user);
+//    mongoStore.get(id, function(err, sess){
+//        if (err)
+//            console.log(err.toString());
+//        else{
+//            //console.log("That user who joined? his userId is "+sess.auth.userId);
+//            //console.log(sess);
+//            clients[self.user.clientId].sess = sess;
+//        }
+//    });
+//});
+//
+//nowjs.on('disconnect', function () {
+//    for (var i in clients) {
+//        if (i == this.user.clientId) {
+//            delete clients[i];
+//            break;
+//        }
+//    }
+//});
 
-nowjs.on('disconnect', function () {
-    for (var i in clients) {
-        if (i == this.user.clientId) {
-            delete clients[i];
-            break;
-        }
-    }
-});
 
-
-everyone.now.save_page = function(data){
-    //console.log(data);
-    var self = this;
-    dao.pages.update(data, function (error, result) {
-        if (error != undefined)
-            console.log("Got an error: " + error);
-
-    });
-};
+//everyone.now.save_page = function(data){
+//    //console.log(data);
+//    var self = this;
+//    dao.pages.update(data, function (error, result) {
+//        if (error != undefined)
+//            console.log("Got an error: " + error);
+//
+//    });
+//};
 
 var default_code = 'var app=function(){var a={};return{init:function(){a.name="Application"},render:function(){ich.app_defaultTemplate(a)}}};app.render()';
 var default_template = '<b>{{name}}</b>';
 
-everyone.now.create_app = function(data){
-    //_id - pageid
-    //name - application name
-    //надо выбрать массив с приложениями и добавить туда новое приложение
-    //необходимо приложение по умолчанию
-    //структура: app = { name: "", code: "", templates: [] }
-    //console.log("create app");
-    var self = this;
-    dao.pages.findById(data.page_id).next(
-        function(page){
-            //console.log(page);
-            var apps = [];
-            var app = {
-                name: data.app_name,
-                code: default_code,
-                templates: [{
-                        name: "app_defaultTemplate",
-                        template: default_template
-                    }
-                ]
-            };
-            if (typeof page['apps'] === "undefined"){
-                apps.push(app);
-            } else {
-                apps = page['apps'];
-                apps.push(app);
-            }
-            page.apps = apps;
-            console.log(page);
-            page._id = page._id.toString();
-            dao.pages.update(page, function (error, result) {
-                if (error != undefined)
-                    console.log("Got an error: " + error);
-                console.log(app);
-                self.now.app_was_created(app);
-            });
-        }
-    );
-};
+//everyone.now.create_app = function(data){
+//    //_id - pageid
+//    //name - application name
+//    //надо выбрать массив с приложениями и добавить туда новое приложение
+//    //необходимо приложение по умолчанию
+//    //структура: app = { name: "", code: "", templates: [] }
+//    //console.log("create app");
+//    var self = this;
+//    dao.pages.findById(data.page_id).next(
+//        function(page){
+//            //console.log(page);
+//            var apps = [];
+//            var app = {
+//                name: data.app_name,
+//                code: default_code,
+//                templates: [{
+//                        name: "app_defaultTemplate",
+//                        template: default_template
+//                    }
+//                ]
+//            };
+//            if (typeof page['apps'] === "undefined"){
+//                apps.push(app);
+//            } else {
+//                apps = page['apps'];
+//                apps.push(app);
+//            }
+//            page.apps = apps;
+//            console.log(page);
+//            page._id = page._id.toString();
+//            dao.pages.update(page, function (error, result) {
+//                if (error != undefined)
+//                    console.log("Got an error: " + error);
+//                console.log(app);
+//                self.now.app_was_created(app);
+//            });
+//        }
+//    );
+//};
 
 
 var default_page = {
