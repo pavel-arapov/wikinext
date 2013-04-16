@@ -562,14 +562,16 @@
         $("#jslint").click(function () {
             editorJavaScript.clearGutter("errors");
             JSLINT(editorJavaScript.getValue(), {
-                es5: true, white: true, devel: true, browser: true
+                es5: true, white: true, devel: true, browser: true, maxerr: 100000, maxlen: 10000, passfail: false, undef: true,
+                sloppy: true, stupid: true, indent: true, nomen: true
             });
             var errors = JSLINT.data().errors;
             console.log(errors);
             _.each(errors, function (value) {
                 if (value != null) {
                     var info = editorJavaScript.lineInfo(value.line - 1);
-                    editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
+                    if (info != null)
+                        editorJavaScript.setGutterMarker(value.line - 1, "errors", info.markers ? null : makeMarker(value.reason));
                 }
             });
             $('.error a').tooltip({container: 'body', placement: 'right'});
