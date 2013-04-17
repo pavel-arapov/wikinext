@@ -20,6 +20,8 @@ function SPARQL()
     //The result's type
     this.format 		= "json";
 
+    this.formatAjax     = "jsonp";
+
     //The GET or POST parameter name for the query
     this.queryParam 	= "query";
 
@@ -82,15 +84,7 @@ function SPARQL()
 
         if(this.distinctSelect) sp += "DISTINCT ";
 
-        if(this.variables.length > 0)
-        {
-//            var first = true;
-//            for(var i = 0; i < this.variables.length; i++)
-//            {
-//                if(first) first = false;
-//                else if(i < this.variables.length) sp += ", ";
-//                sp += this.variables[i];
-//            }
+        if(this.variables.length > 0) {
             sp += this.variables.join(" ");
         }
         else sp += "*";
@@ -129,13 +123,6 @@ function SPARQL()
         if(this.orders.length > 0)
         {
             sp += "ORDER BY ";
-//            var first = true;
-//            for(var i = 0; i < this.orders.length; i++)
-//            {
-//                if(first) first = false;
-//                else if(i < this.orders.length) sp += ", ";
-//                sp += this.orders[i];
-//            }
             sp += this.orders.join(" ");
         }
 
@@ -146,7 +133,7 @@ function SPARQL()
         if(this.offsetNb != null) sp += "OFFSET " + this.offsetNb + "\n";
 
         return sp;
-    }
+    };
 
     this.buildWhere = function() {
         var sp = "";
@@ -179,7 +166,7 @@ function SPARQL()
             type: this.method,
             url: this.baseUrl,
             data: data,
-            dataType: this.format
+            dataType: this.formatAjax
         }).done(function( data ) {
                 callback(data, cur.info);
                 cur.sparql = "";
