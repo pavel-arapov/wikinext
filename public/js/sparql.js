@@ -84,13 +84,14 @@ function SPARQL()
 
         if(this.variables.length > 0)
         {
-            var first = true;
-            for(var i = 0; i < this.variables.length; i++)
-            {
-                if(first) first = false;
-                else if(i < this.variables.length) sp += ", ";
-                sp += this.variables[i];
-            }
+//            var first = true;
+//            for(var i = 0; i < this.variables.length; i++)
+//            {
+//                if(first) first = false;
+//                else if(i < this.variables.length) sp += ", ";
+//                sp += this.variables[i];
+//            }
+            sp += this.variables.join(" ");
         }
         else sp += "*";
 
@@ -128,13 +129,14 @@ function SPARQL()
         if(this.orders.length > 0)
         {
             sp += "ORDER BY ";
-            var first = true;
-            for(var i = 0; i < this.orders.length; i++)
-            {
-                if(first) first = false;
-                else if(i < this.orders.length) sp += ", ";
-                sp += this.orders[i];
-            }
+//            var first = true;
+//            for(var i = 0; i < this.orders.length; i++)
+//            {
+//                if(first) first = false;
+//                else if(i < this.orders.length) sp += ", ";
+//                sp += this.orders[i];
+//            }
+            sp += this.variables.join(", ");
         }
 
         //LIMIT
