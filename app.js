@@ -161,6 +161,8 @@ app.get('/cp/users', cp.users);
 // cache
 app.post('/update_cache',routes.update_cache);
 app.post('/load_cache',routes.load_cache);
+// template
+app.post('/load_template',routes.load_template);
 // page
 app.post('/create',routes.create);
 app.post('/change_parent',routes.updateParent);

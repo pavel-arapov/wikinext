@@ -305,8 +305,8 @@ module.exports = function (dao) {
                             data['app'] = data_orig.app;
                         if (typeof data_orig['title'] !== "undefined")
                             data['title'] = data_orig.title;
-                        if (typeof data_orig['jsl_id'] !== "undefined")
-                            data['jsl_id'] = data_orig.jsl_id;
+                        if (typeof data_orig['libraries'] !== "undefined")
+                            data['libraries'] = data_orig.libraries;
                         data['last_modified_by'] = result.name;
                         data['last_modified_at'] = new Date();
                         data['created_by'] = result.name;
@@ -444,6 +444,23 @@ module.exports = function (dao) {
                     page.cache = {};
                 // sending cache to a client
                 res.send({cache: page.cache});
+            });
+        },
+        /**
+         * Load article which we want to use such as template
+         * @param req
+         * @param res
+         */
+        load_template: function (req, res) {
+            // id of the page
+            var pageid = req.body.pageid;
+            // looking for a page
+            dao.pages.findById(pageid).next(function (page) {
+                console.log(page);
+                if (_.isUndefined(page.article))
+                    page.article = {};
+                // sending template to a client
+                res.send(page.article);
             });
         },
         /**

@@ -222,14 +222,14 @@ var wikinextHelper = (function () {
         nl2br: function (str) {	// Inserts HTML line breaks before all newlines in a string
             return str.replace(/([^>])\n/g, '$1<br/>');
         }
-    }
+    };
 
     var relations = {
         "http://www.w3.org/2000/01/rdf-schema#label": "schema_label",
         "http://www.w3.org/2002/07/owl#sameAs": "schema_label",
         "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": "ns_type",
         "http://www.w3.org/2000/01/rdf-schema#comment ": "schema_comment"
-    }
+    };
 
     var rdftypes = {
         "uri": "ns_type",
@@ -441,6 +441,20 @@ var wikinextHelper = (function () {
                 pageid: pageid
             }).next(function (cache) {
                     d.call(cache);
+                });
+            return d;
+        },
+        /**
+         * Load an article which we would like use such as template
+         * @param pageid
+         * @returns {*}
+         */
+        loadTemplate: function(pageid) {
+            var d = Deferred();
+            this.http_post("/load_template", {
+                pageid: pageid
+            }).next(function(template) {
+                    d.call(template);
                 });
             return d;
         },
