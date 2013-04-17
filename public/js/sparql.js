@@ -136,7 +136,7 @@ function SPARQL()
 //                else if(i < this.orders.length) sp += ", ";
 //                sp += this.orders[i];
 //            }
-            sp += this.variables.join(", ");
+            sp += this.orders.join(" ");
         }
 
         //LIMIT
