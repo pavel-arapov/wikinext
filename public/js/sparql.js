@@ -85,7 +85,7 @@ function SPARQL()
         if(this.variables.length > 0)
         {
             var first = true;
-            for(int = 0; i < this.variables.length; i++)
+            for(var i = 0; i < this.variables.length; i++)
             {
                 if(first) first = false;
                 else if(i < this.variables.length) sp += ", ";
