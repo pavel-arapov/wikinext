@@ -445,6 +445,28 @@ var wikinextHelper = (function () {
             return d;
         },
         /**
+         * Loading page's meta
+         * @param pageid
+         */
+        loadMeta: function (pageid) {
+            var d = Deferred();
+            this.http_post("/load_meta", {
+                pageid: pageid
+            }).next(function (meta) {
+                    d.call(meta);
+                });
+            return d;
+        },
+        searchMeta: function (value) {
+            var d = Deferred();
+            this.http_post("/search_meta", {
+                value: value
+            }).next(function (result) {
+                    d.call(result);
+                });
+            return d;
+        },
+        /**
          * Load an article which we would like use such as template
          * @param pageid
          * @returns {*}

@@ -3,7 +3,9 @@
  */
 
 var Deferred = require('jsdeferred').Deferred;
-var jQuery = require('jquery');
+var jQuery = require('../lib/jquery/node-jquery.js');
+
+var rdfstore = require('../lib/rdfquery/jquery.rdfquery.js');
 
 var formidable = require('formidable'),
     util = require('util');
@@ -263,6 +265,23 @@ module.exports = function (dao) {
                         data['jsl_id'] = req.body.jsl_id;
                     data['last_modified_by'] = result.name;
                     data['last_modified_at'] = new Date();
+                    var html = rdfstore.$(data['article']);
+                    var meta = []; //rdfstore.$(html).rdf().databank.dump();
+                    //data['meta'] = JSON.stringify(meta);
+                    var uri = '<http://wikinext.gexsoft.com/wiki/'+data['_id']+'>';
+                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
+                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
+                    rdfstore.$(html).rdf().where('?s ?p ?o').each(function(index,value){
+                        //console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+                        var s = _.isObject(value.s.value) ? '<'+value.s.value._string+'>' : value.s.value;
+                        var p = _.isObject(value.p.value) ? '<'+value.p.value._string+'>' : value.p.value;
+                        var o = _.isObject(value.o.value) ? '<'+value.o.value._string+'>' : value.o.value;
+                        meta.push({s: s, p: p, o: o});
+                    });
+                    console.log(meta);
+                    data['meta'] = meta;
+
+                    //console.log(data);
 
                     dao.pages.update(data, function (error, result) {
                         if (error != undefined)
@@ -439,11 +458,27 @@ module.exports = function (dao) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid).next(function (page) {
+            dao.pages.findById(pageid,{cache: 1}).next(function (page) {
                 if (!_.isObject(page.cache))
                     page.cache = {};
                 // sending cache to a client
                 res.send({cache: page.cache});
+            });
+        },
+        /**
+         * Load page's meta
+         * @param req
+         * @param res
+         */
+        load_meta: function (req, res) {
+            // id of the page
+            var pageid = req.body.pageid;
+            // looking for a page
+            dao.pages.findById(pageid,{meta: 1}).next(function (page) {
+                if (!_.isObject(page.meta))
+                    page.meta = {};
+                // sending cache to a client
+                res.send({meta: page.meta});
             });
         },
         /**
@@ -455,7 +490,7 @@ module.exports = function (dao) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid).next(function (page) {
+            dao.pages.findById(pageid,{article:1}).next(function (page) {
                 console.log(page);
                 if (_.isUndefined(page.article))
                     page.article = {};
@@ -502,9 +537,59 @@ module.exports = function (dao) {
             }
 
         },
+
         loadPagesTree: function (req, res) {
             dao.pages.findAllLinks().next(function (pages) {
                 res.send({status: "ok", pages: pages});
+            });
+        },
+
+        search_meta: function (req,res) {
+            // 1) load all meta
+            // 2) rdfstore from dump
+            // 3) request
+            var value = req.body.value === undefined ? "Don Tapscott" : req.body.value;
+
+            var bank = rdfstore.$.rdf()
+                .base('http://wikinext.gexsoft.com/')
+                .prefix('dc', 'http://purl.org/dc/elements/1.1/')
+                .prefix('foaf', 'http://xmlns.com/foaf/0.1/');
+            dao.pages.findAllWithParameters({meta : 1}).next(function(pages){
+                _.each(pages, function (page) {
+                    //console.log(page);
+                    if (_.isArray(page.meta)) {
+                        //console.log(page.meta);
+                        _.each(page.meta, function(value) {
+                            //console.log(value);
+                            var s = value.s[0] === '<' ? value.s : '"'+value.s+'"';
+                            var p = value.p[0] === '<' ? value.p : '"'+value.p+'"';
+                            var o = value.o[0] === '<' ? value.o : '"'+value.o+'"';
+                            var triple = s+' '+p+' '+o+' .';
+                            //console.log(triple);
+                            bank.add(triple);
+                        });
+                    }
+                });
+                //console.log(bank);
+//                bank.where('?s ?p ?o').each(function(index,value){
+//                    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+//                });
+
+                var predict = [];
+                bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
+                    predict.push(value.x.value._string);
+                });
+                //console.log(predict);
+                var result = [];
+                _.each(predict,function(value){
+                    var result_part = [];
+                    bank.about('<'+value+'>').each(function(value,k) {
+                        //console.log(k.property + " = " +  k.value.value);
+                        result_part.push({p: k.property, v: k.value.value});
+                    });
+                    result.push({p:value,r:result_part});
+                });
+                res.send(result);
             });
         }
     };

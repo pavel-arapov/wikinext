@@ -8,10 +8,11 @@ var express = require('express')
     , mongo = require('mongoskin')
     , everyauth = require('everyauth')
     , vie = require('vie')
-    , jQuery = require('jquery')
+    , jQuery = require('./lib/jquery/node-jquery.js')
     , mustache = require('mustache')
     , winston = require('winston')
     , _ = require('underscore')
+    , rdfstore = require('./lib/rdfquery/jquery.rdfquery.js')
     , MongoStore = require('connect-mongodb'); // sessions for express
 
 require('./config.settings'); // include settings
@@ -161,6 +162,8 @@ app.get('/cp/users', cp.users);
 // cache
 app.post('/update_cache',routes.update_cache);
 app.post('/load_cache',routes.load_cache);
+// meta
+app.post('/load_meta',routes.load_meta);
 // template
 app.post('/load_template',routes.load_template);
 // page
@@ -168,13 +171,14 @@ app.post('/create',routes.create);
 app.post('/change_parent',routes.updateParent);
 // tree
 app.get('/links',routes.loadPagesTree);
+// search
+app.post('/search_meta',routes.search_meta);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
 //var everyone = nowjs.initialize(app, {socketio:{transports:['websocket', 'xhr-polling', 'jsonp-polling']}});
-
 
 // looking for a same user session for nowjs
 
@@ -297,33 +301,92 @@ var VIE = new vie.VIE();
 // Enable the RDFa service
 VIE.use(new VIE.RdfaService());
 
-console.log(VIE.jQuery);
+//console.log(VIE.jQuery);
 
 //console.log(rdfQuery);
+//console.log(rdfstore);
 
 //test VIE
 var html = jQuery('<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
+var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
 
-//
-VIE.load({element: html}).from('rdfa').execute().done(function() {
-    var objectInstance = VIE.entities.get('http://www.example.com/books/wikinomics');
-    console.log(objectInstance.get('dc:title') + " by " + objectInstance.get('dc:creator'));
+//console.log(html);
+var bank = rdfstore.$.rdf()
+    .base('http://wikinext.gexsoft.com/')
+    .prefix('dc', 'http://purl.org/dc/elements/1.1/')
+    .prefix('foaf', 'http://xmlns.com/foaf/0.1/')
+    .add('<photo1.jpg> <http://purl.org/dc/elements/1.1/creator> <http://www.blogger.com/profile/1109404> .')
+    .add('<photo3.jpg> dc:creator <http://www.blogger.com/profile/1109434> .')
+    .add('<photo1.jpg> foaf:name "Jane" .')
+    .add('<photo2.jpg> foaf:name "John" .')
+    .add('<photo3.jpg> foaf:name "Michel" .')
+    .add('<http://wikinext.gexsoft.com/wiki/1> dc:creator "Michel" .')
+    .add('<http://wikinext.gexsoft.com/wiki/1> dc:title "Title" .')
+    .add('<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .')
+    .add('<http://www.blogger.com/profile/1109434> foaf:img <photo3.jpg> .');
+
+var value = 'Michel';
+var predict = [];
+bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
+    predict.push(value.x.value._string);
 });
-
-var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
-var v = new vie.VIE();
-v.use(new VIE.RdfaService());
-v.load({element: html2}).from('rdfa').execute().success(function(entities) {
-    entities.forEach(function(entity) {
-        console.log(entity.toJSONLD());
-        entity.set({'dcterms:title': 'Hello, world'});
-        console.log(entity.toJSON());
+console.log(predict);
+_.each(predict,function(value){
+    bank.about('<'+value+'>').each(function(value,k) {
+        //console.log(k.property + " = " +  k.value.value);
     });
-    console.log("We got " + entities.length + " editable objects from the page");
 });
-var obj = v.entities.get('http://example.net/blog/news_item');
-console.log(obj.get('dcterms:title'));
 
-v.entities.each(function(Entity){
-    console.log(Entity.getSubjectUri());
+bank.about('<http://www.blogger.com/profile/1109434>').each(function(index,value){
+    //console.log(value.property + " = " + value.value.value);
 });
+
+//console.log(bank.databank.dump());
+
+bank.where('?s ?p ?o').each(function(index,value){
+    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+});
+
+//console.log(rdfstore.$(html2)//.rdf().databank.dump());
+//    .rdf().prefix('dc', 'http://purl.org/dc/elements/1.1/').where('?x dc:creator ?creator'));
+//console.log(rdfstore.$(html2)//.rdf().databank.dump());
+//    .rdf()
+//    .prefix('sioc', 'http://rdfs.org/sioc/ns')
+//    .where('?uri sioc:content ?content')[0].uri.value);
+
+//console.log(author.where('?x dc:creator ?creator'));
+
+//var rdf = rdfstore.$.rdf()
+//    .prefix('dc10', 'http://purl.org/dc/elements/1.0/')
+//    .prefix('dc11', 'http://purl.org/dc/elements/1.1/>')
+//    .add('_:a  dc10:title     "SPARQL Query Language Tutorial" .')
+//    .add('_:a  dc10:creator   "Alice" .')
+//    .add('_:b  dc11:title     "SPARQL Protocol Tutorial" .')
+//    .add('_:b  dc11:creator   "Bob" .')
+//    .add('_:c  dc10:title     "SPARQL" .')
+//    .add('_:c  dc11:title     "SPARQL (updated)" .');
+//var rdfA = rdf.where('?book dc10:title ?title');
+//console.log(rdfA);
+
+// VIE EXAMPLES (they work fine!)
+//VIE.load({element: html}).from('rdfa').execute().done(function() {
+//    var objectInstance = VIE.entities.get('http://www.example.com/books/wikinomics');
+//    //console.log(objectInstance.get('dc:title') + " by " + objectInstance.get('dc:creator'));
+//});
+//
+//var v = new vie.VIE();
+//v.use(new VIE.RdfaService());
+//v.load({element: html2}).from('rdfa').execute().success(function(entities) {
+//    entities.forEach(function(entity) {
+//        //console.log(entity.toJSONLD());
+//        entity.set({'dcterms:title': 'Hello, world'});
+//        //console.log(entity.toJSON());
+//    });
+//    //console.log("We got " + entities.length + " editable objects from the page");
+//});
+//var obj = v.entities.get('http://example.net/blog/news_item');
+////console.log(obj.get('dcterms:title'));
+//
+//v.entities.each(function(Entity){
+//    //console.log(Entity.getSubjectUri());
+//});
