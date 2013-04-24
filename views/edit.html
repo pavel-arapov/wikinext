@@ -368,6 +368,8 @@
             tabMode: "indent",
             lineWrapping: true
         });
+        //editorHTML.setSize(null, 500);
+        //editorJavaScript.setSize(null, 500);
 
 
         $("#save_button").click(function(){
@@ -641,7 +643,7 @@
 
     <div class="btn-toolbar" id="toolbar">
         <div class="btn-group">
-            <button class="btn" data-tool="save" id="save_button"><i class="icon-16x16"></i> Save</button>
+            <button class="btn" data-tool="save" id="save_button"><i class="icon-16x16"></i>Save</button>
         </div>
         <div class="btn-group">
             <button class="btn">Heading</button>
@@ -711,11 +713,11 @@
                 <div class="tab-content">
                     {{#page}}
                     <div class="tab-pane active" id="tab1">
-                        <div class="btn-group">
-                            <button class="btn" id="editor-wysiwyg">WYSIWYG</button>
-                            <button class="btn" id="editor-html">HTML Code</button>
-                        </div>
-                        <br>
+                        <!--<div class="btn-group">-->
+                            <!--<button class="btn" id="editor-wysiwyg">WYSIWYG</button>-->
+                            <!--<button class="btn" id="editor-html">HTML Code</button>-->
+                        <!--</div>-->
+                        <!--<br>-->
                         <p><textarea id="textAreaArticle" style="width: 810px; height: 200px;" placeholder="Enter text ...">{{article}}</textarea></p>
                     </div>
                     <div class="tab-pane" id="tab_apps">
