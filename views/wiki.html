@@ -97,6 +97,7 @@
             wikinextHelper.preparePrettify($("#article_show"));
             launch_wiki_script.afterConstruct();
             wikinextHelper.updateContent();
+            prettyPrint();
         });
     </script>
     <script type="text/javascript">
@@ -110,7 +111,7 @@
         {{/page}}
     </script>
 </head>
-<body onload="prettyPrint();">
+<body>
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
