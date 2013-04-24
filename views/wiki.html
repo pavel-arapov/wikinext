@@ -87,24 +87,17 @@
             })();
                     $(document).ready(function(){
                         // start wiki
-                        wikinextHelper.init().next(function(){});
-                        var data = launch_wiki_script.construct();
-                        var article = ich.article_template(data);
-                        $("#article_show").append(article);
-                        wikinextHelper.preparePrettify($("#article_show"));
-                        launch_wiki_script.afterConstruct();
-                        wikinextHelper.updateContent();
 
-                        $("#goto").click(function () {
-                            // invoking select page dialog
-                            wikinextHelper.selectPageDialog(function (data) {
-                                // go to another page
-                                location.href = '/wiki/'+data['id'];
-                            });
-                            return false;
-                        });
                     });
                     //});
+        document.wikinextReady = (function() {
+            var data = launch_wiki_script.construct();
+            var article = ich.article_template(data);
+            $("#article_show").append(article);
+            wikinextHelper.preparePrettify($("#article_show"));
+            launch_wiki_script.afterConstruct();
+            wikinextHelper.updateContent();
+        });
     </script>
     <script type="text/javascript">
         var page = {
@@ -170,7 +163,7 @@
                     {{/user}}
                     {{/facebook}}
                     {{/auth}}
-                    <li><a href="/search">Search</a></li>
+                    <li><a href="/wiki/5176580d1d20c5b055000001">Search</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

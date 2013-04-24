@@ -520,6 +520,8 @@
         });
 
         $("#editor-wysiwyg").click(function(){
+            alert("Currently WISYWIG is inactive due to changing in visualisation HTML editor part. We are sorry for inconviniance.");
+            return false;
             editorHTML.toTextArea();
             //$("#textAreaArticle").hide();
             //$("#textAreaArticle").show();
@@ -631,6 +633,7 @@
                     {{#page}}
                     <li><a href="/wiki/{{_id}}">View</a></li>
                     {{/page}}
+                    <li><a href="/wiki/5176580d1d20c5b055000001">Search</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

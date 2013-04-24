@@ -282,6 +282,7 @@ var wikinextHelper = (function () {
 
                     console.log("templates loaded");
                     self.constructTreeView();
+                    d.call();
                 });
             return d;
         },

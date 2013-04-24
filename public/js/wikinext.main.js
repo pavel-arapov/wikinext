@@ -1,4 +1,11 @@
 $(document).ready(function(){
+
+    wikinextHelper.init().next(function(){
+        if (typeof document.wikinextReady == 'function'){
+            document.wikinextReady();
+        }
+    });
+
     $("#create-page-button").click(function () {
         $('#create-page').modal('hide');
         $("#create-page-form").submit();
@@ -8,5 +15,14 @@ $(document).ready(function(){
         $.get("/wiki/"+page['_id']+"/remove",function(status){
            document.location = "/home";
         });
+    });
+
+    $("#goto").click(function () {
+        // invoking select page dialog
+        wikinextHelper.selectPageDialog(function (data) {
+            // go to another page
+            location.href = '/wiki/'+data['id'];
+        });
+        return false;
     });
 });

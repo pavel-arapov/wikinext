@@ -6,12 +6,14 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/treeview.css" rel="stylesheet">
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
     <script type="text/javascript" src="/js/jsdeferred.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/underscore-min.js"></script>
     <script type="text/javascript" src="/js/backbone-min.js"></script>
+    <script type="text/javascript" src="/js/wikinext.helper.js"></script>
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
     <style>
 
@@ -70,6 +72,7 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li class="active"><a href="/">Home</a></li>
+                    <li><a href="#" id="goto">Go To Page</a></li>
                     {{#auth}}
                     {{#facebook}}
                     {{#user}}
@@ -77,6 +80,7 @@
                     {{/user}}
                     {{/facebook}}
                     {{/auth}}
+                    <li><a href="/wiki/5176580d1d20c5b055000001">Search</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
