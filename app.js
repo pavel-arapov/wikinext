@@ -303,82 +303,82 @@ var clients = {};
 //};
 
 //var data = '<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>';
-var data = '<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>';
-
-
-
-new rdfstorejs.Store({
-    persistent: true,
-    engine: 'mongodb',
-    name: 'rdfstore',
-    overwrite: false,    // delete all the data already present in the MongoDB server
-    mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
-    mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
-    mongoDBOptions: {safe: false}
-}, function (store) {
-
-    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
-                     SELECT ?s ?p ?v FROM NAMED <http://wikinext.gexsoft.com/wiki/5175c973ede6842655000001> { GRAPH ?g { ?s ?p ?v } }',
-                    function (success, results) {
-                        console.log(results);
-                    });
-
-//    store.execute('LOAD <http://dbpedia.org/resource/Tim_Berners-Lee> INTO GRAPH <http://example.org/people>', function () {
+//var data = '<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>';
 //
-//            store.setPrefix('dbp', 'http://dbpedia.org/resource/');
 //
-//            store.node(store.rdf.resolve('dbp:Tim_Berners-Lee'), "http://example.org/people", function (success, graph) {
 //
-//                var peopleGraph = graph.filter(store.rdf.filters.type(store.rdf.resolve("foaf:Person")));
+//new rdfstorejs.Store({
+//    persistent: true,
+//    engine: 'mongodb',
+//    name: 'rdfstore',
+//    overwrite: false,    // delete all the data already present in the MongoDB server
+//    mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
+//    mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
+//    mongoDBOptions: {safe: false}
+//}, function (store) {
 //
-//                store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
-//                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>\
-//                     PREFIX : <http://example.org/>\
-//                     SELECT ?s FROM NAMED :people { GRAPH ?g { ?s rdf:type foaf:Person } }',
-//                    function (success, results) {
-//                        //console.log(results);
-//                        //console.log(peopleGraph.toArray());
-//                        //console.log(peopleGraph.toArray()[0].subject.valueOf() === results[0].s.value);
-//                    });
-//            });
-//        }
-//    );
-
-
-//    jsdom.env(data, function (errors, window) {
-//        if (errors && errors.length > 0) {
-//            console.log(errors);
-//        }
-//        // extract JSON-LD from RDFa
-//        RDFa.attach(window.document);
-//        //console.log(window.document.data);
-//        // create JSON-LD from RDF
-//        jsonld.fromRDF(window.document.data,
-//            {format: 'rdfa-api'}, function (error, data) {
-//                //console.log(error);
-//                console.log(data);
-//
-//                store.load("application/ld+json", data, "a", function(success, results) {
-//                    //console.log(results);
-//                    store.node("http://www.example.com/books/wikinomics", "a", function(success, graph) {
-//                        // process graph here
-//                        console.log(graph);
-//
-//                    });
-//
-//                    store.graph("a", function(success, graph){
-//                        console.log(graph);
-//                    });
-//
-//                    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
-//                     SELECT ?s ?p ?v FROM NAMED <a> { GRAPH ?g { ?s ?p ?v } }',
+//    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+//                     SELECT ?s ?p ?v FROM NAMED <http://wikinext.gexsoft.com/wiki/5175c973ede6842655000001> { GRAPH ?g { ?s ?p ?v } }',
 //                    function (success, results) {
 //                        console.log(results);
 //                    });
-//                });
-//            });
-//    });
-});
+//
+////    store.execute('LOAD <http://dbpedia.org/resource/Tim_Berners-Lee> INTO GRAPH <http://example.org/people>', function () {
+////
+////            store.setPrefix('dbp', 'http://dbpedia.org/resource/');
+////
+////            store.node(store.rdf.resolve('dbp:Tim_Berners-Lee'), "http://example.org/people", function (success, graph) {
+////
+////                var peopleGraph = graph.filter(store.rdf.filters.type(store.rdf.resolve("foaf:Person")));
+////
+////                store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+////                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>\
+////                     PREFIX : <http://example.org/>\
+////                     SELECT ?s FROM NAMED :people { GRAPH ?g { ?s rdf:type foaf:Person } }',
+////                    function (success, results) {
+////                        //console.log(results);
+////                        //console.log(peopleGraph.toArray());
+////                        //console.log(peopleGraph.toArray()[0].subject.valueOf() === results[0].s.value);
+////                    });
+////            });
+////        }
+////    );
+//
+//
+////    jsdom.env(data, function (errors, window) {
+////        if (errors && errors.length > 0) {
+////            console.log(errors);
+////        }
+////        // extract JSON-LD from RDFa
+////        RDFa.attach(window.document);
+////        //console.log(window.document.data);
+////        // create JSON-LD from RDF
+////        jsonld.fromRDF(window.document.data,
+////            {format: 'rdfa-api'}, function (error, data) {
+////                //console.log(error);
+////                console.log(data);
+////
+////                store.load("application/ld+json", data, "a", function(success, results) {
+////                    //console.log(results);
+////                    store.node("http://www.example.com/books/wikinomics", "a", function(success, graph) {
+////                        // process graph here
+////                        console.log(graph);
+////
+////                    });
+////
+////                    store.graph("a", function(success, graph){
+////                        console.log(graph);
+////                    });
+////
+////                    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+////                     SELECT ?s ?p ?v FROM NAMED <a> { GRAPH ?g { ?s ?p ?v } }',
+////                    function (success, results) {
+////                        console.log(results);
+////                    });
+////                });
+////            });
+////    });
+//});
 
 
 //jsonld.request(

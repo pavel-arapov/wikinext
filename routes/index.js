@@ -279,7 +279,7 @@ module.exports = function (dao) {
                         });
                     }
 
-                    //console.log(page);
+                    console.log(page);
 
                     res.render('wiki.html', {
                         locals: {
