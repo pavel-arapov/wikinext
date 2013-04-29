@@ -21,6 +21,167 @@ var _ = require('underscore');
 var winston = require('winston');
 //winston.add(winston.transports.File, { filename: 'debug.log' });
 
+var rdfstorejs = require('rdfstore')
+    , jsonld = require('../lib/jsonld/jsonld.js')
+    , RDFa = require('../lib/jsonld/rdfa.js')
+    , jsdom = require('jsdom');
+
+
+jsonld.use('request');
+
+var store;
+
+new rdfstorejs.Store({
+    persistent: true,
+    engine: 'mongodb',
+    name: 'rdfstore',
+    overwrite: false,    // delete all the data already present in the MongoDB server
+    mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
+    mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
+    mongoDBOptions: {safe: false}
+}, function (d) {
+    store = d;
+});
+
+
+/**
+ * Transforms a RDF JS Interfaces API Graph object into a JSON-LD serialization
+ *
+ * @arguments
+ * @param graph JS RDF Interface graph object to be serialized
+ * @param rdf JS RDF Interface RDF environment object
+ */
+graphToJSONLD = function(graph, rdf) {
+    var nodes = {};
+
+    graph.forEach(function(triple) {
+        var subject = triple.subject.valueOf();
+        var node = nodes[subject];
+        if(node == null) {
+            node = {"@subject" : subject, "@context": {}};
+            nodes[subject] = node;
+        }
+
+        var predicate = triple.predicate.valueOf();
+        if(predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+            predicate = "@type";
+        }
+
+        var property  = null;
+        var isCURIE = false;
+        property = rdf.prefixes.shrink(predicate);
+
+        if(property != predicate) {
+            isCURIE = true;
+        }
+        if(property.indexOf("#") != -1) {
+            property = property.split("#")[1];
+        } else {
+            property = property.split("/");
+            property = property[property.length-1];
+        }
+
+        var object = triple.object.valueOf();
+
+        if(node[property] != null) {
+            if(!isCURIE) {
+                if(node["@context"][property] != null || property[0] === '@') {
+                    if(typeof(node[property]) === "object") {
+                        node[property].push(object);
+                    } else {
+                        object = [ node[property], object];
+                        node[property] = object;
+                    }
+                } else {
+                    property = triple.predicate.valueOf();
+                    if(node[property] == null) {
+                        node[property] = object;
+                    } else {
+                        if(typeof(node[property]) === "object") {
+                            node[property].push(object);
+                        } else {
+                            object = [ node[property], object ];
+                            node[property] = object;
+                        }
+                    }
+
+                    if(typeof(object) === 'string' &&
+                        (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
+                        jsonldCoerce(node, property, "@iri");
+                    }
+                }
+            } else {
+                var prefix = property.split(":")[0];
+                if(typeof(node[property]) === "object") {
+                    node[property].push(object);
+                } else {
+                    object = [ node[property], object];
+                    node[property] = object;
+                }
+            }
+        } else {
+            node[property] = object;
+            if(property[0] != '@') {
+                if(isCURIE == true) {
+                    // saving prefix
+                    var prefix = property.split(":")[0];
+                    node["@context"][prefix] = rdf.prefixes[prefix];
+                } else {
+                    // saving whole URI in context
+                    node["@context"][property] = triple.predicate.valueOf();
+                }
+
+                if(typeof(object) === 'string' &&
+                    (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
+                    jsonldCoerce(node, property, "@iri");
+                }
+
+            }
+        }
+    });
+
+    var results = [];
+    for(var p in nodes) {
+        results.push(nodes[p]);
+    }
+
+    return results;
+};
+
+/**
+ * Adds a coercion annotation to a json-ld object
+ *
+ * @arguments
+ * @param obj jsonld Object where the coerced property will be added
+ * @param prpoerty URI of the property to be coerced
+ * @param type coercion type
+ */
+jsonldCoerce = function(obj, property, type) {
+    if(obj['@context'] == null) {
+        obj['@context'] = {};
+    }
+    if(obj['@context']['@coerce'] == null) {
+        obj['@context']['@coerce'] = {};
+        obj['@context']['@coerce'][type] = property;
+    } else if(typeof(obj['@context']['@coerce'][type]) === 'string' &&
+        obj['@context']['@coerce'][type] != property) {
+        var oldValue = obj['@context']['@coerce'][type];
+        obj['@context']['@coerce'][type] = [oldValue, property];
+    } else if(typeof(obj['@context']['@coerce'][type]) === 'object') {
+        for(var i=0; i<obj['@context']['@coerce'][type].length; i++) {
+            if(obj['@context']['@coerce'][type][i] === property)  {
+                return obj;
+            }
+        }
+
+        obj['@context']['@coerce'][type].push(property);
+    } else {
+        obj['@context']['@coerce'][type] = property;
+    }
+
+    return obj;
+};
+
 function in_array(needle, haystack, argStrict) {
     var key = '',
         strict = !!argStrict;
@@ -118,7 +279,7 @@ module.exports = function (dao) {
                         });
                     }
 
-                    console.log(page);
+                    //console.log(page);
 
                     res.render('wiki.html', {
                         locals: {
@@ -266,9 +427,11 @@ module.exports = function (dao) {
                     data['last_modified_by'] = result.name;
                     data['last_modified_at'] = new Date();
                     var html = rdfstore.$(data['article']);
+                    // meta rdfquery
                     var meta = []; //rdfstore.$(html).rdf().databank.dump();
                     //data['meta'] = JSON.stringify(meta);
-                    var uri = '<http://wikinext.gexsoft.com/wiki/'+data['_id']+'>';
+                    var url = 'http://wikinext.gexsoft.com/wiki/'+data['_id'];
+                    var uri = '<'+url+'>';
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
                     rdfstore.$(html).rdf().where('?s ?p ?o').each(function(index,value){
@@ -278,10 +441,29 @@ module.exports = function (dao) {
                         var o = _.isObject(value.o.value) ? '<'+value.o.value._string+'>' : value.o.value;
                         meta.push({s: s, p: p, o: o});
                     });
-                    console.log(meta);
+                    //console.log(meta);
                     data['meta'] = meta;
 
                     //console.log(data);
+                    // DOM
+                    jsdom.env(data['article'], function (errors, window) {
+                        if (errors && errors.length > 0) {
+                            console.log(errors);
+                        }
+                        // extract JSON-LD from RDFa
+                        RDFa.attach(window.document);
+                        //console.log(window.document.data);
+                        // create JSON-LD from RDF
+                        jsonld.fromRDF(window.document.data,
+                            {format: 'rdfa-api'}, function (error, data) {
+                                //console.log(error);
+                                console.log(data);
+
+                                store.load("application/ld+json", data, url, function(success, results) {
+
+                                });
+                            });
+                    });
 
                     dao.pages.update(data, function (error, result) {
                         if (error != undefined)
@@ -522,6 +704,11 @@ module.exports = function (dao) {
                 });
             }
         },
+        /**
+         * Update parent page of precised page
+         * @param req
+         * @param res
+         */
         updateParent: function (req, res) {
             // id of the page
             var pageid = req.body.pageid;
@@ -543,7 +730,11 @@ module.exports = function (dao) {
                 res.send({status: "ok", pages: pages});
             });
         },
-
+        /**
+         * Looking for a data in our meta base that has a value
+         * @param req
+         * @param res
+         */
         search_meta: function (req,res) {
             // 1) load all meta
             // 2) rdfstore from dump
@@ -590,6 +781,29 @@ module.exports = function (dao) {
                     result.push({p:value,r:result_part});
                 });
                 res.send(result);
+            });
+        },
+        endpoint: function (req, res) {
+            var query = req.body.query;
+            //console.log(query);
+            store.execute(query, function (success, results) {
+                //console.log(results);
+                res.send(results);
+//                var varNames = {};
+//                var genBindings = [];
+//                for(var i=0; i<results.length; i++) {
+//                    var result = results[i];
+//                    for(var p in results[i]) {
+//                        varNames[p] = true;
+//                    }
+//                }
+//                var head = {'variables':[]};
+//                for(var p in varNames) {
+//                    head['variables'].push({'name':p});
+//                }
+//                res.send(JSON.stringify({'head':head,'results':results}));
+
+                //console.log(graphToJSONLD(results,store.rdf));
             });
         }
     };

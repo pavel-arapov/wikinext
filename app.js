@@ -1,10 +1,8 @@
 /**
  * Module dependencies.
  */
-//d = console.log
 var express = require('express')
     , Deferred = require('jsdeferred').Deferred
-//    , nowjs = require('now')
     , mongo = require('mongoskin')
     , everyauth = require('everyauth')
     , vie = require('vie')
@@ -13,7 +11,14 @@ var express = require('express')
     , winston = require('winston')
     , _ = require('underscore')
     , rdfstore = require('./lib/rdfquery/jquery.rdfquery.js')
-    , MongoStore = require('connect-mongodb'); // sessions for express
+    , MongoStore = require('connect-mongodb') // sessions for express
+    , rdfstorejs = require('rdfstore')
+    , jsonld = require('./lib/jsonld/jsonld.js')
+    , RDFa = require('./lib/jsonld/rdfa.js')
+    , jsdom = require('jsdom');
+
+
+jsonld.use('request');
 
 require('./config.settings'); // include settings
 
@@ -173,6 +178,8 @@ app.post('/change_parent',routes.updateParent);
 app.get('/links',routes.loadPagesTree);
 // search
 app.post('/search_meta',routes.search_meta);
+// endpoint
+app.post('/endpoint',routes.endpoint);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
@@ -220,8 +227,8 @@ var clients = {};
 //    });
 //};
 
-var default_code = 'var app=function(){var a={};return{init:function(){a.name="Application"},render:function(){ich.app_defaultTemplate(a)}}};app.render()';
-var default_template = '<b>{{name}}</b>';
+//var default_code = 'var app=function(){var a={};return{init:function(){a.name="Application"},render:function(){ich.app_defaultTemplate(a)}}};app.render()';
+//var default_template = '<b>{{name}}</b>';
 
 //everyone.now.create_app = function(data){
 //    //_id - pageid
@@ -263,89 +270,184 @@ var default_template = '<b>{{name}}</b>';
 //    );
 //};
 
+// not in use
+//var default_page = {
+//    title: "new page",
+//    article: "html article",
+//    created_by: {},
+//    created_at: new Date(),
+//    last_modified_at: new Date(),
+//    last_modified_by:{},
+//    version:"",
+//    apps:[
+//        {
+//            id:"",
+//            title:"Application name",
+//            description:"Application description",
+//            created_by:new Date(),
+//            created_at:{},
+//            last_modified_at:new Date(),
+//            last_modified_by:{},
+//            templates:[
+//                {
+//                    id:"",
+//                    template:"",
+//                    created_by:new Date(),
+//                    created_at:{},
+//                    last_modified_at:new Date(),
+//                    last_modified_by:{}
+//                }
+//            ]
+//        }
+//    ]
+//};
 
-var default_page = {
-    title: "new page",
-    article: "html article",
-    created_by: {},
-    created_at: new Date(),
-    last_modified_at: new Date(),
-    last_modified_by:{},
-    version:"",
-    apps:[
-        {
-            id:"",
-            title:"Application name",
-            description:"Application description",
-            created_by:new Date(),
-            created_at:{},
-            last_modified_at:new Date(),
-            last_modified_by:{},
-            templates:[
-                {
-                    id:"",
-                    template:"",
-                    created_by:new Date(),
-                    created_at:{},
-                    last_modified_at:new Date(),
-                    last_modified_by:{}
-                }
-            ]
-        }
-    ]
-};
+//var data = '<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>';
+var data = '<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>';
 
-// Instantiate VIE
-var VIE = new vie.VIE();
 
-// Enable the RDFa service
-VIE.use(new VIE.RdfaService());
 
-//console.log(VIE.jQuery);
+new rdfstorejs.Store({
+    persistent: true,
+    engine: 'mongodb',
+    name: 'rdfstore',
+    overwrite: false,    // delete all the data already present in the MongoDB server
+    mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
+    mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
+    mongoDBOptions: {safe: false}
+}, function (store) {
 
-//console.log(rdfQuery);
-//console.log(rdfstore);
+    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+                     SELECT ?s ?p ?v FROM NAMED <http://wikinext.gexsoft.com/wiki/5175c973ede6842655000001> { GRAPH ?g { ?s ?p ?v } }',
+                    function (success, results) {
+                        console.log(results);
+                    });
 
-//test VIE
-var html = jQuery('<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
-var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
+//    store.execute('LOAD <http://dbpedia.org/resource/Tim_Berners-Lee> INTO GRAPH <http://example.org/people>', function () {
+//
+//            store.setPrefix('dbp', 'http://dbpedia.org/resource/');
+//
+//            store.node(store.rdf.resolve('dbp:Tim_Berners-Lee'), "http://example.org/people", function (success, graph) {
+//
+//                var peopleGraph = graph.filter(store.rdf.filters.type(store.rdf.resolve("foaf:Person")));
+//
+//                store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+//                     PREFIX foaf: <http://xmlns.com/foaf/0.1/>\
+//                     PREFIX : <http://example.org/>\
+//                     SELECT ?s FROM NAMED :people { GRAPH ?g { ?s rdf:type foaf:Person } }',
+//                    function (success, results) {
+//                        //console.log(results);
+//                        //console.log(peopleGraph.toArray());
+//                        //console.log(peopleGraph.toArray()[0].subject.valueOf() === results[0].s.value);
+//                    });
+//            });
+//        }
+//    );
 
-//console.log(html);
-var bank = rdfstore.$.rdf()
-    .base('http://wikinext.gexsoft.com/')
-    .prefix('dc', 'http://purl.org/dc/elements/1.1/')
-    .prefix('foaf', 'http://xmlns.com/foaf/0.1/')
-    .add('<photo1.jpg> <http://purl.org/dc/elements/1.1/creator> <http://www.blogger.com/profile/1109404> .')
-    .add('<photo3.jpg> dc:creator <http://www.blogger.com/profile/1109434> .')
-    .add('<photo1.jpg> foaf:name "Jane" .')
-    .add('<photo2.jpg> foaf:name "John" .')
-    .add('<photo3.jpg> foaf:name "Michel" .')
-    .add('<http://wikinext.gexsoft.com/wiki/1> dc:creator "Michel" .')
-    .add('<http://wikinext.gexsoft.com/wiki/1> dc:title "Title" .')
-    .add('<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .')
-    .add('<http://www.blogger.com/profile/1109434> foaf:img <photo3.jpg> .');
 
-var value = 'Michel';
-var predict = [];
-bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
-    predict.push(value.x.value._string);
+//    jsdom.env(data, function (errors, window) {
+//        if (errors && errors.length > 0) {
+//            console.log(errors);
+//        }
+//        // extract JSON-LD from RDFa
+//        RDFa.attach(window.document);
+//        //console.log(window.document.data);
+//        // create JSON-LD from RDF
+//        jsonld.fromRDF(window.document.data,
+//            {format: 'rdfa-api'}, function (error, data) {
+//                //console.log(error);
+//                console.log(data);
+//
+//                store.load("application/ld+json", data, "a", function(success, results) {
+//                    //console.log(results);
+//                    store.node("http://www.example.com/books/wikinomics", "a", function(success, graph) {
+//                        // process graph here
+//                        console.log(graph);
+//
+//                    });
+//
+//                    store.graph("a", function(success, graph){
+//                        console.log(graph);
+//                    });
+//
+//                    store.execute('PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\
+//                     SELECT ?s ?p ?v FROM NAMED <a> { GRAPH ?g { ?s ?p ?v } }',
+//                    function (success, results) {
+//                        console.log(results);
+//                    });
+//                });
+//            });
+//    });
 });
-console.log(predict);
-_.each(predict,function(value){
-    bank.about('<'+value+'>').each(function(value,k) {
-        //console.log(k.property + " = " +  k.value.value);
-    });
-});
 
-bank.about('<http://www.blogger.com/profile/1109434>').each(function(index,value){
-    //console.log(value.property + " = " + value.value.value);
-});
 
-//console.log(bank.databank.dump());
+//jsonld.request(
+//    'http://wikinext.gexsoft.com/wiki/516556ff587eeef861000002',
+//    {},
+//    function(error,data){
+//        console.log(data);
+//        console.log(error);
+//        var options = {};
+//        options.format = 'application/nquads';
+//
+//        jsonld.normalize(data, options, function(error,data){
+//            console.log(data);
+//        });
+//    }
+//);
 
-bank.where('?s ?p ?o').each(function(index,value){
-    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
-});
+
+//// Instantiate VIE
+//var VIE = new vie.VIE();
+//
+//// Enable the RDFa service
+//VIE.use(new VIE.RdfaService());
+//
+////console.log(VIE.jQuery);
+//
+////console.log(rdfQuery);
+////console.log(rdfstore);
+//
+////test VIE
+//var html = jQuery('<p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
+//var html2 = jQuery('<div id="myarticle" typeof="http://rdfs.org/sioc/ns#Post" about="http://example.net/blog/news_item" xmlns:sioc="http://rdfs.org/sioc/ns"><h1 property="dcterms:title">News item title</h1><div property="sioc:content">News item contents</div></div><p xmlns:dc="http://purl.org/dc/elements/1.1/" about="http://www.example.com/books/wikinomics">In his latest book <cite property="dc:title">Wikinomics</cite>, <span property="dc:creator">Don Tapscott</span> explains deep changes in technology, demographics and business.</p>');
+//
+////console.log(html);
+//var bank = rdfstore.$.rdf()
+//    .base('http://wikinext.gexsoft.com/')
+//    .prefix('dc', 'http://purl.org/dc/elements/1.1/')
+//    .prefix('foaf', 'http://xmlns.com/foaf/0.1/')
+//    .add('<photo1.jpg> <http://purl.org/dc/elements/1.1/creator> <http://www.blogger.com/profile/1109404> .')
+//    .add('<photo3.jpg> dc:creator <http://www.blogger.com/profile/1109434> .')
+//    .add('<photo1.jpg> foaf:name "Jane" .')
+//    .add('<photo2.jpg> foaf:name "John" .')
+//    .add('<photo3.jpg> foaf:name "Michel" .')
+//    .add('<http://wikinext.gexsoft.com/wiki/1> dc:creator "Michel" .')
+//    .add('<http://wikinext.gexsoft.com/wiki/1> dc:title "Title" .')
+//    .add('<http://www.blogger.com/profile/1109404> foaf:img <photo1.jpg> .')
+//    .add('<http://www.blogger.com/profile/1109434> foaf:img <photo3.jpg> .');
+//
+//var value = 'Michel';
+//var predict = [];
+//bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
+//    predict.push(value.x.value._string);
+//});
+//console.log(predict);
+//_.each(predict,function(value){
+//    bank.about('<'+value+'>').each(function(value,k) {
+//        //console.log(k.property + " = " +  k.value.value);
+//    });
+//});
+//
+//bank.about('<http://www.blogger.com/profile/1109434>').each(function(index,value){
+//    //console.log(value.property + " = " + value.value.value);
+//});
+//
+////console.log(bank.databank.dump());
+//
+//bank.where('?s ?p ?o').each(function(index,value){
+//    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+//});
 
 //console.log(rdfstore.$(html2)//.rdf().databank.dump());
 //    .rdf().prefix('dc', 'http://purl.org/dc/elements/1.1/').where('?x dc:creator ?creator'));

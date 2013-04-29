@@ -458,10 +458,29 @@ var wikinextHelper = (function () {
                 });
             return d;
         },
+        /**
+         * Seaching for a meta data that has a value
+         * @param value
+         * @returns {*}
+         */
         searchMeta: function (value) {
             var d = Deferred();
             this.http_post("/search_meta", {
                 value: value
+            }).next(function (result) {
+                    d.call(result);
+                });
+            return d;
+        },
+        /**
+         * SPARQL query
+         * @param query
+         * @returns {*}
+         */
+        endpoint: function(query) {
+            var d = Deferred();
+            this.http_post("/endpoint", {
+                query: query
             }).next(function (result) {
                     d.call(result);
                 });
