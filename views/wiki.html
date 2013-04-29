@@ -53,6 +53,11 @@
 
     </style>
     <script type="text/javascript">
+        var page = {
+            _id: "{{#page}}{{_id}}{{/page}}"
+        };
+    </script>
+    <script type="text/javascript">
             window.launch_wiki_script = (function(){
                 var __data = {};
                 var application = (function(){
@@ -67,6 +72,7 @@
                             } else
                             if (typeof data != 'undefined')
                                 __data = data;
+                            __data._id = "{{#page}}{{_id}}{{/page}}";
                             return __data;
                         },
                         __afterConstruct: function() {
@@ -99,11 +105,6 @@
             wikinextHelper.updateContent();
             prettyPrint();
         });
-    </script>
-    <script type="text/javascript">
-        var page = {
-            _id: "{{#page}}{{_id}}{{/page}}"
-        };
     </script>
     <script type="text/html" id="article_template">
         {{#page}}
@@ -228,7 +229,6 @@
         {{/last_modified_by}}
         | <i class="icon-comment"></i> <a href="#">0 Comments</a>
         | <i class="icon-history"></i> Version <span property="version">{{version}}</span>
-        | <i class="icon-share"></i> URL: <a href="/wiki/{{_id}}" property="url" rel="url">Address</a>
         {{/page}}
     </p>
     <blockquote class="pull-right">
