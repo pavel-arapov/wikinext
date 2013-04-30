@@ -72,6 +72,8 @@
                             } else
                             if (typeof data != 'undefined')
                                 __data = data;
+                            if (typeof __data == 'undefined')
+                                __data = {};
                             __data._id = "{{#page}}{{_id}}{{/page}}";
                             return __data;
                         },
@@ -152,11 +154,11 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
+                    <li><a href="#" id="goto">Go To Page</a></li>
                     {{#auth}}
                     {{#facebook}}
                     {{#user}}
                     <li><a data-toggle="modal" href="#create-page-dialog">Create Page</a></li>
-                    <li><a href="#" id="goto">Go To Page</a></li>
                     {{#page}}
                     <li><a href="/wiki/{{_id}}/edit"><i class="icon-edit"></i>&nbsp;Edit</a></li>
                     <li><a href="/wiki/{{_id}}/clone"><i class="icon-repeat"></i>&nbsp;Clone</a></li>
