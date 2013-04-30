@@ -12,6 +12,17 @@ var formidable = require('formidable'),
 
 var fs = require('fs');
 
+require('../config.settings'); // include settings
+
+//var wikiTemplate;
+//fs.readFile(__dirname + '/../views/wiki.html', function (err, template) {
+//    if (err) {
+//        throw err;
+//    } else {
+//        wikiTemplate = template.toString();
+//    }
+//});
+
 var path = require('path');
 
 //var encoder = require('../lib/encoderHTML');
@@ -26,6 +37,10 @@ var rdfstorejs = require('rdfstore')
     , RDFa = require('../lib/jsonld/rdfa.js')
     , jsdom = require('jsdom');
 
+var mustache = require('mustache');
+
+var request = require('request');
+
 
 jsonld.use('request');
 
@@ -34,7 +49,7 @@ var store;
 new rdfstorejs.Store({
     persistent: true,
     engine: 'mongodb',
-    name: 'rdfstore',
+    name: 'wikinext',
     overwrite: false,    // delete all the data already present in the MongoDB server
     mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
     mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
@@ -279,12 +294,12 @@ module.exports = function (dao) {
                         });
                     }
 
-                    console.log(page);
+                    //console.log(page);
 
                     res.render('wiki.html', {
                         locals: {
                             page_id: page._id,
-                            title: 'WikiNEXT V2',
+                            title: 'WikiNEXT V2 : '+page['title'],
                             auth: req.session.auth,
                             login: req.session.auth ? false : true,
                             page: page,
@@ -426,15 +441,16 @@ module.exports = function (dao) {
                         data['jsl_id'] = req.body.jsl_id;
                     data['last_modified_by'] = result.name;
                     data['last_modified_at'] = new Date();
-                    var html = rdfstore.$(data['article']);
+
                     // meta rdfquery
+                    var html_jquery = rdfstore.$(data['article']);
                     var meta = []; //rdfstore.$(html).rdf().databank.dump();
                     //data['meta'] = JSON.stringify(meta);
-                    var url = 'http://wikinext.gexsoft.com/wiki/'+data['_id'];
+                    var url = config.host_uri+'wiki/'+data['_id'];
                     var uri = '<'+url+'>';
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
-                    rdfstore.$(html).rdf().where('?s ?p ?o').each(function(index,value){
+                    rdfstore.$(html_jquery).rdf().where('?s ?p ?o').each(function(index,value){
                         //console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
                         var s = _.isObject(value.s.value) ? '<'+value.s.value._string+'>' : value.s.value;
                         var p = _.isObject(value.p.value) ? '<'+value.p.value._string+'>' : value.p.value;
@@ -443,27 +459,6 @@ module.exports = function (dao) {
                     });
                     //console.log(meta);
                     data['meta'] = meta;
-
-                    //console.log(data);
-                    // DOM
-                    jsdom.env(data['article'], function (errors, window) {
-                        if (errors && errors.length > 0) {
-                            console.log(errors);
-                        }
-                        // extract JSON-LD from RDFa
-                        RDFa.attach(window.document);
-                        //console.log(window.document.data);
-                        // create JSON-LD from RDF
-                        jsonld.fromRDF(window.document.data,
-                            {format: 'rdfa-api'}, function (error, data) {
-                                //console.log(error);
-                                console.log(data);
-
-                                store.load("application/ld+json", data, url, function(success, results) {
-
-                                });
-                            });
-                    });
 
                     dao.pages.update(data, function (error, result) {
                         if (error != undefined)
@@ -479,6 +474,67 @@ module.exports = function (dao) {
                         dao.pageversions.insert(req.params.id, data.userid, version, function (error, result) {
                             res.send({status: "ok"});
                         });
+
+
+
+                        request({
+                            uri: config.host_uri + '/wiki/' + req.params.id
+                        }, function(err,res,body) {
+                            var html = body;
+                                //console.log(html);
+
+                        //dao.pages.findById(req.params.id).next(function(page){
+
+//                            page['_id'] = data['_id'];
+//
+//                            if (typeof data['article'] !== "undefined")
+//                                page['article'] = data.article;
+//                            if (typeof data['app'] !== "undefined")
+//                                page['app'] = data.app;
+//                            if (typeof data['title'] !== "undefined")
+//                                page['title'] = data.title;
+//                            if (typeof data['jsl_id'] !== "undefined")
+//                                page['jsl_id'] = data.jsl_id;
+//                            page['last_modified_by'] = data['last_modified_by'];
+//                            page['last_modified_at'] = data['last_modified_at'];
+//
+//                            if (typeof page['created_at'] != 'undefined')
+//                                page['created_at'] = new Date(page['created_at']).toDateString();
+//                            if (typeof page['last_modified_at'] != 'undefined')
+//                                page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
+//
+//                            var html = mustache.to_html(wikiTemplate, {page: page});
+
+
+
+                            //console.log(data);
+
+                            //console.log(template.toString());
+
+                            // DOM
+                            store.clear(url, function (success) {
+                                jsdom.env(html, function (errors, window) {
+                                    if (errors && errors.length > 0) {
+                                        console.log(errors);
+                                    }
+                                    window.location.href = url;
+                                    // extract JSON-LD from RDFa
+                                    RDFa.attach(window.document);
+                                    //console.log(window.document.data);
+                                    // create JSON-LD from RDF
+                                    jsonld.fromRDF(window.document.data,
+                                        {format: 'rdfa-api'}, function (error, data) {
+                                            //console.log(error);
+                                            console.log(data);
+
+                                            store.load("application/ld+json", data, url, function (success, results) {
+                                                //console.log(results);
+                                            });
+                                        });
+                                });
+                            });
+                        //});
+                            });
 
                     });
 
@@ -742,7 +798,7 @@ module.exports = function (dao) {
             var value = req.body.value === undefined ? "Don Tapscott" : req.body.value;
 
             var bank = rdfstore.$.rdf()
-                .base('http://wikinext.gexsoft.com/')
+                .base(config.host_uri)
                 .prefix('dc', 'http://purl.org/dc/elements/1.1/')
                 .prefix('foaf', 'http://xmlns.com/foaf/0.1/');
             dao.pages.findAllWithParameters({meta : 1}).next(function(pages){
