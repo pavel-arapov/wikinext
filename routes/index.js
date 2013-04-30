@@ -446,7 +446,7 @@ module.exports = function (dao) {
                     var html_jquery = rdfstore.$(data['article']);
                     var meta = []; //rdfstore.$(html).rdf().databank.dump();
                     //data['meta'] = JSON.stringify(meta);
-                    var url = config.host_uri+'wiki/'+data['_id'];
+                    var url = config.host_uri+'/wiki/'+data['_id'];
                     var uri = '<'+url+'>';
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
                     meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
