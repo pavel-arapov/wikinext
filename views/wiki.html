@@ -229,7 +229,7 @@
         {{#page}}
         | <i class="icon-info-sign"></i><span property="name">{{title}}</span>
         | <i class="icon-user"></i>
-        <span property="author"><span typeOf="Person" about="/user/{{#author}}{{oid}}{{/author}}"><span property="name"><a href="/user/{{#author}}{{oid}}{{/author}}">{{created_by}}</a></span></span></span>
+        <span rel="author"><span typeOf="Person" about="/user/{{#author}}{{oid}}{{/author}}"><span property="name"><a href="/user/{{#author}}{{oid}}{{/author}}">{{created_by}}</a></span></span></span>
         | <i class="icon-calendar"></i> <span property="dateCreated">{{created_at}}</span>
         {{#last_modified_by}}
         | <i class="icon-user"></i> <span property="contributor"><a href="#">{{last_modified_by}}</a></span>
