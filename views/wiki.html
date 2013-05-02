@@ -101,8 +101,10 @@
         document.wikinextReady = (function() {
             var data = launch_wiki_script.construct();
             var article = ich.article_template(data);
-            $("#article_show").append(article);
-            wikinextHelper.preparePrettify($("#article_show"));
+            var article_show = $("#article_show");
+            article_show.empty();
+            article_show.append(article);
+            wikinextHelper.preparePrettify(article_show);
             launch_wiki_script.afterConstruct();
             wikinextHelper.updateContent();
             prettyPrint();
@@ -202,7 +204,11 @@
         </div><!--/.well -->
     </div><!--/span-->
     <div class="span9">
-        <span id="article_show" property="articleBody"></span>
+        <span id="article_show" property="articleBody">
+            {{#page}}
+                {{{article}}}
+            {{/page}}
+        </span>
     </div><!--/row-->
     </div>
     <hr>
