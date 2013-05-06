@@ -232,7 +232,7 @@
         <span rel="author"><span typeOf="Person" about="/user/{{#author}}{{oid}}{{/author}}"><span property="name"><a href="/user/{{#author}}{{oid}}{{/author}}">{{created_by}}</a></span></span></span>
         | <i class="icon-calendar"></i> <span property="dateCreated">{{created_at}}</span>
         {{#last_modified_by}}
-        | <i class="icon-user"></i> <span property="contributor"><a href="#">{{last_modified_by}}</a></span>
+        | <i class="icon-user"></i> <span rel="contributor"><span typeOf="Person" about="/user/{{#contributor}}{{oid}}{{/contributor}}"><span property="name"><a href="/user/{{#contributor}}{{oid}}{{/contributor}}">{{last_modified_by}}</a></span></span></span>
         | <i class="icon-calendar"></i> <span property="dateModified">{{last_modified_at}}</span>
         {{/last_modified_by}}
         | <i class="icon-comment"></i> <a href="#">0 Comments</a>

@@ -66,42 +66,42 @@ new rdfstorejs.Store({
  * @param graph JS RDF Interface graph object to be serialized
  * @param rdf JS RDF Interface RDF environment object
  */
-graphToJSONLD = function(graph, rdf) {
+graphToJSONLD = function (graph, rdf) {
     var nodes = {};
 
-    graph.forEach(function(triple) {
+    graph.forEach(function (triple) {
         var subject = triple.subject.valueOf();
         var node = nodes[subject];
-        if(node == null) {
-            node = {"@subject" : subject, "@context": {}};
+        if (node == null) {
+            node = {"@subject": subject, "@context": {}};
             nodes[subject] = node;
         }
 
         var predicate = triple.predicate.valueOf();
-        if(predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
+        if (predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
             predicate = "@type";
         }
 
-        var property  = null;
+        var property = null;
         var isCURIE = false;
         property = rdf.prefixes.shrink(predicate);
 
-        if(property != predicate) {
+        if (property != predicate) {
             isCURIE = true;
         }
-        if(property.indexOf("#") != -1) {
+        if (property.indexOf("#") != -1) {
             property = property.split("#")[1];
         } else {
             property = property.split("/");
-            property = property[property.length-1];
+            property = property[property.length - 1];
         }
 
         var object = triple.object.valueOf();
 
-        if(node[property] != null) {
-            if(!isCURIE) {
-                if(node["@context"][property] != null || property[0] === '@') {
-                    if(typeof(node[property]) === "object") {
+        if (node[property] != null) {
+            if (!isCURIE) {
+                if (node["@context"][property] != null || property[0] === '@') {
+                    if (typeof(node[property]) === "object") {
                         node[property].push(object);
                     } else {
                         object = [ node[property], object];
@@ -109,10 +109,10 @@ graphToJSONLD = function(graph, rdf) {
                     }
                 } else {
                     property = triple.predicate.valueOf();
-                    if(node[property] == null) {
+                    if (node[property] == null) {
                         node[property] = object;
                     } else {
-                        if(typeof(node[property]) === "object") {
+                        if (typeof(node[property]) === "object") {
                             node[property].push(object);
                         } else {
                             object = [ node[property], object ];
@@ -120,14 +120,14 @@ graphToJSONLD = function(graph, rdf) {
                         }
                     }
 
-                    if(typeof(object) === 'string' &&
+                    if (typeof(object) === 'string' &&
                         (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
                         jsonldCoerce(node, property, "@iri");
                     }
                 }
             } else {
                 var prefix = property.split(":")[0];
-                if(typeof(node[property]) === "object") {
+                if (typeof(node[property]) === "object") {
                     node[property].push(object);
                 } else {
                     object = [ node[property], object];
@@ -136,8 +136,8 @@ graphToJSONLD = function(graph, rdf) {
             }
         } else {
             node[property] = object;
-            if(property[0] != '@') {
-                if(isCURIE == true) {
+            if (property[0] != '@') {
+                if (isCURIE == true) {
                     // saving prefix
                     var prefix = property.split(":")[0];
                     node["@context"][prefix] = rdf.prefixes[prefix];
@@ -146,7 +146,7 @@ graphToJSONLD = function(graph, rdf) {
                     node["@context"][property] = triple.predicate.valueOf();
                 }
 
-                if(typeof(object) === 'string' &&
+                if (typeof(object) === 'string' &&
                     (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
                     jsonldCoerce(node, property, "@iri");
                 }
@@ -156,7 +156,7 @@ graphToJSONLD = function(graph, rdf) {
     });
 
     var results = [];
-    for(var p in nodes) {
+    for (var p in nodes) {
         results.push(nodes[p]);
     }
 
@@ -171,20 +171,20 @@ graphToJSONLD = function(graph, rdf) {
  * @param prpoerty URI of the property to be coerced
  * @param type coercion type
  */
-jsonldCoerce = function(obj, property, type) {
-    if(obj['@context'] == null) {
+jsonldCoerce = function (obj, property, type) {
+    if (obj['@context'] == null) {
         obj['@context'] = {};
     }
-    if(obj['@context']['@coerce'] == null) {
+    if (obj['@context']['@coerce'] == null) {
         obj['@context']['@coerce'] = {};
         obj['@context']['@coerce'][type] = property;
-    } else if(typeof(obj['@context']['@coerce'][type]) === 'string' &&
+    } else if (typeof(obj['@context']['@coerce'][type]) === 'string' &&
         obj['@context']['@coerce'][type] != property) {
         var oldValue = obj['@context']['@coerce'][type];
         obj['@context']['@coerce'][type] = [oldValue, property];
-    } else if(typeof(obj['@context']['@coerce'][type]) === 'object') {
-        for(var i=0; i<obj['@context']['@coerce'][type].length; i++) {
-            if(obj['@context']['@coerce'][type][i] === property)  {
+    } else if (typeof(obj['@context']['@coerce'][type]) === 'object') {
+        for (var i = 0; i < obj['@context']['@coerce'][type].length; i++) {
+            if (obj['@context']['@coerce'][type][i] === property) {
                 return obj;
             }
         }
@@ -244,6 +244,7 @@ module.exports = function (dao) {
 
         },
         wiki: function (req, res) {
+            console.log("Page ID: " + req.params.id);
             var run = {
                 page: dao.pages.findById(req.params.id),
                 pages: dao.pages.findByParent(req.params.id),
@@ -299,7 +300,7 @@ module.exports = function (dao) {
                     res.render('wiki.html', {
                         locals: {
                             page_id: page._id,
-                            title: 'WikiNEXT V2 : '+page['title'],
+                            title: 'WikiNEXT V2 : ' + page['title'],
                             auth: req.session.auth,
                             login: req.session.auth ? false : true,
                             page: page,
@@ -443,22 +444,22 @@ module.exports = function (dao) {
                     data['last_modified_at'] = new Date();
 
                     // meta rdfquery
-                    var html_jquery = rdfstore.$(data['article']);
-                    var meta = []; //rdfstore.$(html).rdf().databank.dump();
+//                    var html_jquery = rdfstore.$(data['article']);
+//                    var meta = []; //rdfstore.$(html).rdf().databank.dump();
                     //data['meta'] = JSON.stringify(meta);
-                    var url = config.host_uri+'/wiki/'+data['_id'];
-                    var uri = '<'+url+'>';
-                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
-                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
-                    rdfstore.$(html_jquery).rdf().where('?s ?p ?o').each(function(index,value){
-                        //console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
-                        var s = _.isObject(value.s.value) ? '<'+value.s.value._string+'>' : value.s.value;
-                        var p = _.isObject(value.p.value) ? '<'+value.p.value._string+'>' : value.p.value;
-                        var o = _.isObject(value.o.value) ? '<'+value.o.value._string+'>' : value.o.value;
-                        meta.push({s: s, p: p, o: o});
-                    });
+                    var url = config.host_uri + '/wiki/' + data['_id'];
+//                    var uri = '<' + url + '>';
+//                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/contributor>', o: result.name});
+//                    meta.push({s: uri, p: '<http://purl.org/dc/elements/1.1/title>', o: data['title']});
+//                    rdfstore.$(html_jquery).rdf().where('?s ?p ?o').each(function (index, value) {
+//                        //console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+//                        var s = _.isObject(value.s.value) ? '<' + value.s.value._string + '>' : value.s.value;
+//                        var p = _.isObject(value.p.value) ? '<' + value.p.value._string + '>' : value.p.value;
+//                        var o = _.isObject(value.o.value) ? '<' + value.o.value._string + '>' : value.o.value;
+//                        meta.push({s: s, p: p, o: o});
+//                    });
                     //console.log(meta);
-                    data['meta'] = meta;
+//                    data['meta'] = meta;
 
                     dao.pages.update(data, function (error, result) {
                         if (error != undefined)
@@ -476,14 +477,13 @@ module.exports = function (dao) {
                         });
 
 
-
                         request({
                             uri: config.host_uri + '/wiki/' + req.params.id
-                        }, function(err,res,body) {
+                        }, function (err, res, body) {
                             var html = body;
-                                //console.log(html);
+                            //console.log(html);
 
-                        //dao.pages.findById(req.params.id).next(function(page){
+                            //dao.pages.findById(req.params.id).next(function(page){
 
 //                            page['_id'] = data['_id'];
 //
@@ -504,7 +504,6 @@ module.exports = function (dao) {
 //                                page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
 //
 //                            var html = mustache.to_html(wikiTemplate, {page: page});
-
 
 
                             //console.log(data);
@@ -533,8 +532,8 @@ module.exports = function (dao) {
                                         });
                                 });
                             });
-                        //});
-                            });
+                            //});
+                        });
 
                     });
 
@@ -696,7 +695,7 @@ module.exports = function (dao) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid,{cache: 1}).next(function (page) {
+            dao.pages.findById(pageid, {cache: 1}).next(function (page) {
                 if (!_.isObject(page.cache))
                     page.cache = {};
                 // sending cache to a client
@@ -712,7 +711,7 @@ module.exports = function (dao) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid,{meta: 1}).next(function (page) {
+            dao.pages.findById(pageid, {meta: 1}).next(function (page) {
                 if (!_.isObject(page.meta))
                     page.meta = {};
                 // sending cache to a client
@@ -728,7 +727,7 @@ module.exports = function (dao) {
             // id of the page
             var pageid = req.body.pageid;
             // looking for a page
-            dao.pages.findById(pageid,{article:1}).next(function (page) {
+            dao.pages.findById(pageid, {article: 1}).next(function (page) {
                 console.log(page);
                 if (_.isUndefined(page.article))
                     page.article = {};
@@ -773,7 +772,7 @@ module.exports = function (dao) {
             if (req.session.auth && pageid != parentid) {
                 dao.pages.updateParent(pageid, parentid).next(function (page) {
                     //res.redirect("/wiki/" + pageid);
-                    res.send({status:"ok"});
+                    res.send({status: "ok"});
                 }).error(function (error) {
                         console.log(error);
                     });
@@ -791,60 +790,129 @@ module.exports = function (dao) {
          * @param req
          * @param res
          */
-        search_meta: function (req,res) {
+        search_meta: function (req, res) {
             // 1) load all meta
             // 2) rdfstore from dump
             // 3) request
             var value = req.body.value === undefined ? "Don Tapscott" : req.body.value;
 
-            var bank = rdfstore.$.rdf()
-                .base(config.host_uri)
-                .prefix('dc', 'http://purl.org/dc/elements/1.1/')
-                .prefix('foaf', 'http://xmlns.com/foaf/0.1/');
-            dao.pages.findAllWithParameters({meta : 1}).next(function(pages){
-                _.each(pages, function (page) {
-                    //console.log(page);
-                    if (_.isArray(page.meta)) {
-                        //console.log(page.meta);
-                        _.each(page.meta, function(value) {
-                            //console.log(value);
-                            var s = value.s[0] === '<' ? value.s : '"'+value.s+'"';
-                            var p = value.p[0] === '<' ? value.p : '"'+value.p+'"';
-                            var o = value.o[0] === '<' ? value.o : '"'+value.o+'"';
-                            var triple = s+' '+p+' '+o+' .';
-                            //console.log(triple);
-                            bank.add(triple);
-                        });
-                    }
-                });
-                //console.log(bank);
-//                bank.where('?s ?p ?o').each(function(index,value){
-//                    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+//            var bank = rdfstore.$.rdf()
+//                .base(config.host_uri)
+//                .prefix('dc', 'http://purl.org/dc/elements/1.1/')
+//                .prefix('foaf', 'http://xmlns.com/foaf/0.1/');
+//            dao.pages.findAllWithParameters({meta : 1}).next(function(pages){
+//                _.each(pages, function (page) {
+//                    //console.log(page);
+//                    if (_.isArray(page.meta)) {
+//                        //console.log(page.meta);
+//                        _.each(page.meta, function(value) {
+//                            //console.log(value);
+//                            var s = value.s[0] === '<' ? value.s : '"'+value.s+'"';
+//                            var p = value.p[0] === '<' ? value.p : '"'+value.p+'"';
+//                            var o = value.o[0] === '<' ? value.o : '"'+value.o+'"';
+//                            var triple = s+' '+p+' '+o+' .';
+//                            //console.log(triple);
+//                            bank.add(triple);
+//                        });
+//                    }
 //                });
+//                //console.log(bank);
+////                bank.where('?s ?p ?o').each(function(index,value){
+////                    console.log("s: " + value.s.value + " p:" + value.p.value + " o:" + value.o.value);
+////                });
+//
+//                var predict = [];
+//                bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
+//                    predict.push(value.x.value._string);
+//                });
+//                //console.log(predict);
+//                var result = [];
+//                _.each(predict,function(value){
+//                    var result_part = [];
+//                    bank.about('<'+value+'>').each(function(value,k) {
+//                        //console.log(k.property + " = " +  k.value.value);
+//                        result_part.push({p: k.property, v: k.value.value});
+//                    });
+//                    result.push({p:value,r:result_part});
+//                });
+//                res.send(result);
+//            });
+            var query = {"predicate": "u:@value", object: "l:\"" + value + "\""};
+            var fields = {"subject": 1, "graph": 1};
+            dao.quads.findByParams(query, fields).next(function (results) {
+                //console.log(results);
+                // schema -> [ usages ]
+                var data = {};
+//                var usage_keys = [];
+                Deferred.loop(results.length,function (iterator_results) {
+                    var ref = results[iterator_results];
+                    query = {"object": ref.subject};
+                    fields = {"subject": 1, "predicate": 1, "graph": 1, "_id": 0};
+                    return dao.quads.findByParams(query, fields).next(function (usages) {
+                        return Deferred.loop(usages.length, function (iterator_usage) {
+                            var usage = usages[iterator_usage];
+//                            if (!in_array(usage.subject+usage.predicate, usage_keys)) {
+//
+//                                usage_keys.push(usage.subject+usage.predicate);
 
-                var predict = [];
-                bank.where('?x ?predict ?name').filter('name',value).each(function(index, value){
-                    predict.push(value.x.value._string);
-                });
-                //console.log(predict);
-                var result = [];
-                _.each(predict,function(value){
-                    var result_part = [];
-                    bank.about('<'+value+'>').each(function(value,k) {
-                        //console.log(k.property + " = " +  k.value.value);
-                        result_part.push({p: k.property, v: k.value.value});
+                            query = {"subject": usage.subject, "predicate": "u:http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "graph": usage.graph};
+                            if (typeof data[usage.subject] === "undefined")
+                                data[usage.subject] = {};
+                            fields = {"_id": 0, "object": 1 };
+                            return dao.quads.findByParams(query, fields).next(function (schemas) {
+                                if (schemas.length > 0)
+                                return Deferred.loop(schemas.length, function (iterator_schema) {
+                                    var schema = schemas[iterator_schema];
+                                    console.log(usage);
+                                    if (typeof data[usage.subject][schema.object] === 'undefined')
+                                        data[usage.subject][schema.object] = {};
+                                    if (typeof data[usage.subject][schema.object][usage.predicate] === 'undefined')
+                                        data[usage.subject][schema.object][usage.predicate] = { "graphs": [usage.graph] } ;
+                                    else
+                                        data[usage.subject][schema.object][usage.predicate]["graphs"].push(usage.graph);
+                                    //console.log("-----======-----");
+                                    //console.log(data);
+                                });
+                                else {
+                                    data[usage.subject]["not defined"] = {};
+                                    data[usage.subject]["not defined"][usage.predicate] = { "graphs": [usage.graph] } ;
+                                    return Deferred.next();
+                                }
+                            });
+//                            } else {
+//                                //console.log("next");
+//                                return Deferred.next();
+//                                //return;
+//                            }
+                        });
                     });
-                    result.push({p:value,r:result_part});
-                });
-                res.send(result);
+
+                }).next(function () {
+                        //console.log("here");
+                        console.log(data);
+                        res.send(data);
+                    });
             });
         },
         endpoint: function (req, res) {
             var query = req.body.query;
-            //console.log(query);
-            store.execute(query, function (success, results) {
-                //console.log(results);
-                res.send(results);
+            //console.log(query); //'http://127.0.0.1:8000/wiki/517a48e2cc1d5a4d81000001'
+            dao.quads.distinct("graph", {}).next(function (results) {
+                var graphs = [];
+                _.each(results, function (value) {
+                    graphs.push(value.slice(2, value.length));
+                });
+                store.executeWithEnvironment("SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ", [], graphs, function (success, results) {
+                    console.log(success);
+                    if (success) {
+                        // process results
+                        console.log(results);
+                    }
+                });
+                store.executeWithEnvironment(query, [], graphs, function (success, results) {
+                    console.log(success);
+                    console.log(results);
+                    res.send(results);
 //                var varNames = {};
 //                var genBindings = [];
 //                for(var i=0; i<results.length; i++) {
@@ -859,8 +927,17 @@ module.exports = function (dao) {
 //                }
 //                res.send(JSON.stringify({'head':head,'results':results}));
 
-                //console.log(graphToJSONLD(results,store.rdf));
+                    //console.log(graphToJSONLD(results,store.rdf));
+                });
             });
+//            store.execute("SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ", function(success, results){
+//                console.log(success);
+//                if(success) {
+//                    // process results
+//                    console.log(results);
+//                }
+//            });
+
         }
     };
 };
