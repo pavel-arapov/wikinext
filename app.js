@@ -493,3 +493,56 @@ var clients = {};
 //v.entities.each(function(Entity){
 //    //console.log(Entity.getSubjectUri());
 //});
+
+
+/**
+ * Here we consume schema.org and insert all triples in database
+ */
+//var request = require('request');
+//
+//var url = "http://schema.org/";
+//
+//var store;
+//
+//new rdfstorejs.Store({
+//    persistent: true,
+//    engine: 'mongodb',
+//    name: 'wikinext',
+//    overwrite: false,    // delete all the data already present in the MongoDB server
+//    mongoDomain: 'localhost', // location of the MongoDB instance, localhost by default
+//    mongoPort: 27017, // port where the MongoDB server is running, 27017 by default
+//    mongoDBOptions: {safe: false}
+//}, function (d) {
+//
+//    store = d;
+//
+//
+//    request({
+//        uri: "http://schema.org/docs/schema_org_rdfa.html"
+//    }, function (err, res, body) {
+//        var html = body;
+//
+//        // DOM
+//        store.clear(url, function (success) {
+//            jsdom.env(html, function (errors, window) {
+//                if (errors && errors.length > 0) {
+//                    console.log(errors);
+//                }
+//                window.location.href = url;
+//                // extract JSON-LD from RDFa
+//                RDFa.attach(window.document);
+//                //console.log(window.document.data);
+//                // create JSON-LD from RDF
+//                jsonld.fromRDF(window.document.data,
+//                    {format: 'rdfa-api'}, function (error, data) {
+//                        //console.log(error);
+//                        console.log(data);
+//
+//                        store.load("application/ld+json", data, url, function (success, results) {
+//                            console.log(results);
+//                        });
+//                    });
+//            });
+//        });
+//    });
+//});

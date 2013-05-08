@@ -45,6 +45,7 @@ var request = require('request');
 jsonld.use('request');
 
 var store;
+var schema_org_cache = require("../db/schema.org.json");
 
 new rdfstorejs.Store({
     persistent: true,
@@ -57,145 +58,6 @@ new rdfstorejs.Store({
 }, function (d) {
     store = d;
 });
-
-
-/**
- * Transforms a RDF JS Interfaces API Graph object into a JSON-LD serialization
- *
- * @arguments
- * @param graph JS RDF Interface graph object to be serialized
- * @param rdf JS RDF Interface RDF environment object
- */
-graphToJSONLD = function (graph, rdf) {
-    var nodes = {};
-
-    graph.forEach(function (triple) {
-        var subject = triple.subject.valueOf();
-        var node = nodes[subject];
-        if (node == null) {
-            node = {"@subject": subject, "@context": {}};
-            nodes[subject] = node;
-        }
-
-        var predicate = triple.predicate.valueOf();
-        if (predicate === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type") {
-            predicate = "@type";
-        }
-
-        var property = null;
-        var isCURIE = false;
-        property = rdf.prefixes.shrink(predicate);
-
-        if (property != predicate) {
-            isCURIE = true;
-        }
-        if (property.indexOf("#") != -1) {
-            property = property.split("#")[1];
-        } else {
-            property = property.split("/");
-            property = property[property.length - 1];
-        }
-
-        var object = triple.object.valueOf();
-
-        if (node[property] != null) {
-            if (!isCURIE) {
-                if (node["@context"][property] != null || property[0] === '@') {
-                    if (typeof(node[property]) === "object") {
-                        node[property].push(object);
-                    } else {
-                        object = [ node[property], object];
-                        node[property] = object;
-                    }
-                } else {
-                    property = triple.predicate.valueOf();
-                    if (node[property] == null) {
-                        node[property] = object;
-                    } else {
-                        if (typeof(node[property]) === "object") {
-                            node[property].push(object);
-                        } else {
-                            object = [ node[property], object ];
-                            node[property] = object;
-                        }
-                    }
-
-                    if (typeof(object) === 'string' &&
-                        (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
-                        jsonldCoerce(node, property, "@iri");
-                    }
-                }
-            } else {
-                var prefix = property.split(":")[0];
-                if (typeof(node[property]) === "object") {
-                    node[property].push(object);
-                } else {
-                    object = [ node[property], object];
-                    node[property] = object;
-                }
-            }
-        } else {
-            node[property] = object;
-            if (property[0] != '@') {
-                if (isCURIE == true) {
-                    // saving prefix
-                    var prefix = property.split(":")[0];
-                    node["@context"][prefix] = rdf.prefixes[prefix];
-                } else {
-                    // saving whole URI in context
-                    node["@context"][property] = triple.predicate.valueOf();
-                }
-
-                if (typeof(object) === 'string' &&
-                    (object.indexOf("http://") == 0 || object.indexOf("https://") == 0)) {
-                    jsonldCoerce(node, property, "@iri");
-                }
-
-            }
-        }
-    });
-
-    var results = [];
-    for (var p in nodes) {
-        results.push(nodes[p]);
-    }
-
-    return results;
-};
-
-/**
- * Adds a coercion annotation to a json-ld object
- *
- * @arguments
- * @param obj jsonld Object where the coerced property will be added
- * @param prpoerty URI of the property to be coerced
- * @param type coercion type
- */
-jsonldCoerce = function (obj, property, type) {
-    if (obj['@context'] == null) {
-        obj['@context'] = {};
-    }
-    if (obj['@context']['@coerce'] == null) {
-        obj['@context']['@coerce'] = {};
-        obj['@context']['@coerce'][type] = property;
-    } else if (typeof(obj['@context']['@coerce'][type]) === 'string' &&
-        obj['@context']['@coerce'][type] != property) {
-        var oldValue = obj['@context']['@coerce'][type];
-        obj['@context']['@coerce'][type] = [oldValue, property];
-    } else if (typeof(obj['@context']['@coerce'][type]) === 'object') {
-        for (var i = 0; i < obj['@context']['@coerce'][type].length; i++) {
-            if (obj['@context']['@coerce'][type][i] === property) {
-                return obj;
-            }
-        }
-
-        obj['@context']['@coerce'][type].push(property);
-    } else {
-        obj['@context']['@coerce'][type] = property;
-    }
-
-    return obj;
-};
 
 function in_array(needle, haystack, argStrict) {
     var key = '',
@@ -217,6 +79,16 @@ function in_array(needle, haystack, argStrict) {
 
     return false;
 }
+
+//function create_cache(dao) {
+//    var d = Deferred();
+//    var query = {"graph": "u:http://schema.org/"};
+//    var fields = {"_id": 0};
+//    dao.quads.findByParams(query, fields).next(function (graph) {
+//
+//    });
+//    return d;
+//}
 
 
 module.exports = function (dao) {
@@ -481,34 +353,6 @@ module.exports = function (dao) {
                             uri: config.host_uri + '/wiki/' + req.params.id
                         }, function (err, res, body) {
                             var html = body;
-                            //console.log(html);
-
-                            //dao.pages.findById(req.params.id).next(function(page){
-
-//                            page['_id'] = data['_id'];
-//
-//                            if (typeof data['article'] !== "undefined")
-//                                page['article'] = data.article;
-//                            if (typeof data['app'] !== "undefined")
-//                                page['app'] = data.app;
-//                            if (typeof data['title'] !== "undefined")
-//                                page['title'] = data.title;
-//                            if (typeof data['jsl_id'] !== "undefined")
-//                                page['jsl_id'] = data.jsl_id;
-//                            page['last_modified_by'] = data['last_modified_by'];
-//                            page['last_modified_at'] = data['last_modified_at'];
-//
-//                            if (typeof page['created_at'] != 'undefined')
-//                                page['created_at'] = new Date(page['created_at']).toDateString();
-//                            if (typeof page['last_modified_at'] != 'undefined')
-//                                page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
-//
-//                            var html = mustache.to_html(wikiTemplate, {page: page});
-
-
-                            //console.log(data);
-
-                            //console.log(template.toString());
 
                             // DOM
                             store.clear(url, function (success) {
@@ -532,7 +376,6 @@ module.exports = function (dao) {
                                         });
                                 });
                             });
-                            //});
                         });
 
                     });
@@ -840,7 +683,7 @@ module.exports = function (dao) {
             var query = {"predicate": "u:@value", object: "l:\"" + value + "\""};
             var fields = {"subject": 1, "graph": 1};
             dao.quads.findByParams(query, fields).next(function (results) {
-                //console.log(results);
+                console.log(results);
                 // schema -> [ usages ]
                 var data = {};
 //                var usage_keys = [];
@@ -849,6 +692,7 @@ module.exports = function (dao) {
                     query = {"object": ref.subject};
                     fields = {"subject": 1, "predicate": 1, "graph": 1, "_id": 0};
                     return dao.quads.findByParams(query, fields).next(function (usages) {
+                        console.log(usages);
                         return Deferred.loop(usages.length, function (iterator_usage) {
                             var usage = usages[iterator_usage];
 //                            if (!in_array(usage.subject+usage.predicate, usage_keys)) {
@@ -860,30 +704,65 @@ module.exports = function (dao) {
                                 data[usage.subject] = {};
                             fields = {"_id": 0, "object": 1 };
                             return dao.quads.findByParams(query, fields).next(function (schemas) {
+                                console.log(schemas);
                                 if (schemas.length > 0)
-                                return Deferred.loop(schemas.length, function (iterator_schema) {
-                                    var schema = schemas[iterator_schema];
-                                    console.log(usage);
-                                    if (typeof data[usage.subject][schema.object] === 'undefined')
-                                        data[usage.subject][schema.object] = {};
-                                    if (typeof data[usage.subject][schema.object][usage.predicate] === 'undefined')
-                                        data[usage.subject][schema.object][usage.predicate] = { "graphs": [usage.graph] } ;
-                                    else
-                                        data[usage.subject][schema.object][usage.predicate]["graphs"].push(usage.graph);
-                                    //console.log("-----======-----");
-                                    //console.log(data);
-                                });
+                                    return Deferred.loop(schemas.length, function (iterator_schema) {
+                                        var schema = schemas[iterator_schema];
+                                        //console.log(usage);
+                                        // TODO need to find where the definition of predicate/property... in which ontology,
+                                        // in case we have more than 1, we will have the same predicate few times...
+                                        // ? if we didn't find any ontology which has it definition, we need to add our predicate in "not defined"?
+                                        // Subject : <http://www.w3.org/2000/01/rdf-schema#subClassOf> : Object
+                                        // Subject == schema.subject
+                                        // Construct tree of found schemas?
+                                        // Property
+                                        // || Subject : <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> : <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>
+                                        // Next query could give us an answer about where the definition of our property...
+                                        // Subject : <http://schema.org/domain> : Object
+                                        // Subject : <http://www.w3.org/2000/01/rdf-schema#label> : Object
+                                        // If we know subject (our property is usage.predicate) we could find objects - where the definition and label
+                                        // Domain(Object) need to be equal usage.object...
+                                        var need_to_insert = false;
+                                        // 18 = length(http://schema.org/) + 2 (u:);
+                                        var property = schema_org_cache['properties'][usage.predicate.slice(20, usage.predicate.length)];
+                                        var ontology = schema.object.slice(20, schema.object.length);
+                                        var type = schema_org_cache['types'][ontology];
+                                        //console.log(property);
+                                        //console.log(ontology);
+                                        //console.log(type);
+                                        // looking for our ontology in domains, if it there - good
+                                        for (var key in property['domains']) {
+                                            if (property['domains'][key] == ontology) {
+                                                need_to_insert = true;
+                                            }
+                                        }
+
+                                        if (!need_to_insert) {
+                                            for (key in type['ancestors'])
+                                                if (in_array(type['ancestors'][key], property['domains']))
+                                                    need_to_insert = true;
+                                        }
+                                        if (need_to_insert) {
+//                                            if (typeof data[usage.subject][schema.object] === 'undefined')
+//                                                data[usage.subject][schema.object] = {};
+//                                            if (typeof data[usage.subject][schema.object][usage.predicate] === 'undefined')
+//                                                data[usage.subject][schema.object][usage.predicate] = { "graphs": [usage.graph] };
+//                                            else
+//                                                data[usage.subject][schema.object][usage.predicate]["graphs"].push(usage.graph);
+                                            if (typeof data[usage.subject][type['label']] === 'undefined')
+                                                data[usage.subject][type['label']] = {};
+                                            if (typeof data[usage.subject][type['label']][property['label']] === 'undefined')
+                                                data[usage.subject][type['label']][property['label']] = { "graphs": [usage.graph] };
+                                            else
+                                                data[usage.subject][type['label']][property['label']]["graphs"].push(usage.graph);
+                                        }
+                                    });
                                 else {
                                     data[usage.subject]["not defined"] = {};
-                                    data[usage.subject]["not defined"][usage.predicate] = { "graphs": [usage.graph] } ;
+                                    data[usage.subject]["not defined"][usage.predicate] = { "graphs": [usage.graph] };
                                     return Deferred.next();
                                 }
                             });
-//                            } else {
-//                                //console.log("next");
-//                                return Deferred.next();
-//                                //return;
-//                            }
                         });
                     });
 
@@ -891,6 +770,8 @@ module.exports = function (dao) {
                         //console.log("here");
                         console.log(data);
                         res.send(data);
+                    }).error(function(error) {
+                        res.send({"error":error});
                     });
             });
         },
