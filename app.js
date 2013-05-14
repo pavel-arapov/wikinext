@@ -181,6 +181,8 @@ app.get('/links',routes.loadPagesTree);
 app.post('/search_meta',routes.search_meta);
 // endpoint
 app.post('/endpoint',routes.endpoint);
+// full information about defined URI
+app.post('/uri',routes.uri);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

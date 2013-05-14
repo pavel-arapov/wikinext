@@ -487,6 +487,21 @@ var wikinextHelper = (function () {
             return d;
         },
         /**
+         * All information about URI
+         * Normaly return array with [predicate -> value] info
+         * @param uri
+         * @returns {*}
+         */
+        uri : function(uri){
+            var d = Deferred();
+            this.http_post("/uri", {
+                uri: uri
+            }).next(function (result) {
+                    d.call(result);
+                });
+            return d;
+        },
+        /**
          * Load an article which we would like use such as template
          * @param pageid
          * @returns {*}

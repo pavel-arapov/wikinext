@@ -698,10 +698,12 @@ module.exports = function (dao) {
 //                            if (!in_array(usage.subject+usage.predicate, usage_keys)) {
 //
 //                                usage_keys.push(usage.subject+usage.predicate);
+                            var filtered_uri = usage.subject.substr(0,2) == 'u:' ? usage.subject.substr(2,usage.subject.length) : usage.subject;
+                            var filtered_graph = usage.graph.substr(0,2) == 'u:' ? usage.graph.substr(2,usage.graph.length) : usage.graph;
 
                             query = {"subject": usage.subject, "predicate": "u:http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "graph": usage.graph};
-                            if (typeof data[usage.subject] === "undefined")
-                                data[usage.subject] = {};
+                            if (typeof data[filtered_uri] === "undefined")
+                                data[filtered_uri] = {};
                             fields = {"_id": 0, "object": 1 };
                             return dao.quads.findByParams(query, fields).next(function (schemas) {
                                 console.log(schemas);
@@ -749,17 +751,17 @@ module.exports = function (dao) {
 //                                                data[usage.subject][schema.object][usage.predicate] = { "graphs": [usage.graph] };
 //                                            else
 //                                                data[usage.subject][schema.object][usage.predicate]["graphs"].push(usage.graph);
-                                            if (typeof data[usage.subject][type['label']] === 'undefined')
-                                                data[usage.subject][type['label']] = {};
-                                            if (typeof data[usage.subject][type['label']][property['label']] === 'undefined')
-                                                data[usage.subject][type['label']][property['label']] = { "graphs": [usage.graph] };
+                                            if (typeof data[filtered_uri][type['label']] === 'undefined')
+                                                data[filtered_uri][type['label']] = {};
+                                            if (typeof data[filtered_uri][type['label']][property['label']] === 'undefined')
+                                                data[filtered_uri][type['label']][property['label']] = { "graphs": [filtered_graph] };
                                             else
-                                                data[usage.subject][type['label']][property['label']]["graphs"].push(usage.graph);
+                                                data[filtered_uri][type['label']][property['label']]["graphs"].push(filtered_graph);
                                         }
                                     });
                                 else {
-                                    data[usage.subject]["not defined"] = {};
-                                    data[usage.subject]["not defined"][usage.predicate] = { "graphs": [usage.graph] };
+                                    data[filtered_uri]["Unknown schema"] = {};
+                                    data[filtered_uri]["Unknown schema"][usage.predicate] = { "graphs": [filtered_graph] };
                                     return Deferred.next();
                                 }
                             });
@@ -819,6 +821,44 @@ module.exports = function (dao) {
 //                }
 //            });
 
+        },
+        uri: function (req, res) {
+            var uri = req.body.uri;
+            var query = {"subject": "u:" + uri};
+            var fields = {"_id": 0, "predicate": 1, "object": 1};
+            dao.quads.findByParams(query, fields).next(function (results) {
+                var blanknodes = [];
+                for (var key in results) {
+                    if (results[key].object.substr(0,2) == 'b:' ) {
+                        blanknodes.push(results[key].object);
+                        console.log("blank node: "+results[key].object);
+                    }
+                }
+
+                query = {"subject":{$in: blanknodes},"predicate":"u:@value"};
+                fields = {"_id": 0, "subject": 1, "object": 1};
+                dao.quads.findByParams(query, fields).next(function (values) {
+                    console.log(values);
+                    for (key in values) {
+                        //results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
+                        for (var i in results) {
+                            if (results[i].object == values[key].subject) {
+                                results[i].object = values[key].object.substr(3, values[key].object.length - 4);
+                            }
+                        }
+                    }
+                    for (key in results) {
+                        if (results[key].object.substr(0, 2) == 'u:') {
+                            results[key].object = results[key].object.substr(2, results[key].object.length);
+                        }
+                        if (results[key].predicate.substr(0, 2) == 'u:') {
+                            results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
+                        }
+                    }
+                    console.log(results);
+                    res.send(results);
+                });
+            });
         }
     };
 };
