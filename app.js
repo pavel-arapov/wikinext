@@ -53,31 +53,33 @@ everyauth.facebook
         /*
          Looking by fbUserMetadata.id in the database or create new user
          */
-        dao.users.findByFBId(fbUserMetadata.id, function(error, found_user) {
+        dao.users.findByFBId(fbUserMetadata.id, function (error, found_user) {
             if (error)
                 return userPromise.fail(error);
-            if (found_user){
+            if (found_user) {
                 session.userId = found_user._id;
                 found_user.id = found_user._id;
                 // d(found_user);
                 return userPromise.fulfill(found_user);
             }
-            else{
+            else {
                 var our_user = {
-                    'fbid':fbUserMetadata.id,
-                    'name':fbUserMetadata.name,
-                    'link':fbUserMetadata.link,
-                    'verified':fbUserMetadata.verified
+                    'fbid': fbUserMetadata.id,
+                    'name': fbUserMetadata.name,
+                    'link': fbUserMetadata.link,
+                    'verified': fbUserMetadata.verified
                 };
-                dao.users.insert(our_user, function(error, inserted_user) {
+                dao.users.insert(our_user, function (error, inserted_user) {
                     if (error) return userPromise.fail(error);
-                    session.userId = inserted_user._id+"";
+                    session.userId = inserted_user._id;
                     inserted_user.id = inserted_user._id;
                     return userPromise.fulfill(inserted_user);
                 });
+                return userPromise;
             }
         });
-        return userPromise;});
+        return userPromise;
+    });
 
 //// эта фигня вызывается при КАЖДОМ запросе сервера :-(
 //everyauth.everymodule.findUserById( function (userId, callback) {
