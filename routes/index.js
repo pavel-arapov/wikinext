@@ -594,8 +594,11 @@ module.exports = function (dao) {
                     // only owner of a page can delete it
                     if (page.userid == userid) {
                         dao.pages.remove(pageid, function (msg) {
-                            console.log(msg);
-                            res.send({status: "ok"});
+                            var url = config.host_uri + '/wiki/' + pageid;
+                            store.clear(url, function (success) {
+                                //console.log(msg);
+                                res.send({status: "ok"});
+                            });
                             //res.redirect("/home");
                         });
                     }
