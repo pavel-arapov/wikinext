@@ -55,18 +55,23 @@ everyauth.facebook
          */
         dao.users.findByFBId(fbUserMetadata.id, function (error, found_user) {
             if (error)
-                return userPromise.fail(error);
+                userPromise.fail(error);
             if (found_user) {
                 session.userId = found_user._id;
                 found_user.id = found_user._id;
                 // d(found_user);
-                return userPromise.fulfill(found_user);
+                userPromise.fulfill(found_user);
             }
             else {
                 var our_user = {
                     'fbid': fbUserMetadata.id,
                     'name': fbUserMetadata.name,
                     'link': fbUserMetadata.link,
+                    'email': fbUserMetadata.email,
+                    'gender': fbUserMetadata.gender,
+                    'locale': fbUserMetadata.locale,
+                    'work': typeof fbUserMetadata.work === 'undefined' ? "" : fbUserMetadata.work,
+                    'education': typeof fbUserMetadata.education === 'undefined' ? "" : fbUserMetadata.education,
                     'verified': fbUserMetadata.verified
                 };
                 dao.users.insert(our_user, function (error, inserted_user) {
@@ -75,7 +80,6 @@ everyauth.facebook
                     inserted_user.id = inserted_user._id;
                     return userPromise.fulfill(inserted_user);
                 });
-                return userPromise;
             }
         });
         return userPromise;
