@@ -115,7 +115,7 @@ function eliminate_duplicates_predicate_value(arr) {
     var obj = {}, array = [], hash;
 
     for (var key in arr) {
-        hash = crypto.createHash('md5').update(arr[key].predicate+"_"+arr[key].value).digest("hex")
+        hash = crypto.createHash('md5').update(arr[key].predicate+"_"+arr[key].object).digest("hex")
         if (typeof obj[hash] === 'undefined') {
             obj[hash] = 0;
             array.push(arr[key]);
