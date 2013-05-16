@@ -112,11 +112,12 @@ function eliminate_duplicates(arr) {
  * @param arr
  */
 function eliminate_duplicates_predicate_value(arr) {
-    var obj = {}, array = [];
+    var obj = {}, array = [], hash;
 
     for (var key in arr) {
-        if (typeof obj[arr[key].predicate+"_"+arr[key].value] === 'undefined') {
-            obj[arr[key].predicate+"_"+arr[key].value] = 0;
+        hash = crypto.createHash('md5').update(arr[key].predicate+"_"+arr[key].value).digest("hex")
+        if (typeof obj[hash] === 'undefined') {
+            obj[hash] = 0;
             array.push(arr[key]);
         }
     }
