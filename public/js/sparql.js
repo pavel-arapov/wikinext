@@ -171,7 +171,7 @@ function SPARQL()
                 callback(data, cur.info);
                 cur.sparql = "";
             });
-    }
+    };
 
     this.abort = function() {
         if(this.ajax != null) this.ajax.abort();
