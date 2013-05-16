@@ -59,6 +59,13 @@ new rdfstorejs.Store({
     store = d;
 });
 
+/**
+ * Looking for a value in array
+ * @param needle - value that we would like to find
+ * @param haystack - array to check
+ * @param argStrict - type of checking (=== or ==) - boolean
+ * @returns {boolean}
+ */
 function in_array(needle, haystack, argStrict) {
     var key = '',
         strict = !!argStrict;
@@ -80,16 +87,41 @@ function in_array(needle, haystack, argStrict) {
     return false;
 }
 
-//function create_cache(dao) {
-//    var d = Deferred();
-//    var query = {"graph": "u:http://schema.org/"};
-//    var fields = {"_id": 0};
-//    dao.quads.findByParams(query, fields).next(function (graph) {
-//
-//    });
-//    return d;
-//}
+/**
+ * Remove duplicates in array
+ * @param arr   - array
+ * @returns {Array} - new array without duplicates
+ */
+function eliminate_duplicates(arr) {
+    var i,
+        len = arr.length,
+        out = [],
+        obj = {};
 
+    for (i = 0; i < len; i++) {
+        obj[arr[i]] = 0;
+    }
+    for (i in obj) {
+        out.push(i);
+    }
+    return out;
+}
+
+/**
+ * Remove the same associated links and array
+ * @param arr
+ */
+function eliminate_duplicates_predicate_value(arr) {
+    var obj = {}, array = [];
+
+    for (var key in arr) {
+        if (typeof obj[arr[key].predicate+"_"+arr[key].value] === 'undefined') {
+            obj[arr[key].predicate+"_"+arr[key].value] = 0;
+            array.push(arr[key]);
+        }
+    }
+    return array;
+}
 
 module.exports = function (dao) {
     return {
@@ -859,6 +891,7 @@ module.exports = function (dao) {
                             results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
                         }
                     }
+                    results = eliminate_duplicates_predicate_value(results);
                     console.log(results);
                     res.send(results);
                 });
