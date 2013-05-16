@@ -883,7 +883,7 @@ module.exports = function (dao) {
                 query = {"subject":{$in: blanknodes},"predicate":"u:@value"};
                 fields = {"_id": 0, "subject": 1, "object": 1};
                 dao.quads.findByParams(query, fields).next(function (values) {
-                    //console.log(values);
+                    console.log(values);
                     for (key in values) {
                         //results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
                         for (var i in results) {
@@ -895,7 +895,7 @@ module.exports = function (dao) {
                     for (key in results) {
                         if (results[key].object.substr(0, 2) == 'u:') {
                             results[key].object = results[key].object.substr(2, results[key].object.length);
-                            if (results[key].object.substr(0,18) == 'http://schema.org/')
+                            if (results[key].object.substr(0,18) == 'http://schema.org/' && results[key].object.length != 18)
                                 results[key].object = getLabelOfOntologySchemaOrg(results[key].object);
                         }
                         if (results[key].predicate.substr(0, 2) == 'u:') {
@@ -907,7 +907,7 @@ module.exports = function (dao) {
                             results[key].predicate = "Class (RDF Type)";
                     }
                     results = eliminate_duplicates_predicate_value(results);
-//                    console.log(results);
+                    console.log(results);
                     res.send(results);
                 });
             });
