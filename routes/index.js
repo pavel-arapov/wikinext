@@ -402,8 +402,9 @@ module.exports = function (dao) {
                             data['article'] = data_orig.article;
                         if (typeof data_orig['app'] !== "undefined")
                             data['app'] = data_orig.app;
+                        data['title'] = "Cloned";
                         if (typeof data_orig['title'] !== "undefined")
-                            data['title'] = data_orig.title;
+                            data['title'] = data['title']+": "+data_orig.title;
                         if (typeof data_orig['libraries'] !== "undefined")
                             data['libraries'] = data_orig.libraries;
                         data['last_modified_by'] = result.name;
