@@ -124,6 +124,14 @@ function eliminate_duplicates_predicate_value(arr) {
     return array;
 }
 
+function getLabelOfPropertySchemaOrg(obj){
+    return schema_org_cache['properties'][obj.slice(18, obj.length)]['label'];
+}
+
+function getLabelOfOntologySchemaOrg(obj){
+    return schema_org_cache['types'][obj.slice(18, obj.length)]['label'];
+}
+
 module.exports = function (dao) {
     return {
         index: function (req, res) {
@@ -868,14 +876,14 @@ module.exports = function (dao) {
                 for (var key in results) {
                     if (results[key].object.substr(0,2) == 'b:' ) {
                         blanknodes.push(results[key].object);
-                        console.log("blank node: "+results[key].object);
+                        //console.log("blank node: "+results[key].object);
                     }
                 }
 
                 query = {"subject":{$in: blanknodes},"predicate":"u:@value"};
                 fields = {"_id": 0, "subject": 1, "object": 1};
                 dao.quads.findByParams(query, fields).next(function (values) {
-                    console.log(values);
+                    //console.log(values);
                     for (key in values) {
                         //results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
                         for (var i in results) {
@@ -887,13 +895,19 @@ module.exports = function (dao) {
                     for (key in results) {
                         if (results[key].object.substr(0, 2) == 'u:') {
                             results[key].object = results[key].object.substr(2, results[key].object.length);
+                            if (results[key].object.substr(0,18) == 'http://schema.org/')
+                                results[key].object = getLabelOfOntologySchemaOrg(results[key].object);
                         }
                         if (results[key].predicate.substr(0, 2) == 'u:') {
                             results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
+                            if (results[key].predicate.substr(0,18) == 'http://schema.org/')
+                                results[key].predicate = getLabelOfPropertySchemaOrg(results[key].predicate);
                         }
+                        if (results[key].predicate == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+                            results[key].predicate = "Class (RDF Type)";
                     }
                     results = eliminate_duplicates_predicate_value(results);
-                    console.log(results);
+//                    console.log(results);
                     res.send(results);
                 });
             });
