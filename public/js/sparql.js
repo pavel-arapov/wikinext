@@ -141,7 +141,7 @@ function SPARQL()
         if(this.selectGraph != null) sp += " } ";
 
         //GROUP BY
-        if(this.groupBy.length > 0) sp += "GROUP BY " + this.group.join(" ");
+        if(this.group.length > 0) sp += "GROUP BY " + this.group.join(" ");
 
         //ORDER BY
         if(this.orders.length > 0) sp += "ORDER BY " + this.orders.join(" ");
