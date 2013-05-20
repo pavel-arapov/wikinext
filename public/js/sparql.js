@@ -49,7 +49,7 @@ function SPARQL()
     this.variables 		= [];
     this.wheres 		= [];
     this.orders		= [];
-    this.groupBy		= [];
+    this.group		= [];
     this.limitNb		= null;
     this.offsetNb		= null;
     this.selectGraph	= null;
@@ -78,7 +78,7 @@ function SPARQL()
     this.union 			= function(x) 			{ this.unions.push(x); return this; };
     this.filter 			= function(x) 			{ this.wheres.push("FILTER (" + x + ")"); return this; };
     this.orderBy 			= function(x) 			{ this.orders.push(x); return this; };
-    this.groupBy 			= function(x) 			{ this.groupBy.push(x); return this; };
+    this.groupBy 			= function(x) 			{ this.group.push(x); return this; };
     this.limit 			= function(x) 			{ this.limitNb = x; return this; };
     this.offset 			= function(x) 			{ this.offestNb = x; return this; };
     this.setInfo			= function(x) 			{ this.info = x; return this; };
@@ -141,7 +141,7 @@ function SPARQL()
         if(this.selectGraph != null) sp += " } ";
 
         //GROUP BY
-        if(this.groupBy.length > 0) sp += "GROUP BY " + this.groupBy.join(" ");
+        if(this.groupBy.length > 0) sp += "GROUP BY " + this.group.join(" ");
 
         //ORDER BY
         if(this.orders.length > 0) sp += "ORDER BY " + this.orders.join(" ");
