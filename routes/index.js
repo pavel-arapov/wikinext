@@ -241,7 +241,7 @@ module.exports = function (dao) {
                             auth: req.session.auth,
                             login: req.session.auth ? false : true,
                             page: page,
-                            pages: page
+                            pages: pages
                         }});
                 });
         },
