@@ -137,7 +137,8 @@ module.exports = function (dao) {
         index: function (req, res) {
             var userid = "";
             var run = {
-                main_pages: dao.pages.findMain()
+                main_pages: dao.pages.findMain(),
+                recent: dao.pages.findByParamsAndSort({},{title:1,last_modified_at:1,last_modified_by:1, contributor: 1},{last_modified_at: -1})
             };
             if (req.session.auth) {
                 userid = req.session.auth.userId;
@@ -145,13 +146,18 @@ module.exports = function (dao) {
             }
             Deferred.parallel(run)
                 .next(function (data) {
+                    for (var key in data['recent']) {
+                        data['recent'][key]['last_modified_at_m'] = new Date(data['recent'][key]['last_modified_at']).toDateString();
+                    }
+                    console.log(data['recent']);
                     res.render('index.html', {
                         locals: {
                             title: 'WikiNEXT V2',
                             auth: req.session.auth,
                             login: req.session.auth ? false : true,
                             pages: data['main_pages'],
-                            user_pages: data['user_pages']
+                            user_pages: data['user_pages'],
+                            recent: data['recent']
                         }});
                 });
 
@@ -194,9 +200,9 @@ module.exports = function (dao) {
                 next(function () {
 
                     if (typeof page['created_at'] != 'undefined')
-                        page['created_at'] = new Date(page['created_at']).toDateString();
+                        page['created_at_m'] = new Date(page['created_at']).toDateString();
                     if (typeof page['last_modified_at'] != 'undefined')
-                        page['last_modified_at'] = new Date(page['last_modified_at']).toDateString();
+                        page['last_modified_at_m'] = new Date(page['last_modified_at']).toDateString();
 
                     // plugged libraries
                     page['js'] = [];

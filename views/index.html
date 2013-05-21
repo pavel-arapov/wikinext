@@ -126,6 +126,25 @@
                     <p><a class="btn" href="http://wikinext.gexsoft.com/wiki/5130891340e78f057a000001">View details »</a></p>
                 </div><!--/span-->
             </div><!--/row-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3>Recent changes</h3>
+                    <p>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Page</th>
+                            <th>Change At</th>
+                            <th>By</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#recent}}<tr><td><a href="/wiki/{{_id}}">{{title}}</a></td><td>{{last_modified_at_m}}</td><td><a href="/user/{{#contributor}}{{oid}}{{/contributor}}">{{last_modified_by}}</a></td></tr>{{/recent}}
+                        </tbody>
+                </table>
+                    </p>
+                </div><!--/span-->
+            </div>
         </div><!--/span-->
     </div><!--/row-->
 
