@@ -35,9 +35,6 @@
 
 <script src="/js/less-1.3.0.min.js"></script>
 
-<script type="text/javascript">
-    wikinextHelper.init();
-</script>
 <style>
 
     body {
@@ -77,62 +74,63 @@
 
 </style>
 <script type="text/javascript">
+var page = {
+    _id: "{{#page}}{{_id}}{{/page}}"
+};
+
+var editorHTML;
+var editorJavaScript;
+
+var fontList = {
+    'Arial': 'Arial',
+    'Arial Black': 'Arial Black',
+    'Book Antiqua': 'Book Antiqua',
+    'Comic Sans MS': 'Comic Sans MS',
+    'Courier New': 'Courier New',
+    'Georgia': 'Georgia',
+    'Helvetica': 'Helvetica',
+    'Impact': 'Impact',
+    'Tahoma': 'Tahoma',
+    'Times New Roman': 'Times New Roman',
+    'Trebuchet MS': 'Trebuchet MS',
+    'Verdana': 'Verdana'
+};
 
 
+var currentFont = 'Arial';
+wikinextHelper.init().next(function () {
+    $(document).ready(function () {
 
-    var page = {
-        _id: "{{#page}}{{_id}}{{/page}}"
-    };
-
-    var editorHTML;var editorJavaScript;
-
-    var fontList = {
-        'Arial':'Arial',
-        'Arial Black':'Arial Black',
-        'Book Antiqua' : 'Book Antiqua',
-        'Comic Sans MS' : 'Comic Sans MS',
-        'Courier New' :  'Courier New',
-        'Georgia' : 'Georgia',
-        'Helvetica':'Helvetica',
-        'Impact':'Impact',
-        'Tahoma':'Tahoma',
-        'Times New Roman':'Times New Roman',
-        'Trebuchet MS':'Trebuchet MS',
-        'Verdana': 'Verdana'
-    };
-
-
-    var currentFont = 'Arial';
-
-    $(document).ready(function(){
-
-        for(var t in fontList){
-            $('#fontlist').append($('<li><a href="javascript:void(0)" data-tool="font" data-font="'+t+'" style="font-family:'+t+'">'+fontList[t]+'</a></li>'));
+        for (var t in fontList) {
+            $('#fontlist').append($('<li><a href="javascript:void(0)" data-tool="font" data-font="' + t + '" style="font-family:' + t + '">' + fontList[t] + '</a></li>'));
         }
 
         $('#currentFont').html(fontList[currentFont]);
 
-        $("#fontlist a").click(function(){
+        $("#fontlist a").click(function () {
             currentFont = $(this).data('font');
             $('#currentFont').html(fontList[currentFont]);
         });
 
-        (function() {
+        (function () {
             // getElementById
             function $id(id) {
                 return document.getElementById(id);
             }
+
             // output information
             function Output(msg) {
                 var m = $id("messages");
                 m.innerHTML = msg + m.innerHTML;
             }
+
             // file drag hover
             function FileDragHover(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 e.target.className = (e.type == "dragover" ? "hover" : "");
             }
+
             // file selection
             function FileSelectHandler(e) {
 
@@ -149,6 +147,7 @@
                 }
 
             }
+
             // output file information
             function ParseFile(file) {
                 Output(
@@ -160,7 +159,7 @@
                 // display an image
                 if (file.type.indexOf("image") == 0) {
                     var reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         Output(
                                 "<p><strong>" + file.name + ":</strong><br />" +
                                         '<img src="' + e.target.result + '" /></p>'
@@ -172,7 +171,7 @@
                 // display text
                 if (file.type.indexOf("text") == 0) {
                     var reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         Output(
                                 "<p><strong>" + file.name + ":</strong></p><pre>" +
                                         e.target.result.replace(/</g, "&lt;").replace(/>/g, "&gt;") +
@@ -198,13 +197,13 @@
 
 
                     // progress bar
-                    xhr.upload.addEventListener("progress", function(e) {
+                    xhr.upload.addEventListener("progress", function (e) {
                         var pc = parseInt(100 - (e.loaded / e.total * 100));
                         progress.style.backgroundPosition = pc + "% 0";
                     }, false);
 
                     // file received/failed
-                    xhr.onreadystatechange = function(e) {
+                    xhr.onreadystatechange = function (e) {
                         if (xhr.readyState == 4) {
                             progress.className = (xhr.status == 200 ? "success" : "failure");
                         }
@@ -358,10 +357,12 @@
         // leaves mustache/handlebars embedded templates in html mode
         var mixedMode = {
             name: "htmlmixed",
-            scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,
-                mode: null},
+            scriptTypes: [
+                {matches: /\/x-handlebars-template|\/x-mustache/i,
+                    mode: null},
                 {matches: /(text|application)\/(x-)?vb(a|script)/i,
-                    mode: "vbscript"}]
+                    mode: "vbscript"}
+            ]
         };
         var editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"), {
             mode: mixedMode,
@@ -372,15 +373,15 @@
         //editorJavaScript.setSize(null, 500);
 
 
-        $("#save_button").click(function(){
+        $("#save_button").click(function () {
             var info = {
                 title: $("#page_title").val(),
                 article: editorHTML.getValue(),
                 app: editorJavaScript.getValue()
             };
-            wikinextHelper.saveArticle(page._id, info).next(function(d){
+            wikinextHelper.saveArticle(page._id, info).next(function (d) {
                 var m;
-                if (d.status == 'ok'){
+                if (d.status == 'ok') {
                     m = ich.messageSuccess({"message": "Page has been saved"});
 
                 } else {
@@ -390,65 +391,54 @@
             });
         });
 
-        $("#update_title").click(function(){
-            $.post("/wiki/"+page._id+"/save",{title: $("#page_title").val()},function(){});
+        $("#update_title").click(function () {
+            $.post("/wiki/" + page._id + "/save", {title: $("#page_title").val()}, function () {
+            });
             $("#change-title-dialog").modal("hide");
             return false;
         });
 
-        editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"),{
+        editorJavaScript = CodeMirror.fromTextArea(document.getElementById("textAreaApplication"), {
             lineNumbers: true,
             matchBrackets: true,
             continueComments: "Enter",
             gutters: ["CodeMirror-linenumbers", "errors"]
         });
 
-        sharejs.open(page._id, 'text', function(error, doc) {
-            doc.attach_codemirror(editorHTML,true);
-        });
-
-        sharejs.open(page._id+"app", 'text', function(error, doc) {
-            doc.attach_codemirror(editorJavaScript,true);
-        });
-
-        $("#create-page-button").click(function () {
-            $('#create-page').modal('hide');
-            $("#create-page-form").submit();
-        });
-
 
         $('#edit_tabs a').on('shown', function (e) {
             console.log($(e.target).data('id'));
-            if ($(e.target).data('id') == 'html'){
+            if ($(e.target).data('id') == 'html') {
                 editorHTML.refresh();
             } else {
                 editorJavaScript.refresh();
             }
         });
 
-        $(".deleteattach").click(function(){
+        $(".deleteattach").click(function () {
 
             var self = this;
-            $.post("/deleteattach",{
-                index:$(self).data("id"),
-                pageid:page._id
-                }, function(data){
-                    //console.log(data);
-                    var m;
-                    if (data.status == 'ok'){
-                        $(self).closest("div").remove();
-                        m = ich.messageSuccess({"message": "Attach file has been removed"});
-                    }
-                    else
-                        m = ich.messageFail({"message": "Attach file has not been removed"});
-                    $(m).insertBefore("#attached_images");
+            $.post("/deleteattach", {
+                index: $(self).data("id"),
+                pageid: page._id
+            }, function (data) {
+                //console.log(data);
+                var m;
+                if (data.status == 'ok') {
+                    $(self).closest("div").remove();
+                    m = ich.messageSuccess({"message": "Attach file has been removed"});
+                }
+                else
+                    m = ich.messageFail({"message": "Attach file has not been removed"});
+                $(m).insertBefore("#attached_images");
             })
         });
 
-        $("#update_preview_button").click(function(){
+        $("#update_preview_button").click(function () {
             console.log("update preview");
-            delete ich["preview"]; delete ich.templates["preview"];
-            ich.addTemplate("preview",editorHTML.getValue()+"<br>");
+            delete ich["preview"];
+            delete ich.templates["preview"];
+            ich.addTemplate("preview", editorHTML.getValue() + "<br>");
             //TODO need to use the same javascript wrapper as wiki.html uses
             var preview = ich.preview(editorJavaScript.getValue());
             $("#preview_in").empty();
@@ -456,55 +446,55 @@
             $('#preview_dialog').modal('show');
         });
 
-        $(".add-tag").click(function(){
+        $(".add-tag").click(function () {
             var selection = editorHTML.getSelection();
             var result = "";
-            switch($(this).data("tag")){
+            switch ($(this).data("tag")) {
                 case "header1":
-                    result = "<h1>"+selection+"</h1>";
+                    result = "<h1>" + selection + "</h1>";
                     break;
                 case "header2":
-                    result = "<h2>"+selection+"</h2>";
+                    result = "<h2>" + selection + "</h2>";
                     break;
                 case "header3":
-                    result = "<h3>"+selection+"</h3>";
+                    result = "<h3>" + selection + "</h3>";
                     break;
                 case "header4":
-                    result = "<h4>"+selection+"</h4>";
+                    result = "<h4>" + selection + "</h4>";
                     break;
                 case "strong":
-                        result = "<strong>"+selection+"</strong>";
+                    result = "<strong>" + selection + "</strong>";
                     break;
                 case "italic":
-                        result = "<em>"+selection+"</em>";
+                    result = "<em>" + selection + "</em>";
                     break;
                 case "underline":
-                        result = "<u>"+selection+"</u>";
+                    result = "<u>" + selection + "</u>";
                     break;
                 case "strike":
-                        result = "<s>"+selection+"</s>";
+                    result = "<s>" + selection + "</s>";
                     break;
                 case "font":
-                        result = "<span style='font-family:"+currentFont+";'>"+selection+"</span>";
+                    result = "<span style='font-family:" + currentFont + ";'>" + selection + "</span>";
                     break;
                 case "align-center":
-                        result = "<div align='center'>"+selection+"</div>";
+                    result = "<div align='center'>" + selection + "</div>";
                     break;
                 case "align-justify":
-                    result = "<div align='justify'>"+selection+"</div>";
+                    result = "<div align='justify'>" + selection + "</div>";
                     break;
                 case "align-right":
-                    result = "<div align='right'>"+selection+"</div>";
+                    result = "<div align='right'>" + selection + "</div>";
                     break;
                 case "align-left":
-                    result = "<div align='left'>"+selection+"</div>";
+                    result = "<div align='left'>" + selection + "</div>";
                     break;
             }
             editorHTML.replaceSelection(result);
         });
 
 
-        $("#jslist a.jsexample").click(function(e){
+        $("#jslist a.jsexample").click(function (e) {
             //show example page
         });
 
@@ -524,7 +514,7 @@
             });
         });
 
-        $("#editor-wysiwyg").click(function(){
+        $("#editor-wysiwyg").click(function () {
             alert("Currently WISYWIG is inactive due to changing in visualisation HTML editor part. We are sorry for inconviniance.");
             return false;
             editorHTML.toTextArea();
@@ -533,8 +523,8 @@
             $("#textAreaArticle").wysihtml5();
         });
 
-        $("#editor-html").click(function(){
-            editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"),{
+        $("#editor-html").click(function () {
+            editorHTML = CodeMirror.fromTextArea(document.getElementById("textAreaArticle"), {
                 mode: "text/html",
                 tabMode: "indent"
             });
@@ -563,7 +553,8 @@
             wikinextHelper.selectPageDialog(function (data) {
                 console.log("link was inserted");
                 var selection = editorHTML.getSelection();
-                var result = "<a href='"+data['url']+"'>"+selection+"</a>";;
+                var result = "<a href='" + data['url'] + "'>" + selection + "</a>";
+                ;
                 editorHTML.replaceSelection(result);
             });
         });
@@ -588,12 +579,24 @@
 
         function makeMarker(reason) {
             var marker = document.createElement("div");
-            marker.innerHTML = '<a href="#" data-toggle="tooltip" title="'+reason+'">●</a>';
+            marker.innerHTML = '<a href="#" data-toggle="tooltip" title="' + reason + '">●</a>';
             marker.className = "error";
             return marker;
         }
+
+        sharejs.open(page._id, 'text', function (error, doc) {
+            console.log(error);
+            console.log(doc);
+            doc.attach_codemirror(editorHTML, true);
+        });
+
+        sharejs.open(page._id + "app", 'text', function (error, doc) {
+            console.log(error);
+            console.log(doc);
+            doc.attach_codemirror(editorJavaScript, true);
+        });
     });
-//d = console.log;
+});
 </script>
 </head>
 <body>
@@ -636,7 +639,6 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
-                    <li><a data-toggle="modal" href="#create-page-dialog"><i class="icon-file"></i>&nbsp;Create Page</a></li>
                     <li><a href="#" onclick="return false;" id="changeParent"><i class="icon-th-list"></i>&nbsp;Change Parent</a></li>
                     <li><a href="#" onclick="return false;" id="changeTitle"><i class="icon-pencil"></i>&nbsp;Change Title</a></li>
                     <li class="active"><a href="#"><i class="icon-edit"></i>&nbsp;Edit</a></li>
@@ -823,22 +825,6 @@
 
 </div>
 
-<div class="modal hide" id="create-page-dialog">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3>Create Page</h3>
-    </div>
-    <div class="modal-body">
-        <form id="create-page-form" method="POST" action="/create">
-            <label>Create Page</label>
-            <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">Close</a>
-        <a href="#" class="btn btn-primary" id="create-page-button">Create</a>
-    </div>
-</div>
 <div class="modal hide" id="change-title-dialog">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>

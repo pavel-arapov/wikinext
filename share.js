@@ -122,22 +122,6 @@ app.listen(port, function () {
 var timeout;
 
 var sharejs_auth = function(agent,action){
-    //var d = new Deferred();
-    //console.log(agent);
-    //console.log(action);
-    //console.log("auth");
-    var finished = false;
-
-    var wait_result = function() {
-        console.log("wait result");
-        if (!finished){
-            console.log("wait");
-            //setTimeout(wait_result,500);
-        } else
-        {
-            console.log("done");
-        }
-    };
 
 //    if (action.type == 'connect'){
 //        var id = unescape(parseCookie(agent.headers.cookie)['connect.sid']);
@@ -155,7 +139,7 @@ var sharejs_auth = function(agent,action){
 //        console.log("return");
 //    }
 //    else {
-//        action.accept();
+        action.accept();
 //    }
     return action;
 };
