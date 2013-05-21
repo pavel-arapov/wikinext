@@ -439,11 +439,41 @@ wikinextHelper.init().next(function () {
             delete ich["preview"];
             delete ich.templates["preview"];
             ich.addTemplate("preview", editorHTML.getValue() + "<br>");
-            //TODO need to use the same javascript wrapper as wiki.html uses
-            var preview = ich.preview(editorJavaScript.getValue());
+            // same wrapper is used in wiki.html
+            var __data = {};
+            var application = (function () {
+                var app = editorJavaScript.getValue().split("\n").join(" ");
+                //console.log(app);
+                eval(app);
+
+                return {
+                    __construct: function () {
+                        if (typeof construct == 'function') {
+                            console.log('application construct');
+                            __data = construct();
+                        } else if (typeof data != 'undefined')
+                            __data = data;
+                        if (typeof __data == 'undefined')
+                            __data = {};
+                        __data._id = page._id;
+                        return __data;
+                    },
+                    __afterConstruct: function () {
+                        if (typeof afterConstruct == 'function') {
+                            console.log('application after construct');
+                            afterConstruct();
+                        }
+                    }
+                }
+            })();
+
+            var data = application.__construct();
+            console.log(data);
+            var preview = ich.preview(data);
             $("#preview_in").empty();
             $("#preview_in").append(preview);
             $('#preview_dialog').modal('show');
+            application.__afterConstruct();
         });
 
         $(".add-tag").click(function () {
@@ -554,7 +584,6 @@ wikinextHelper.init().next(function () {
                 console.log("link was inserted");
                 var selection = editorHTML.getSelection();
                 var result = "<a href='" + data['url'] + "'>" + selection + "</a>";
-                ;
                 editorHTML.replaceSelection(result);
             });
         });
@@ -585,14 +614,10 @@ wikinextHelper.init().next(function () {
         }
 
         sharejs.open(page._id, 'text', function (error, doc) {
-            console.log(error);
-            console.log(doc);
             doc.attach_codemirror(editorHTML, true);
         });
 
         sharejs.open(page._id + "app", 'text', function (error, doc) {
-            console.log(error);
-            console.log(doc);
             doc.attach_codemirror(editorJavaScript, true);
         });
     });
