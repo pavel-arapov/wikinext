@@ -161,6 +161,7 @@ app.get('/wiki/:id/remove',routes.remove);
 app.get('/wiki/:id/edit',function(req,res){
     res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");
 });
+app.get('/user/:id',routes.user);
 
 // control panel
 // js libraries

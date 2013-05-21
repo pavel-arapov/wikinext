@@ -157,7 +157,7 @@ module.exports = function (dao) {
 
         },
         wiki: function (req, res) {
-            console.log("Page ID: " + req.params.id);
+            //console.log("Page ID: " + req.params.id);
             var run = {
                 page: dao.pages.findById(req.params.id),
                 pages: dao.pages.findByParent(req.params.id),
@@ -219,6 +219,29 @@ module.exports = function (dao) {
                             page: page,
                             pages: pages,
                             libraries: libraries
+                        }});
+                });
+        },
+        user: function (req, res) {
+            //console.log("User ID: " + req.params.id);
+            var run = {
+                page: dao.users.findById(req.params.id),
+                pages: dao.pages.findAllByUserId(req.params.id)
+            };
+            var page, pages;
+            Deferred.parallel(run).next(function (data) {
+                page = data['page'],
+                pages = data['pages']
+            }).next(function () {
+                    //console.log(page);
+                    res.render('user.html', {
+                        locals: {
+                            page_id: page._id,
+                            title: 'WikiNEXT V2 : ' + page['name'],
+                            auth: req.session.auth,
+                            login: req.session.auth ? false : true,
+                            page: page,
+                            pages: page
                         }});
                 });
         },
