@@ -518,11 +518,37 @@ var wikinextHelper = (function () {
         /**
          * API REST create page
          * @param title Title of a page
+         * @return {pageid : id}
          */
-        createPage: function (title) {
-            this.http_post("/create", {
-                page_name: title
-            })
+        createPage: function (title, parent) {
+            var d = Deferred();
+            var data = { page_name: title };
+            if (typeof parent !== 'undefined')
+                data['parent'] = parent;
+            this.http_post("/create", data).next(function(result){
+                    d.call(result);
+                });
+            return d;
+        },
+        findPage: function (title) {
+            var d = Deferred();
+            this.http_post("/find", {title: title}).next(function(result){
+                d.call(result);
+            });
+            return d;
+        },
+        /**
+         *
+         * @param id - pageid
+         * @param info - { title, article, app }
+         * @returns {*}
+         */
+        saveArticle: function (id, info) {
+            var d = Deferred();
+            this.http_post("/wiki/"+id+"/save",info).next(function(data){
+                    d.call(data);
+                });
+            return d;
         },
         changeParentPage: function (pageid, parentid) {
             var d = Deferred();

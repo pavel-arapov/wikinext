@@ -8,7 +8,10 @@ $(document).ready(function(){
 
     $("#create-page-button").click(function () {
         $('#create-page').modal('hide');
-        $("#create-page-form").submit();
+//        $("#create-page-form").submit();
+        wikinextHelper.createPage($('#page_name').val(),$('#parent').val()).next(function(data){
+            window.location = "/wiki/"+data['pageid'];
+        });
     });
 
     $("#delete-page-button").click(function (){

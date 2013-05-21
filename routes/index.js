@@ -256,12 +256,14 @@ module.exports = function (dao) {
                     data.title = "new page";
                 if (!_.isUndefined(req.body.parent))
                     data.parent = req.body.parent;
-                dao.users.findById(data.userid, function (error, result) {
+                dao.users.findById(data.userid).next(function (result) {
                     data.created_by = result.name;
                     dao.pages.insert(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
-                        res.redirect("/wiki/" + result[0]._id + "/edit");
+                        console.log(result[0]._id);
+                        res.send({pageid: result[0]._id});
+                        //res.redirect("/wiki/" + result[0]._id + "/edit");
 
                     });
                 });
@@ -269,17 +271,26 @@ module.exports = function (dao) {
                 res.redirect("/");
             }
         },
+        find: function(req,res){
+            var title = req.body.title;
+            dao.pages.findByParams({title:title},{'title':1}).next(function(result){
+                if (result.title == title) {
+                    res.send(result);
+                } else {
+                    res.send({_id: 0});
+                }
+            });
+        },
         /**
          * Edit page view
          * @param req
          * @param res
          */
         edit: function (req, res) {
-            //console.log("edit");
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
-                dao.users.findById(data.userid, function (error, result) {
+                dao.users.findById(data.userid).next(function (result) {
 //                    data.last_modified_by = {
 //                        name: result.name
 //                    };
@@ -366,7 +377,7 @@ module.exports = function (dao) {
             if (req.session.auth) {
                 var data = {};
                 data.userid = req.session.auth.userId;
-                dao.users.findById(data.userid, function (error, result) {
+                dao.users.findById(data.userid).next(function (result) {
                     data['_id'] = req.params.id;
                     if (typeof req.body['article'] !== "undefined")
                         data['article'] = req.body.article;
@@ -461,7 +472,7 @@ module.exports = function (dao) {
                     var data_orig = arr['page'];
                     var data = {};
                     data.userid = req.session.auth.userId;
-                    dao.users.findById(data.userid, function (error, result) {
+                    dao.users.findById(data.userid).next(function (result) {
                         if (typeof data_orig['article'] !== "undefined")
                             data['article'] = data_orig.article;
                         if (typeof data_orig['app'] !== "undefined")

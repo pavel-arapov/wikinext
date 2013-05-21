@@ -373,11 +373,12 @@
 
 
         $("#save_button").click(function(){
-            $.post("/wiki/"+page._id+"/save",{
+            var info = {
                 title: $("#page_title").val(),
                 article: editorHTML.getValue(),
                 app: editorJavaScript.getValue()
-            },function(d){
+            };
+            wikinextHelper.saveArticle(page._id, info).next(function(d){
                 var m;
                 if (d.status == 'ok'){
                     m = ich.messageSuccess({"message": "Page has been saved"});

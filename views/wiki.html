@@ -258,7 +258,7 @@
         <form id="create-page-form" method="POST" action="/create">
             <label>Create Page</label>
             <input type="text" class="span3" placeholder="Type the name…" id="page_name" name="page_name">
-            <input type="hidden" name="parent" value="{{#page}}{{_id}}{{/page}}">
+            <input type="hidden" id="parent" value="{{#page}}{{_id}}{{/page}}">
         </form>
     </div>
     <div class="modal-footer">

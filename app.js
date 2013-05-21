@@ -28,7 +28,7 @@ winston.info('WikiNEXT is starting');
 var app = module.exports = express.createServer();
 //var db = require('mongoskin').db('dewey:tehrock@localhost:27017/rockband');
 var db = mongo.db(process.env.MONGOLAB_URI || config.mongo_uri);
-var mongoStore = new MongoStore({db:db.db});
+var mongoStore = new MongoStore({db: db.db});
 
 //DAO
 var dao = {};
@@ -36,7 +36,7 @@ dao.users = require('./lib/dao/users.js')(db);
 dao.pages = require('./lib/dao/pages.js')(db);
 dao.pageversions = require('./lib/dao/pageversions.js')(db);
 dao.jslibraries = require('./lib/dao/jslibraries.js')(db);
-dao.quads = require('./lib/dao/quads.js')(db);;
+dao.quads = require('./lib/dao/quads.js')(db);
 
 var port = process.env.PORT || config.port;
 
@@ -97,7 +97,7 @@ everyauth.facebook
 var tmpl = {
     compile: function (source, options) {
         if (typeof source == 'string') {
-            return function(options) {
+            return function (options) {
                 options.locals = options.locals || {};
                 options.partials = options.partials || {};
                 if (options.body) // for express.js > v1.0
@@ -125,14 +125,14 @@ app.configure(function () {
     app.use(express.cookieParser("nothing is permitted"));
     app.use(express.session(
         {
-            secret:process.env.SESSION_SECRET || 'wikinextSecret438271872487',
+            secret: process.env.SESSION_SECRET || 'wikinextSecret438271872487',
             cookie: { domain: config.cookie_domain },
-            store:mongoStore
+            store: mongoStore
         }));
     app.use(everyauth.middleware());
     app.use(app.router);
     app.use(express.static(__dirname + '/public'));
-    app.set("view options", {layout:false});
+    app.set("view options", {layout: false});
     app.use({ keepExtensions: true });
     app.register(".html", tmpl);
 });
@@ -140,7 +140,7 @@ app.configure(function () {
 everyauth.helpExpress(app);
 
 app.configure('development', function () {
-    app.use(express.errorHandler({ dumpExceptions:true, showStack:true }));
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function () {
@@ -155,41 +155,43 @@ var cp = require('./routes/controlpanel.js')(dao);
 //base navigation
 app.get('/', routes.index);
 app.get('/home', routes.index);
-app.get('/wiki/:id',routes.wiki);
-app.get('/wiki/:id/clone',routes.clone);
-app.get('/wiki/:id/remove',routes.remove);
-app.get('/wiki/:id/edit',function(req,res){
-    res.redirect(config.host_sync_uri+"/wiki/"+req.params.id+"/edit");
+app.get('/wiki/:id', routes.wiki);
+app.get('/wiki/:id/clone', routes.clone);
+app.get('/wiki/:id/remove', routes.remove);
+app.get('/wiki/:id/edit', function (req, res) {
+    res.redirect(config.host_sync_uri + "/wiki/" + req.params.id + "/edit");
 });
-app.get('/user/:id',routes.user);
+app.get('/user/:id', routes.user);
 
 // control panel
 // js libraries
 app.get('/cp/jslibraries', cp.jslibraries);
 app.post('/cp/jslibraries/add', cp.add_js_library);
-app.post('/cp/jslibraries/delete',cp.delete_js_library);
+app.post('/cp/jslibraries/delete', cp.delete_js_library);
 // users
 app.get('/cp/users', cp.users);
 
 // API function
 // cache
-app.post('/update_cache',routes.update_cache);
-app.post('/load_cache',routes.load_cache);
+app.post('/update_cache', routes.update_cache);
+app.post('/load_cache', routes.load_cache);
 // meta
-app.post('/load_meta',routes.load_meta);
+app.post('/load_meta', routes.load_meta);
 // template
-app.post('/load_template',routes.load_template);
+app.post('/load_template', routes.load_template);
 // page
-app.post('/create',routes.create);
-app.post('/change_parent',routes.updateParent);
+app.post('/create', routes.create);
+app.post('/change_parent', routes.updateParent);
 // tree
-app.get('/links',routes.loadPagesTree);
+app.get('/links', routes.loadPagesTree);
 // search
-app.post('/search_meta',routes.search_meta);
+app.post('/search_meta', routes.search_meta);
 // endpoint
-app.post('/endpoint',routes.endpoint);
+app.post('/endpoint', routes.endpoint);
 // full information about defined URI
-app.post('/uri',routes.uri);
+app.post('/uri', routes.uri);
+// find the id of a page
+app.post('/find', routes.find);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
