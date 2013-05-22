@@ -530,7 +530,7 @@ var wikinextHelper = (function () {
                 });
             return d;
         },
-        findPage: function (title) {
+        findArticle: function (title) {
             var d = Deferred();
             this.http_post("/find", {title: title}).next(function(result){
                 d.call(result);
