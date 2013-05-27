@@ -280,11 +280,7 @@ module.exports = function (dao) {
         find: function(req,res){
             var title = req.body.title;
             dao.pages.findByParams({title:title},{'title':1}).next(function(result){
-                if (result.title == title) {
-                    res.send(result);
-                } else {
-                    res.send();
-                }
+                res.send(result);
             });
         },
         /**
