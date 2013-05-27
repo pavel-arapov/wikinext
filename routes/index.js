@@ -283,7 +283,7 @@ module.exports = function (dao) {
                 if (result.title == title) {
                     res.send(result);
                 } else {
-                    res.send({_id: 0});
+                    res.send();
                 }
             });
         },
