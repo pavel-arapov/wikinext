@@ -1,6 +1,8 @@
 WikiNEXT
 ========
 
+http://wikinext.gexsoft.com/ - online version with information about WikiNEXT API and a lot examples with DBPedia.org, Freebase etc.
+
 ## JavaScript Semantic Application Wiki
 
 Wiki has 2 node.js applications
