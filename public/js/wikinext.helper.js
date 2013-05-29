@@ -523,7 +523,7 @@ var wikinextHelper = (function () {
         createPage: function (title, parent) {
             var d = Deferred();
             var data = { page_name: title };
-            if (typeof parent !== 'undefined')
+            if (typeof parent !== 'undefined' && parent != null && parent != "")
                 data['parent'] = parent;
             this.http_post("/create", data).next(function(result){
                     d.call(result);
