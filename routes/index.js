@@ -861,46 +861,47 @@ module.exports = function (dao) {
         endpoint: function (req, res) {
             var query = req.body.query;
             //console.log(query); //'http://127.0.0.1:8000/wiki/517a48e2cc1d5a4d81000001'
-            dao.quads.distinct("graph", {}).next(function (results) {
-                var graphs = [];
-                _.each(results, function (value) {
-                    graphs.push(value.slice(2, value.length));
-                });
-                store.executeWithEnvironment("SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ", [], graphs, function (success, results) {
-                    console.log(success);
-                    if (success) {
-                        // process results
-                        console.log(results);
-                    }
-                });
-                store.executeWithEnvironment(query, [], graphs, function (success, results) {
-                    console.log(success);
-                    console.log(results);
-                    res.send(results);
-//                var varNames = {};
-//                var genBindings = [];
-//                for(var i=0; i<results.length; i++) {
-//                    var result = results[i];
-//                    for(var p in results[i]) {
-//                        varNames[p] = true;
-//                    }
-//                }
-//                var head = {'variables':[]};
-//                for(var p in varNames) {
-//                    head['variables'].push({'name':p});
-//                }
-//                res.send(JSON.stringify({'head':head,'results':results}));
-
-                    //console.log(graphToJSONLD(results,store.rdf));
-                });
-            });
-//            store.execute("SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ", function(success, results){
-//                console.log(success);
-//                if(success) {
-//                    // process results
-//                    console.log(results);
-//                }
+//            dao.quads.distinct("graph", {}).next(function (results) {
+//                var graphs = [];
+//                _.each(results, function (value) {
+//                    graphs.push(value.slice(2, value.length));
+//                });
+////                store.executeWithEnvironment("SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ", [], graphs, function (success, results) {
+////                    console.log(success);
+////                    if (success) {
+////                        // process results
+////                        console.log(results);
+////                    }
+////                });
+//                store.executeWithEnvironment(query, [], graphs, function (success, results) {
+////                    console.log(success);
+////                    console.log(results);
+//                    res.send(results);
+////                var varNames = {};
+////                var genBindings = [];
+////                for(var i=0; i<results.length; i++) {
+////                    var result = results[i];
+////                    for(var p in results[i]) {
+////                        varNames[p] = true;
+////                    }
+////                }
+////                var head = {'variables':[]};
+////                for(var p in varNames) {
+////                    head['variables'].push({'name':p});
+////                }
+////                res.send(JSON.stringify({'head':head,'results':results}));
+//
+//                    //console.log(graphToJSONLD(results,store.rdf));
+//                });
 //            });
+            store.execute(query, function(success, results){
+                console.log(success);
+                if(success) {
+                    // process results
+                    //console.log(results);
+                    res.send(results);
+                }
+            });
 
         },
         uri: function (req, res) {
