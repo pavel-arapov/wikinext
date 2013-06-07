@@ -57,9 +57,10 @@ everyauth.facebook
             if (error)
                 userPromise.fail(error);
             if (found_user) {
-                session.userId = found_user._id;
+                found_user.userId = found_user._id;
                 found_user.id = found_user._id;
-                // d(found_user);
+                //console.log("FOUND");
+                //console.log(found_user);
                 userPromise.fulfill(found_user);
             }
             else {
@@ -74,11 +75,17 @@ everyauth.facebook
                     'education': typeof fbUserMetadata.education === 'undefined' ? "" : fbUserMetadata.education,
                     'verified': fbUserMetadata.verified
                 };
-                dao.users.insert(our_user, function (error, inserted_user) {
-                    if (error) return userPromise.fail(error);
-                    session.userId = inserted_user._id;
-                    inserted_user.id = inserted_user._id;
-                    return userPromise.fulfill(inserted_user);
+                dao.users.insert(our_user, function (error, inserted) {
+                    if (error) {
+                        userPromise.fail(error);
+                    } else {
+                        //console.log("INSERTED");
+                        var inserted_user = inserted[0]
+                        inserted_user.userId = inserted_user._id;
+                        inserted_user.id = inserted_user._id;
+                        //console.log(inserted_user);
+                        userPromise.fulfill(inserted_user);
+                    }
                 });
             }
         });

@@ -57,6 +57,7 @@ new rdfstorejs.Store({
     mongoDBOptions: {safe: false}
 }, function (d) {
     store = d;
+    store.rdf.setPrefix("schema", "http://schema.org/");
 });
 
 /**
@@ -149,7 +150,7 @@ module.exports = function (dao) {
                     for (var key in data['recent']) {
                         data['recent'][key]['last_modified_at_m'] = new Date(data['recent'][key]['last_modified_at']).toDateString();
                     }
-                    console.log(data['recent']);
+                    //console.log(data['recent']);
                     res.render('index.html', {
                         locals: {
                             title: 'WikiNEXT V2',
@@ -254,6 +255,7 @@ module.exports = function (dao) {
         create: function (req, res) {
             if (req.session.auth) {
                 var data = {};
+                console.log(req.session.auth);
                 data.userid = req.session.auth.userId;
                 winston.info('Session', req.session.auth);
                 if (typeof req.body['page_name'] !== "undefined")
@@ -267,7 +269,7 @@ module.exports = function (dao) {
                     dao.pages.insert(data, function (error, result) {
                         if (error != undefined)
                             console.log("Got an error: " + error);
-                        console.log(result[0]._id);
+                        //console.log(result[0]._id);
                         res.send({pageid: result[0]._id});
                         //res.redirect("/wiki/" + result[0]._id + "/edit");
 
@@ -787,7 +789,7 @@ module.exports = function (dao) {
                                 data[filtered_uri] = {};
                             fields = {"_id": 0, "object": 1 };
                             return dao.quads.findByParams(query, fields).next(function (schemas) {
-                                console.log(schemas);
+                                //console.log(schemas);
                                 if (schemas.length > 0)
                                     return Deferred.loop(schemas.length, function (iterator_schema) {
                                         var schema = schemas[iterator_schema];
@@ -873,9 +875,32 @@ module.exports = function (dao) {
 //                        console.log(results);
 //                    }
 //                });
+//                query = 'PREFIX schema: <http://schema.org/>'+
+//                    'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>'+
+//                    'SELECT * WHERE {'+
+//                    '  ?s schema:name "Pavel Arapov". '+
+//                    '  ?s rdf:type schema:Person. '+
+//                    '  ?s schema:name ?t. '+
+//                    '}';
+//                query =
+////                    'PREFIX schema:<http://schema.org/> '+
+////                    ' PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
+//                    ' SELECT ?s ?p ?t ' +
+//                    ' WHERE { '+
+////                    '  ?s schema:name ?t. '+
+//                    '  ?s ?p ?t '+
+//                    ' } ';
+//                //query = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } } ";
+//                query = "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+//                    "PREFIX schema: <http://schema.org/>" +
+//                    "SELECT ?g ?s ?p ?v WHERE { GRAPH ?g " +
+//                    "{ " +
+//                    "?s rdf:type schema:Article. " +
+//                    "?s schema:name [ ?p ?v ] " +
+//                    "} }";
                 store.executeWithEnvironment(query, [], graphs, function (success, results) {
-//                    console.log(success);
-//                    console.log(results);
+                    console.log(success);
+                    console.log(results);
                     res.send(results);
 //                var varNames = {};
 //                var genBindings = [];
@@ -894,13 +919,19 @@ module.exports = function (dao) {
                     //console.log(graphToJSONLD(results,store.rdf));
                 });
             });
+//            query = 'PREFIX schema:<http://schema.org/> '+
+//                'PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
+//                'SELECT ?s WHERE {'+
+//                '  ?s schema:name "Pavel Arapov". '+
+//                '  ?s rdf:type schema:Person. '+
+//                '}';
 //            store.execute(query, function(success, results){
 //                console.log(success);
-//                if(success) {
+////                if(success) {
 //                    // process results
-//                    //console.log(results);
+//                    console.log(results);
 //                    res.send(results);
-//                }
+////                }
 //            });
 
         },
@@ -920,7 +951,7 @@ module.exports = function (dao) {
                 query = {"subject":{$in: blanknodes},"predicate":"u:@value"};
                 fields = {"_id": 0, "subject": 1, "object": 1};
                 dao.quads.findByParams(query, fields).next(function (values) {
-                    console.log(values);
+                    //console.log(values);
                     for (key in values) {
                         //results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
                         for (var i in results) {
@@ -944,7 +975,7 @@ module.exports = function (dao) {
                             results[key].predicate = "Class (RDF Type)";
                     }
                     results = eliminate_duplicates_predicate_value(results);
-                    console.log(results);
+                    //console.log(results);
                     res.send(results);
                 });
             });
