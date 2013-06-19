@@ -616,6 +616,56 @@ var wikinextHelper = (function () {
             $("#select-page-dialog").modal('show');
             selectDialogCallback = callback;
 
+        },
+        /**
+         * Load all types of schema org
+         */
+        loadSchemaTypes : function () {
+            var d = Deferred();
+            this.http_post("/schema",{action: "types"}).next(function(data){
+                d.call(data);
+            });
+            return d;
+        },
+        /**
+         * Load full information about specific type
+         */
+        loadSchemaType : function(type) {
+            var d = Deferred();
+            this.http_post("/schema",{action: "type", type: type}).next(function(data){
+                d.call(data);
+            });
+            return d;
+        },
+        /**
+         * Load all information about properties
+         */
+        loadSchemaProperties : function() {
+            var d = Deferred();
+            this.http_post("/schema",{action: "properties"}).next(function(data){
+                d.call(data);
+            });
+            return d;
+        },
+        /**
+         * Load all information about datatypes
+         */
+        loadSchemaDatatypes : function() {
+            var d = Deferred();
+            this.http_post("/schema",{action: "datatypes"}).next(function(data){
+                d.call(data);
+            });
+            return d;
+        },
+        /**
+         * Load information about specific property
+         */
+        loadSchemaProperty : function(property) {
+            var d = Deferred();
+            this.http_post("/schema",{action: "property", property: property}).next(function(data){
+                d.call(data);
+            });
+            return d;
         }
     }
 })();

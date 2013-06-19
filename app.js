@@ -200,7 +200,9 @@ app.post('/uri', routes.uri);
 // find the id of a page
 app.post('/find', routes.find);
 // save the page
-app.post('/wiki/:id/save',routes.save);
+app.post('/wiki/:id/save', routes.save);
+// schema.org api
+app.post('/schema', routes.schema);
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

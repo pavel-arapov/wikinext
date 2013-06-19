@@ -133,6 +133,16 @@ function getLabelOfOntologySchemaOrg(obj){
     return schema_org_cache['types'][obj.slice(18, obj.length)]['label'];
 }
 
+function getSchemaType(type){
+    var response = schema_org_cache['types'][type];
+    for (var prop in response['properties']) {
+        //console.log(response['properties'][prop]);
+        //console.log(schema_org_cache['properties'][response['properties'][prop]]);
+        response['properties'][prop] = schema_org_cache['properties'][response['properties'][prop]];
+    }
+    return response;
+}
+
 module.exports = function (dao) {
     return {
         index: function (req, res) {
@@ -979,6 +989,24 @@ module.exports = function (dao) {
                     res.send(results);
                 });
             });
+        },
+        schema: function (req, res) {
+            var action = req.body.action;
+            var response = {};
+            switch (action){
+                case 'types':
+                    break;
+                case 'type':
+                    response = getSchemaType(req.body.type);
+                    break;
+                case 'properties':
+                    break;
+                case 'datatypes':
+                    break;
+                case 'property':
+                    break;
+            }
+            res.send(response);
         }
     };
 };
