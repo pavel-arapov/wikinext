@@ -139,7 +139,7 @@ var sharejs_auth = function(agent,action){
 //        console.log("return");
 //    }
 //    else {
-        action.accept();
+       // action.accept();
 //    }
     return action;
 };
