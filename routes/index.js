@@ -134,7 +134,7 @@ function getLabelOfOntologySchemaOrg(obj){
 }
 
 function getSchemaType(type){
-    var response = schema_org_cache['types'][type];
+    var response = schema_org_cache['types'][type].slice(0);
     for (var prop in response['properties']) {
         var property = response['properties'][prop];
         console.log(property);
