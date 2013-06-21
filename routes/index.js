@@ -1036,6 +1036,7 @@ module.exports = function (dao) {
                 case 'properties':
                     break;
                 case 'datatypes':
+                    response = schema_org_cache['datatypes'];
                     break;
                 case 'property':
                     break;
