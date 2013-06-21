@@ -138,8 +138,9 @@ function getSchemaType(type){
     for (var prop in response['properties']) {
         var property = response['properties'][prop];
         console.log(property);
-        console.log(schema_org_cache['properties'][property]);
-        response['properties'][prop] = schema_org_cache['properties'][property];
+        var value = schema_org_cache['properties'][property];
+        console.log(value);
+        response['properties'][prop] = value;
     }
     return response;
 }
