@@ -5,7 +5,7 @@ var express = require('express')
     , Deferred = require('jsdeferred').Deferred
     , mongo = require('mongoskin')
     , everyauth = require('everyauth')
-    , vie = require('vie')
+//    , vie = require('vie')
     , jQuery = require('./lib/jquery/node-jquery.js')
     , mustache = require('mustache')
     , winston = require('winston')
@@ -47,7 +47,7 @@ everyauth.facebook
     .appSecret(process.env.FACEBOOK_SECRET || config.FACEBOOK.SECRET)
     .scope('email')
     //.entryPath('/')
-    .redirectPath('/home')
+    .redirectPath('/redirect')
     .findOrCreateUser(function (session, accessToken, accessTokenExtra, fbUserMetadata) {
         var userPromise = this.Promise();
         /*
@@ -136,9 +136,16 @@ app.configure(function () {
             cookie: { domain: config.cookie_domain },
             store: mongoStore
         }));
+    app.use(express.static(__dirname + '/public'));
+    app.use(function(req,res, next){
+        if (req.url == '/auth/facebook') {
+//        console.log('auth from: ' + req.header('Referer'));
+            req.session.redirectTo = req.header('Referer');
+        }
+        next();
+    });
     app.use(everyauth.middleware());
     app.use(app.router);
-    app.use(express.static(__dirname + '/public'));
     app.set("view options", {layout: false});
     app.use({ keepExtensions: true });
     app.register(".html", tmpl);
@@ -203,6 +210,16 @@ app.post('/find', routes.find);
 app.post('/wiki/:id/save', routes.save);
 // schema.org api
 app.post('/schema', routes.schema);
+
+app.get('/redirect', function(req,res){
+//    console.log(req);
+//    console.log('redirect');
+    var session = req.session;
+    var redirectTo = session.redirectTo;
+    console.log(redirectTo);
+    delete session.redirectTo;
+    res.redirect(redirectTo);
+});
 
 app.listen(port, function () {
     console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

@@ -412,8 +412,12 @@ var wikinextHelper = (function () {
             });
         },
         preparePrettify: function (article) {
+            console.log(article);
             $(article).find(".prettyprint").each(function () {
+                //console.log($(this).text());
+                //$(this).html($('<div/>').html($(this).html()).html());
                 $(this).html(htmlEncoder.XSSEncode($(this).html()), true);
+                $(this).html(htmlEncoder.htmlEncode($(this).html()), true);
             })
 
         },
