@@ -16,7 +16,7 @@ $(document).ready(function(){
     };
 
     $("#create-page-button").click(function () {
-        createPageFrom();
+        createPage();
     });
 
     $("#delete-page-button").click(function (){
