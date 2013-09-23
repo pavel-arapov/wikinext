@@ -27,13 +27,12 @@ module.exports = function (dao) {
                 libraries = data['libraries'];
             }).next(function () {
                     //page's construction
-                    res.render('cp/jslibraries.html', {
-                        locals:{
+                    res.render('cp/jslibraries', {
                             title:'WikiNEXT V2',
                             auth:req.session.auth,
                             login:req.session.auth ? false : true,
                             libraries:libraries
-                        }});
+                        });
                 });
         },
         /**
@@ -92,13 +91,12 @@ module.exports = function (dao) {
                 }).next(function () {
                         //page's construction
                         //console.log(users);
-                        res.render('cp/users.html', {
-                            locals:{
+                        res.render('cp/users', {
                                 title:'WikiNEXT V2',
                                 auth:req.session.auth,
                                 login:req.session.auth ? false : true,
                                 users:users
-                            }});
+                            });
                     });
             }
         }

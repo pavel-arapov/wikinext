@@ -116,7 +116,7 @@ function eliminate_duplicates_predicate_value(arr) {
     var obj = {}, array = [], hash;
 
     for (var key in arr) {
-        hash = crypto.createHash('md5').update(arr[key].predicate+"_"+arr[key].object).digest("hex")
+        hash = crypto.createHash('md5').update(arr[key].predicate + "_" + arr[key].object).digest("hex")
         if (typeof obj[hash] === 'undefined') {
             obj[hash] = 0;
             array.push(arr[key]);
@@ -157,15 +157,15 @@ function clone(obj) {
     throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
-function getLabelOfPropertySchemaOrg(obj){
+function getLabelOfPropertySchemaOrg(obj) {
     return schema_org_cache['properties'][obj.slice(18, obj.length)]['label'];
 }
 
-function getLabelOfOntologySchemaOrg(obj){
+function getLabelOfOntologySchemaOrg(obj) {
     return schema_org_cache['types'][obj.slice(18, obj.length)]['label'];
 }
 
-function getSchemaType(type){
+function getSchemaType(type) {
     var response = clone(schema_org_cache['types'][type]);
     for (var prop in response['properties']) {
         var property = response['properties'][prop];
@@ -179,11 +179,16 @@ function getSchemaType(type){
 
 module.exports = function (dao) {
     return {
+        /**
+         * Index Page rendering
+         * @param req
+         * @param res
+         */
         index: function (req, res) {
             var userid = "";
             var run = {
                 main_pages: dao.pages.findMain(),
-                recent: dao.pages.findByParamsAndSort({},{title:1,last_modified_at:1,last_modified_by:1, contributor: 1},{last_modified_at: -1})
+                recent: dao.pages.findByParamsAndSort({}, {title: 1, last_modified_at: 1, last_modified_by: 1, contributor: 1}, {last_modified_at: -1})
             };
             if (req.session.auth) {
                 userid = req.session.auth.userId;
@@ -195,18 +200,41 @@ module.exports = function (dao) {
                         data['recent'][key]['last_modified_at_m'] = new Date(data['recent'][key]['last_modified_at']).toDateString();
                     }
                     //console.log(data['recent']);
-                    res.render('index.html', {
-                        locals: {
-                            title: 'WikiNEXT V2',
-                            auth: req.session.auth,
-                            login: req.session.auth ? false : true,
-                            pages: data['main_pages'],
-                            user_pages: data['user_pages'],
-                            recent: data['recent']
-                        }});
+                    res.render('index', {
+                        title: 'WikiNEXT V2',
+                        auth: req.session.auth,
+                        login: req.session.auth ? false : true,
+                        user: req.user ? req.user : undefined,
+                        pages: data['main_pages'],
+                        user_pages: data['user_pages'],
+                        recent: data['recent']
+                    });
                 });
 
         },
+        /**
+         * Email verification during registation process
+         * @param req
+         * @param res
+         */
+        check_email: function (req, res) {
+            var email = req.body.email;
+
+            dao.users.checkEmail(email).next(function (result) {
+                if (result)
+                    res.send(false);
+                else
+                    res.send(true);
+            }).error(function (error) {
+                    console.log(error);
+                    res.send(false);
+                });
+        },
+        /**
+         * Wiki Page Rendering
+         * @param req
+         * @param res
+         */
         wiki: function (req, res) {
             //console.log("Page ID: " + req.params.id);
             var run = {
@@ -258,19 +286,16 @@ module.exports = function (dao) {
                             }
                         });
                     }
-
-                    //console.log(page);
-
-                    res.render('wiki.html', {
-                        locals: {
-                            page_id: page._id,
-                            title: 'WikiNEXT V2 : ' + page['title'],
-                            auth: req.session.auth,
-                            login: req.session.auth ? false : true,
-                            page: page,
-                            pages: pages,
-                            libraries: libraries
-                        }});
+                    res.render('wiki', {
+                        page_id: page._id,
+                        title: 'WikiNEXT V2 : ' + page['title'],
+                        auth: req.session.auth,
+                        login: req.session.auth ? false : true,
+                        user: req.user ? req.user : undefined,
+                        page: page,
+                        pages: pages,
+                        libraries: libraries
+                    });
                 });
         },
         user: function (req, res) {
@@ -282,18 +307,18 @@ module.exports = function (dao) {
             var page, pages;
             Deferred.parallel(run).next(function (data) {
                 page = data['page'],
-                pages = data['pages']
+                    pages = data['pages']
             }).next(function () {
                     //console.log(page);
-                    res.render('user.html', {
-                        locals: {
-                            page_id: page._id,
-                            title: 'WikiNEXT V2 : ' + page['name'],
-                            auth: req.session.auth,
-                            login: req.session.auth ? false : true,
-                            page: page,
-                            pages: pages
-                        }});
+                    res.render('user', {
+
+                        page_id: page._id,
+                        title: 'WikiNEXT V2 : ' + page['name'],
+                        auth: req.session.auth,
+                        login: req.session.auth ? false : true,
+                        page: page,
+                        pages: pages
+                    });
                 });
         },
         create: function (req, res) {
@@ -323,9 +348,9 @@ module.exports = function (dao) {
                 res.redirect("/");
             }
         },
-        find: function(req,res){
+        find: function (req, res) {
             var title = req.body.title;
-            dao.pages.findByParams({title:title},{'title':1}).next(function(result){
+            dao.pages.findByParams({title: title}, {'title': 1}).next(function (result) {
                 res.send(result);
             });
         },
@@ -358,15 +383,15 @@ module.exports = function (dao) {
                             }
                         });
 
-                        res.render('edit.html', {
-                            locals: {
-                                title: 'WikiNEXT V2',
-                                auth: req.session.auth,
-                                login: req.session.auth ? false : true,
-                                page: d['page'],
-                                page_id: d['page']['_id'],
-                                libraries: d['libraries']
-                            }});
+                        res.render('edit', {
+                            title: 'WikiNEXT V2',
+                            auth: req.session.auth,
+                            login: req.session.auth ? false : true,
+                            user: req.user ? req.user : undefined,
+                            page: d['page'],
+                            page_id: d['page']['_id'],
+                            libraries: d['libraries']
+                        });
                     });
                 });
             } else {
@@ -527,7 +552,7 @@ module.exports = function (dao) {
                             data['app'] = data_orig.app;
                         data['title'] = "Cloned";
                         if (typeof data_orig['title'] !== "undefined")
-                            data['title'] = data['title']+": "+data_orig.title;
+                            data['title'] = data['title'] + ": " + data_orig.title;
                         if (typeof data_orig['libraries'] !== "undefined")
                             data['libraries'] = data_orig.libraries;
                         data['last_modified_by'] = result.name;
@@ -825,8 +850,8 @@ module.exports = function (dao) {
 //                            if (!in_array(usage.subject+usage.predicate, usage_keys)) {
 //
 //                                usage_keys.push(usage.subject+usage.predicate);
-                            var filtered_uri = usage.subject.substr(0,2) == 'u:' ? usage.subject.substr(2,usage.subject.length) : usage.subject;
-                            var filtered_graph = usage.graph.substr(0,2) == 'u:' ? usage.graph.substr(2,usage.graph.length) : usage.graph;
+                            var filtered_uri = usage.subject.substr(0, 2) == 'u:' ? usage.subject.substr(2, usage.subject.length) : usage.subject;
+                            var filtered_graph = usage.graph.substr(0, 2) == 'u:' ? usage.graph.substr(2, usage.graph.length) : usage.graph;
 
                             query = {"subject": usage.subject, "predicate": "u:http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "graph": usage.graph};
                             if (typeof data[filtered_uri] === "undefined")
@@ -899,8 +924,8 @@ module.exports = function (dao) {
                         //console.log("here");
                         console.log(data);
                         res.send(data);
-                    }).error(function(error) {
-                        res.send({"error":error});
+                    }).error(function (error) {
+                        res.send({"error": error});
                     });
             });
         },
@@ -986,13 +1011,13 @@ module.exports = function (dao) {
             dao.quads.findByParams(query, fields).next(function (results) {
                 var blanknodes = [];
                 for (var key in results) {
-                    if (results[key].object.substr(0,2) == 'b:' ) {
+                    if (results[key].object.substr(0, 2) == 'b:') {
                         blanknodes.push(results[key].object);
                         //console.log("blank node: "+results[key].object);
                     }
                 }
 
-                query = {"subject":{$in: blanknodes},"predicate":"u:@value"};
+                query = {"subject": {$in: blanknodes}, "predicate": "u:@value"};
                 fields = {"_id": 0, "subject": 1, "object": 1};
                 dao.quads.findByParams(query, fields).next(function (values) {
                     //console.log(values);
@@ -1007,12 +1032,12 @@ module.exports = function (dao) {
                     for (key in results) {
                         if (results[key].object.substr(0, 2) == 'u:') {
                             results[key].object = results[key].object.substr(2, results[key].object.length);
-                            if (results[key].object.substr(0,18) == 'http://schema.org/' && results[key].object.length != 18)
+                            if (results[key].object.substr(0, 18) == 'http://schema.org/' && results[key].object.length != 18)
                                 results[key].object = getLabelOfOntologySchemaOrg(results[key].object);
                         }
                         if (results[key].predicate.substr(0, 2) == 'u:') {
                             results[key].predicate = results[key].predicate.substr(2, results[key].predicate.length);
-                            if (results[key].predicate.substr(0,18) == 'http://schema.org/')
+                            if (results[key].predicate.substr(0, 18) == 'http://schema.org/')
                                 results[key].predicate = getLabelOfPropertySchemaOrg(results[key].predicate);
                         }
                         if (results[key].predicate == "http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
@@ -1027,7 +1052,7 @@ module.exports = function (dao) {
         schema: function (req, res) {
             var action = req.body.action;
             var response = {};
-            switch (action){
+            switch (action) {
                 case 'types':
                     break;
                 case 'type':

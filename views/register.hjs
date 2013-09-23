@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>WikiNEXT: Register</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/css/docs.css" rel="stylesheet">
+    <link href="/css/treeview.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
+    <script type="text/javascript" src="/js/jsdeferred.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/underscore-min.js"></script>
+    <script type="text/javascript" src="/js/wikinext.helper.js"></script>
+    <script type="text/javascript" src="/js/wikinext.main.js"></script>
+    <script type="text/javascript" src="/js/wikinext.register.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/">WikiNEXT</a>
+
+                <div class="btn-group pull-right">
+                    {{#login}}
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-user"></i> Login
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/auth/facebook">Facebook</a></li>
+                    </ul>
+                    {{/login}}
+                    {{#user}}
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-user"></i> {{name}}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Profile</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/logout">Sign Out</a></li>
+                    </ul>
+                    {{/user}}
+
+                </div>
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
+                        <li><a href="#" id="goto"><i class="icon-play-circle"></i>&nbsp;Go To Page</a></li>
+                        {{#user}}
+                        <li><a data-toggle="modal" href="#create-page-dialog"><i class="icon-file"></i>&nbsp;Create Page</a>
+                        </li>
+                        {{/user}}
+                        <li><a href="/wiki/5176580d1d20c5b055000001"><i class="icon-search"></i>&nbsp;Search</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="hero-unit">
+        <div class="container">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="span6">
+                        <div class="area">
+                            <form class="form-horizontal" id="signUpForm" method="POST" action="/register">
+                                {{#errors}}
+                                <div class="alert alert-error">
+                                    <button type="button" class="close" data-dismiss="alert">×</button>
+                                    <strong>Error: </strong> {{.}}
+                                </div>
+                                {{/errors}}
+                                <div class="heading">
+                                    <h4 class="form-heading">Sign Up</h4>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="name">Name</label>
+                                    <div class="controls">
+                                        <input type="text" id="name" name="name" placeholder="Bill Lightman" value="{{userParams.name}}">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="email">E-mail</label>
+                                    <div class="controls">
+                                        <input type="text" id="email" name="email" placeholder="mail@me.com" value="{{userParams.email}}">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="singUpPassword">Password</label>
+                                    <div class="controls">
+                                        <input type="password" id="singUpPassword" name="password" placeholder="Min. 6 Characters">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="singUpPassword_verify">Password (again)</label>
+                                    <div class="controls">
+                                        <input type="password" id="singUpPassword_verify" name="password_verify" placeholder="The same is above">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="terms" name="terms"> I agree all your <a href="#">Terms of Services</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <button type="submit" class="btn btn-success">Sign Up</button>
+                                        <!--<button type="button" class="btn">Help</button>-->
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <br/><br/><br/>
+    <hr>
+    <blockquote class="pull-right">
+        <p>Everything is permitted</p>
+        <small>Just do it!</small>
+    </blockquote>
+    <footer><p>WikiNEXT © Pavel Arapov</p></footer>
+</div>
+</body>
+</html>

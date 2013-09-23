@@ -11,7 +11,7 @@
 <script type="text/javascript" src="/js/jsdeferred.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/underscore-min.js"></script>
-<script type="text/javascript" src="/js/backbone-min.js"></script>
+<!--<script type="text/javascript" src="/js/backbone-min.js"></script>-->
 <script type="text/javascript" src="/js/wikinext.helper.js"></script>
 <script type="text/javascript" src="/js/jslint.js"></script>
 <script type="text/javascript" src="/codemirror/codemirror.js"></script>
@@ -37,10 +37,10 @@
 
 <style>
 
-    body {
-        padding-top: 100px;
-        padding-bottom: 40px;
-    }
+    /*body {*/
+        /*padding-top: 100px;*/
+        /*padding-bottom: 40px;*/
+    /*}*/
 
     #filedrag
     {
@@ -625,6 +625,7 @@ wikinextHelper.init().next(function () {
 </script>
 </head>
 <body>
+<div class="container-fluid">
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
@@ -724,7 +725,7 @@ wikinextHelper.init().next(function () {
     </div>
 </div>
 
-
+<br/><br/><br/>
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -848,6 +849,7 @@ wikinextHelper.init().next(function () {
 
     <footer><p>WikiNEXT © Pavel Arapov</p></footer>
 
+</div>
 </div>
 
 <div class="modal hide" id="change-title-dialog">
