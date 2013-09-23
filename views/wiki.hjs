@@ -93,10 +93,15 @@
                     }
                 };
             })();
-                    $(document).ready(function(){
-                        // start wiki
+        $(document).ready(function(){
+            $("#show_attached_files").click(function() {
+                if (!$(this).hasClass('active'))
+                    $("#attached_files").show();
+                else
+                    $("#attached_files").hide();
 
-                    });
+            })
+        });
                     //});
         document.wikinextReady = (function() {
             var data = launch_wiki_script.construct();
@@ -207,15 +212,18 @@
     <hr>
 
     <div class="row-fluid">
-        <p>
-            <b>Attached files</b><br />
+
+        <span class="btn" data-toggle="button" id="show_attached_files">Show Attached Files</span><br/>
+        <hr/>
+            <span id="attached_files" style="display: none">
             {{#page}}
             {{#attach}}
             {{name}} : {{type}}
-            <img src='/{{path}}/{{name}}'><br />
+            <img src='/{{path}}/{{name}}'><br/>
             {{/attach}}
             {{/page}}
-        </p>
+            </span>
+        <hr/>
     </div>
     <p>Tags:
         <a href="#"><span class="label label-info">no Tags</span></a>
