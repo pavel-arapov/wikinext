@@ -333,6 +333,8 @@ module.exports = function (dao) {
                     data.title = "new page";
                 if (!_.isUndefined(req.body.parent))
                     data.parent = req.body.parent;
+                data.article = "<h1>New Article</h1><p>This article will be awesome one day</p>";
+                data.app = '// event will be fired before render, variables in data could be used in the article \n function construct() {\n  var data = { "variable": "value" }\n  return data;\n}\n//next event will be fired after the render\nvar afterConstruct = function() {\n  //$("#graph").render();\n}';
                 dao.users.findById(data.userid).next(function (result) {
                     data.created_by = result.name;
                     dao.pages.insert(data, function (error, result) {
