@@ -90,18 +90,26 @@
             <div class="row-fluid">
                 <div class="span4">
                     <h2>WikiNEXT Pages</h2>
-                    <p>Create your own application from scratch. Just "Edit" next page</p>
-                    <p><a class="btn" href="http://wikinext.gexsoft.com/wiki/4fd5dbf585dcbff208000001">Simple example »</a></p>
+                    <p>Create your own application from scratch.<br/> Check out our <b>tutorial</b></p>
                 </div><!--/span-->
                 <div class="span4">
                     <h2>DBPedia</h2>
                     <p>We have couple examples that use DBPedia.org, see how you create your own application that will work with DBPedia.org</p>
-                    <p><a class="btn" href="http://wikinext.gexsoft.com/wiki/515bf3d6a3fd62524f000002">Examples »</a></p>
                 </div><!--/span-->
                 <div class="span4">
                     <h2>WikiNEXT API</h2>
                     <p>To learn more about WikiNEXT API.</p>
-                    <p><a class="btn" href="http://wikinext.gexsoft.com/wiki/5130891340e78f057a000001">View details »</a></p>
+                </div><!--/span-->
+            </div><!--/row-->
+            <div class="row-fluid">
+                <div class="span4">
+                    <p><a class="btn btn-success" href="http://wikinext.gexsoft.com/wiki/51af0b0b794a1c0364000005">Tutorial »</a></p>
+                </div><!--/span-->
+                <div class="span4">
+                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/515bf3d6a3fd62524f000002">Examples »</a></p>
+                </div><!--/span-->
+                <div class="span4">
+                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/5130891340e78f057a000001">View details »</a></p>
                 </div><!--/span-->
             </div><!--/row-->
             {{^user}}
