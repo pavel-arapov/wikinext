@@ -84,118 +84,143 @@
         <div class="span9">
             <div class="row-fluid">
                 <h1>Welcome to WikiNEXT</h1>
-                <p>You need to be logged in to create/edit and other actions. Please click in right-top corner "Login"</p>
-                <p><a class="btn btn-primary btn-large" href="http://wikinext.gexsoft.com/wiki/512b512578854b2229000001">Learn more »</a></p>
+
+                <p>You need to be logged in to create/edit and other actions. Please click in right-top corner
+                    "Login"</p>
+
+                <p><a class="btn btn-primary btn-large"
+                      href="http://wikinext.gexsoft.com/wiki/512b512578854b2229000001">Learn more »</a></p>
             </div>
             <div class="row-fluid">
                 <div class="span4">
                     <h2>WikiNEXT Pages</h2>
+
                     <p>Create your own application from scratch.<br/> Check out our <b>tutorial</b></p>
-                </div><!--/span-->
+                </div>
+                <!--/span-->
                 <div class="span4">
                     <h2>DBPedia</h2>
-                    <p>We have couple examples that use DBPedia.org, see how you create your own application that will work with DBPedia.org</p>
-                </div><!--/span-->
+
+                    <p>We have couple examples that use DBPedia.org, see how you create your own application that will
+                        work with DBPedia.org</p>
+                </div>
+                <!--/span-->
                 <div class="span4">
                     <h2>WikiNEXT API</h2>
+
                     <p>To learn more about WikiNEXT API.</p>
-                </div><!--/span-->
-            </div><!--/row-->
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
             <div class="row-fluid">
                 <div class="span4">
-                    <p><a class="btn btn-success" href="http://wikinext.gexsoft.com/wiki/51af0b0b794a1c0364000005">Tutorial »</a></p>
-                </div><!--/span-->
+                    <p><a class="btn btn-success" href="http://wikinext.gexsoft.com/wiki/51af0b0b794a1c0364000005">Tutorial
+                        »</a></p>
+                </div>
+                <!--/span-->
                 <div class="span4">
-                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/515bf3d6a3fd62524f000002">Examples »</a></p>
-                </div><!--/span-->
+                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/515bf3d6a3fd62524f000002">Examples
+                        »</a></p>
+                </div>
+                <!--/span-->
                 <div class="span4">
-                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/5130891340e78f057a000001">View details »</a></p>
-                </div><!--/span-->
-            </div><!--/row-->
+                    <p><a class="btn btn-primary" href="http://wikinext.gexsoft.com/wiki/5130891340e78f057a000001">View
+                        details »</a></p>
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
             {{^user}}
             <hr>
-            <div class="container">
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="span6">
-                            <div class="well">
-                                <form class="form-horizontal" id="signInForm" method="post" action="/login">
-                                    <div class="heading">
-                                        <h4 class="form-heading">Sign In</h4>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="email">E-mail</label>
-                                        <div class="controls">
-                                            <input type="text" id="email" name="email" placeholder="E-mail address">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="password">Password</label>
-                                        <div class="controls">
-                                            <input type="password" id="password" name="password" placeholder="Password">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <div class="controls">
-                                            <button type="submit" class="btn btn-primary">Sign In</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+            <div class="row">
+            <div class="span6">
+                <div class="well">
+                    <form class="form-horizontal" id="signInForm" method="post" action="/login">
+                        <div class="heading">
+                            <h4 class="form-heading">Sign In</h4>
                         </div>
-                        <div class="span6">
-                            <div class="well">
-                                <form class="form-horizontal" id="signUpForm" method="POST" action="/register">
-                                    <div class="heading">
-                                        <h4 class="form-heading">Sign Up</h4>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="singUpName">Name</label>
-                                        <div class="controls">
-                                            <input type="text" id="singUpName" name="name" placeholder="Bill Lightman">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="singUpEmail">E-mail</label>
-                                        <div class="controls">
-                                            <input type="text" id="singUpEmail" name="email" placeholder="mail@me.com">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="singUpPassword">Password</label>
-                                        <div class="controls">
-                                            <input type="password" id="singUpPassword" name="password" placeholder="Min. 6 Characters">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <label class="control-label" for="singUpPassword_verify">Password (again)</label>
-                                        <div class="controls">
-                                            <input type="password" id="singUpPassword_verify" name="password_verify" placeholder="The same is above">
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <div class="controls">
-                                            <label class="checkbox">
-                                                <input type="checkbox" id="terms" name="terms"> I agree all your <a href="#">Terms of Services</a>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="control-group">
-                                        <div class="controls">
-                                            <button type="submit" class="btn btn-success">Sign Up</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                        <div class="control-group">
+                            <label class="control-label" for="email">E-mail</label>
 
+                            <div class="controls">
+                                <input type="text" id="email" name="email" placeholder="E-mail address">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="password">Password</label>
+
+                            <div class="controls">
+                                <input type="password" id="password" name="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn btn-primary">Sign In</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                {{/user}}
+            </div>
+            <div class="span6">
+                <div class="well">
+                    <form class="form-horizontal" id="signUpForm" method="POST" action="/register">
+                        <div class="heading">
+                            <h4 class="form-heading">Sign Up</h4>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="singUpName">Name</label>
+
+                            <div class="controls">
+                                <input type="text" id="singUpName" name="name" placeholder="Bill Lightman">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="singUpEmail">E-mail</label>
+
+                            <div class="controls">
+                                <input type="text" id="singUpEmail" name="email" placeholder="mail@me.com">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="singUpPassword">Password</label>
+
+                            <div class="controls">
+                                <input type="password" id="singUpPassword" name="password"
+                                       placeholder="Min. 6 Characters">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="singUpPassword_verify">Password (again)</label>
+
+                            <div class="controls">
+                                <input type="password" id="singUpPassword_verify" name="password_verify"
+                                       placeholder="The same is above">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="terms" name="terms"> I agree all your <a href="#">Terms
+                                    of Services</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <button type="submit" class="btn btn-success">Sign Up</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+            {{/user}}
             <div class="row-fluid">
                 <div class="span12">
                     <hr/>
                     <h4>Recent changes</h4>
+
                     <p>
                     <table class="table table-striped">
                         <thead>
@@ -206,14 +231,23 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {{#recent}}<tr><td><a href="/wiki/{{_id}}">{{title}}</a></td><td>{{last_modified_at_m}}</td><td><a href="/user/{{#contributor}}{{oid}}{{/contributor}}">{{last_modified_by}}</a></td></tr>{{/recent}}
+                        {{#recent}}
+                        <tr>
+                            <td><a href="/wiki/{{_id}}">{{title}}</a></td>
+                            <td>{{last_modified_at_m}}</td>
+                            <td><a href="/user/{{#contributor}}{{oid}}{{/contributor}}">{{last_modified_by}}</a></td>
+                        </tr>
+                        {{/recent}}
                         </tbody>
-                </table>
+                    </table>
                     </p>
-                </div><!--/span-->
+                </div>
+                <!--/span-->
             </div>
-        </div><!--/span-->
-    </div><!--/row-->
+        </div>
+        <!--/span-->
+    </div>
+    <!--/row-->
 
     <hr>
     <blockquote class="pull-right">
