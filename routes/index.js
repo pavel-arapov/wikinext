@@ -14,7 +14,7 @@ var fs = require('fs');
 
 require('../config.settings'); // include settings
 
-var logger = require('./lib/logger.js');
+var logger = require('../lib/logger.js');
 
 var path = require('path');
 
