@@ -236,6 +236,12 @@ everyauth.everymodule.findUserById( function (userId, callback) {
 
 // Configuration
 var app = express();
+// enable web server logging; pipe those log messages through winston
+app.use(express.logger({stream: {
+    write: function (message, encoding) {
+        logger.accessLogger.info(message);
+    }
+}}));
 app.set('port', process.env.PORT || config.port);
 app.enable('trust proxy');
 app.use(express.logger('dev'));
