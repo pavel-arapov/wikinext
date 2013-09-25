@@ -20,6 +20,7 @@ var express = require('express')
     , http = require('http')
     , jsdom = require('jsdom');
 
+var logger = require('./lib/logger.js');
 
 jsonld.use('request');
 
@@ -78,6 +79,7 @@ everyauth.facebook
                 };
                 dao.users.insert(our_user, function (error, inserted) {
                     if (error) {
+                        logger.logger.error(error);
                         userPromise.fail(error);
                     } else {
                         var inserted_user = inserted[0]
@@ -99,14 +101,12 @@ everyauth.password
     .postLoginPath('/login') // Uri path that your login form POSTs to
     .loginView('login')
     .authenticate( function (email, password) {
-        console.log(email + " " + password);
-
         var hash_password = crypto.createHash('md5').update(password).digest('hex');
 
         var userPromise = this.Promise();
         dao.users.findByEmailAndPassword(email, hash_password, function (error, found_user) {
             if (error) {
-//                console.log("Error: "+error);
+                logger.logger.error(error);
                 userPromise.fulfill([error]);
             }
             if (found_user) {
@@ -340,9 +340,9 @@ app.get('/redirect', function(req,res){
         redirectTo = "/";
     res.redirect(redirectTo);
 });
-console.log(app.get('port'));
+
 http.createServer(app).listen(app.get('port'), process.env.IP ||"0.0.0.0", function () {
-    console.log('Express server listening on port ' + app.get('port'));
+    logger.accessLogger.info('Express server listening on port ' + app.get('port'));
 });
 
 

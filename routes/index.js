@@ -14,14 +14,7 @@ var fs = require('fs');
 
 require('../config.settings'); // include settings
 
-//var wikiTemplate;
-//fs.readFile(__dirname + '/../views/wiki.html', function (err, template) {
-//    if (err) {
-//        throw err;
-//    } else {
-//        wikiTemplate = template.toString();
-//    }
-//});
+var logger = require('./lib/logger.js');
 
 var path = require('path');
 
