@@ -7,6 +7,10 @@
     <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/css/docs.css" rel="stylesheet">
     <link href="/css/treeview.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/css/font-awesome-ie7.min.css">
+    <![endif]-->
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
@@ -35,7 +39,7 @@
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a href="/auth/facebook">Facebook</a></li>
+                    <li><a href="/auth/facebook"><i class="icon-facebook"></i>&nbsp;Facebook</a></li>
                 </ul>
                 {{/login}}
                 {{#user}}
@@ -54,7 +58,7 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li class="active"><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
-                    <li><a href="#" id="goto"><i class="icon-play-circle"></i>&nbsp;Go To Page</a></li>
+                    <li><a href="#" id="goto"><i class="icon-sitemap"></i>&nbsp;Go To Page</a></li>
                     {{#user}}
                     <li><a data-toggle="modal" href="#create-page-dialog"><i class="icon-file"></i>&nbsp;Create Page</a></li>
                     {{/user}}
@@ -72,11 +76,11 @@
                 <ul class="nav nav-list">
                     <li class="nav-header">Main</li>
                     {{#pages}}
-                    <li><a href="/wiki/{{_id}}">{{title}}</a></li>
+                    <li><a href="/wiki/{{_id}}"><i class="icon-file-alt"></i>&nbsp;{{title}}</a></li>
                     {{/pages}}
                     <li class="nav-header">Your pages</li>
                     {{#user_pages}}
-                    <li><a href="/wiki/{{_id}}">{{title}}</a></li>
+                    <li><a href="/wiki/{{_id}}"><i class="icon-file-alt"></i>&nbsp;{{title}}</a></li>
                     {{/user_pages}}
                 </ul>
             </div><!--/.well -->
@@ -160,6 +164,14 @@
                             </div>
                         </div>
                     </form>
+                    <div class="heading">
+                        <h4 class="form-heading">Or Via</h4>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <a href="/auth/facebook" class="btn btn-primary"><i class="icon-facebook"></i>&nbsp;Facebook</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="span6">

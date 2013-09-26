@@ -6,6 +6,10 @@
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/css/bootstrap-wysihtml5-0.0.2.css">
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<!--[if IE 7]>
+<link rel="stylesheet" href="/css/font-awesome-ie7.min.css">
+<![endif]-->
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
 <script type="text/javascript" src="/js/jsdeferred.js"></script>

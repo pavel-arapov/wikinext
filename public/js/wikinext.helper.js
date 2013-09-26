@@ -286,6 +286,23 @@ var wikinextHelper = (function () {
                 });
             return d;
         },
+        /**
+         * setting the template for a future rendering
+         * @param name
+         * @param template
+         */
+        addTemplate: function(name, template) {
+            ich.addTemplate(name, template);
+        },
+        /**
+         * Rendering template
+         * @param name
+         * @param data
+         * @returns {*}
+         */
+        renderTemplate: function (name, data) {
+            return ich[name](data);
+        },
         http_get: function (url) {
             loaderCount(1);
             var d = new Deferred();

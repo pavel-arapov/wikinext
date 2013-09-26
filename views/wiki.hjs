@@ -8,6 +8,10 @@
     <link href="/css/prettify.css" rel="stylesheet">
     <link href="/css/docs.css" rel="stylesheet">
     <link href="/css/treeview.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="/css/font-awesome-ie7.min.css">
+    <![endif]-->
     <script type="text/javascript" src="/js/prettify.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
@@ -158,7 +162,7 @@
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
-                    <li><a href="#" id="goto"><i class="icon-play-circle"></i>&nbsp;Go To Page</a></li>
+                    <li><a href="#" id="goto"><i class="icon-sitemap"></i>&nbsp;Go To Page</a></li>
                     {{#user}}
                     <li><a data-toggle="modal" href="#create-page-dialog"><i class="icon-file"></i>&nbsp;Create Page</a></li>
                     {{#page}}
