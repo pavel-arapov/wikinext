@@ -3,24 +3,33 @@
 <head>
     <title>{{title}}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="/css/prettify.css" rel="stylesheet">
-    <link href="/css/docs.css" rel="stylesheet">
-    <link href="/css/treeview.css" rel="stylesheet">
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    {{#isDev}}
+    <link href="/css/dev/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/dev/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/css/dev/prettify.css" rel="stylesheet">
+    <link href="/css/dev/docs.css" rel="stylesheet">
+    <link href="/css/dev/treeview.css" rel="stylesheet">
+    <link href="/css/dev/font-awesome.min.css" rel="stylesheet">
+    {{/isDev}}
+    {{^isDev}}
+    <link href="/css/release/wikinext.min.css" rel="stylesheet">
+    {{/isDev}}
     <!--[if IE 7]>
     <link rel="stylesheet" href="/css/font-awesome-ie7.min.css">
     <![endif]-->
+    {{#isDev}}
     <script type="text/javascript" src="/js/prettify.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>
     <script type="text/javascript" src="/js/jsdeferred.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/underscore-min.js"></script>
-    <!--<script type="text/javascript" src="/js/backbone-min.js"></script>-->
     <script type="text/javascript" src="/js/wikinext.main.js"></script>
     <script type="text/javascript" src="/js/wikinext.helper.js"></script>
+    {{/isDev}}
+    {{^isDev}}
+    <script type="text/javascript" src="/js/release/wikinext.min.js"></script>
+    {{/isDev}}
     {{#page}}
     {{#js}}
     <script type="text/javascript" src="/js/{{src}}"></script>
@@ -244,13 +253,6 @@
         | <i class="icon-history"></i> Version <span property="version">{{version}}</span>
         {{/page}}
     </p>
-    <blockquote class="pull-right">
-        <small>Keep do it</small>
-    </blockquote>
-
-    <hr>
-
-    <footer><p>WikiNEXT © Pavel Arapov</p></footer>
 
 </div>
     </div>
@@ -283,18 +285,7 @@
         <a href="#" class="btn btn-primary" id="delete-page-button">Delete</a>
     </div>
 </div>
-<script type="text/javascript">
+{{> footer}}
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-39822823-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
-</script>
 </body>
 </html>

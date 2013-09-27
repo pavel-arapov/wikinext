@@ -1,28 +1,41 @@
 {
-    "name": "wikinext-v2"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "*"
-    , "mustache": "0.4.0"
-    , "less": ">= 0.0.1"
-    , "jade": ">= 0.0.1"
-    , "jsdeferred": "0.4.0"
-    , "mongoskin": "0.3.6"
-    , "now": "0.8.1"
-    , "vie": "2.0.2"
-    , "jquery": "1.7.2"
-    , "connect-mongodb": "1.1.3"
-    , "formidable": "1.0.9"
-    , "everyauth": "*"
-    , "winston": "0.6.1"
-    , "share" : ">= 0.5.0-pre"
-    , "coffee-script": ">= 1.1.0"
-    , "request": ">= 2.1.1"
-    , "connect": "= 2.0.0"
-    , "underscore": "1.3.3"
-    , "jsdom" : "0.6.0"
-    , "rdfstore" : "0.7.0"
-    , "hjs" : "*"
-  }
+    "name": "wikinext",
+    "homepage": "http://wikinext.gexsoft.com",
+    "author": {
+        "name": "Pavel Arapov"
+    },
+    "version": "0.2.2",
+    "private": true,
+    "dependencies": {
+        "express": "*",
+        "less": ">= 0.0.1",
+        "jsdeferred": "0.4.0",
+        "mongoskin": "0.3.6",
+        "now": "0.8.1",
+        "vie": "2.0.2",
+        "jquery": "1.7.2",
+        "connect-mongodb": "1.1.3",
+        "formidable": "*",
+        "everyauth": "*",
+        "winston": "0.6.1",
+        "share": ">= 0.5.0-pre",
+        "coffee-script": ">= 1.1.0",
+        "request": ">= 2.1.1",
+        "connect": "= 2.0.0",
+        "underscore": "1.3.3",
+        "jsdom": "*",
+        "rdfstore": "0.7.0",
+        "hogan-express": "*",
+        "async": "*"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-jshint": "~0.6.3",
+        "grunt-contrib-nodeunit": "~0.2.0",
+        "grunt-contrib-uglify": "~0.2.2",
+        "grunt-contrib-concat": "*",
+        "grunt-contrib-qunit": "*",
+        "grunt-contrib-clean": "*",
+        "grunt-contrib-cssmin": "*"
+    }
 }

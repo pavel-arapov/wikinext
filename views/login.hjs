@@ -3,10 +3,10 @@
 <head>
     <title>WikiNEXT: Login</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link href="/css/docs.css" rel="stylesheet">
-    <link href="/css/treeview.css" rel="stylesheet">
+    <link href="/css/dev/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/dev/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/css/dev/docs.css" rel="stylesheet">
+    <link href="/css/dev/treeview.css" rel="stylesheet">
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/jquery.validate.min.js"></script>
     <script type="text/javascript" src="/js/ICanHaz.min.js"></script>

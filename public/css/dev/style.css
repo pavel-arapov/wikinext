@@ -41,27 +41,27 @@
     }
 
 #toolbar button[data-tool='strong'] > i {
-    background-image: url(../img/bold.png);
+    background-image: url(../../img/bold.png);
 }
 
 #toolbar button[data-tool='em'] > i {
-    background-image: url(../img/italic.png);
+    background-image: url(../../img/italic.png);
 }
 
 #toolbar button[data-tool='u'] > i {
-    background-image: url(../img/underline.png);
+    background-image: url(../../img/underline.png);
 }
 
 #toolbar button[data-tool='del'] > i {
-    background-image: url(../img/strike.png);
+    background-image: url(../../img/strike.png);
 }
 
 #toolbar button[data-tool='save'] > i {
-    background-image: url(../img/file-save.png);
+    background-image: url(../../img/file-save.png);
 }
 
 #toolbar button[data-tool='font'] > i {
-    background-image: url(../img/text-font.png);
+    background-image: url(../../img/text-font.png);
 }
 
 #toolbar li > a.disabled {

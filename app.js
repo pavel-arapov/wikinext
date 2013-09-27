@@ -10,9 +10,9 @@ var express = require('express')
     , mustache = require('mustache')
     , winston = require('winston')
     , _ = require('underscore')
-    , rdfstore = require('./lib/rdfquery/jquery.rdfquery.js')
+//    , rdfstore = require('./lib/rdfquery/jquery.rdfquery.js')
     , MongoStore = require('connect-mongodb') // sessions for express
-    , rdfstorejs = require('rdfstore')
+//    , rdfstorejs = require('rdfstore')
     , jsonld = require('./lib/jsonld/jsonld.js')
     , RDFa = require('./lib/jsonld/rdfa.js')
     , path = require('path')
@@ -245,8 +245,17 @@ app.use(express.logger({stream: {
 app.set('port', process.env.PORT || config.port);
 app.enable('trust proxy');
 app.use(express.logger('dev'));
-app.set('views', __dirname + '/views');
 app.set('view engine', 'hjs');
+
+//partails using by default on all pages
+app.set('partials', {
+//    navigation: "partials/navigation_wiki"
+    footer: "partials/footer"
+});
+
+app.enable('view cache');
+app.set('views', __dirname + '/views');
+app.engine('hjs', require('hogan-express'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser("nothing is permitted"));
@@ -275,6 +284,18 @@ app.configure('development', function () {
 
 app.configure('production', function () {
     app.use(express.errorHandler());
+});
+
+app.locals({
+    site: {
+        title: 'WikiNEXT',
+        description: 'Semantic Application Wiki Engine'
+    },
+    author: {
+        name: 'Pavel Arapov',
+        contact: 'pavel.arapov@gmail.com'
+    },
+    isDev: false
 });
 
 // Routes
