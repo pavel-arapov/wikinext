@@ -328,6 +328,7 @@ module.exports = function (dao) {
                     data.parent = req.body.parent;
                 data.article = "<h1>New Article</h1><p>This article will be awesome one day</p>";
                 data.app = '// event will be fired before render, variables in data could be used in the article \n function construct() {\n  var data = { "variable": "value" }\n  return data;\n}\n//next event will be fired after the render\nvar afterConstruct = function() {\n  //$("#graph").render();\n}';
+                data.simple = true;
                 dao.users.findById(data.userid).next(function (result) {
                     data.created_by = result.name;
                     dao.pages.insert(data, function (error, result) {
@@ -378,7 +379,12 @@ module.exports = function (dao) {
                             }
                         });
 
-                        res.render('edit', {
+                        if (d.page.simple)
+                            var t = 'edit_wysiwyg';
+                        else
+                            t = 'edit';
+
+                        res.render(t, {
                             title: 'WikiNEXT V2',
                             auth: req.session.auth,
                             login: req.session.auth ? false : true,
@@ -391,6 +397,20 @@ module.exports = function (dao) {
                 });
             } else {
                 res.redirect("/");
+            }
+        },
+        app_mode: function(req, res) {
+            if (req.loggedIn) {
+                var pageid = req.body.pageid;
+                dao.pages.findById(pageid).next(function(result){
+                    if (result.simple) {
+                        dao.pages.update({_id:pageid,userid:req.session.auth.userId,simple:false},function(r){
+                            res.json({status:'ok'});
+                        });
+                    }
+                }).error(function(error){
+                        console.log(error.message);
+                    });
             }
         },
         upload: function (req, res) {

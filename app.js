@@ -253,9 +253,10 @@ app.set('partials', {
     footer: "partials/footer"
 });
 
-app.enable('view cache');
+//app.enable('view cache');
 app.set('views', __dirname + '/views');
 app.engine('hjs', require('hogan-express'));
+app.use(express.favicon("public/img/favicon.ico"));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser("nothing is permitted"));
@@ -310,6 +311,8 @@ app.get('/wiki/:id', routes.wiki);
 app.get('/wiki/:id/clone', routes.clone);
 app.get('/wiki/:id/remove', routes.remove);
 app.get('/user/:id', routes.user);
+
+app.post('/app_mode', routes.app_mode);
 
 app.post('/check_email', routes.check_email);
 

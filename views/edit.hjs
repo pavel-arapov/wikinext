@@ -25,9 +25,6 @@
 <script src="/codemirror/mode/xml/xml.js"></script>
 <script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
-<!--<script src="/js/wysihtml5-0.3.0_rc2.js"></script>-->
-<!--<script src="/js/bootstrap-wysihtml5-0.0.2.js"></script>-->
-
 <link href="/css/dev/style.css" rel="stylesheet/less">
 <link href="/css/dev/treeview.css" rel="stylesheet">
 
@@ -545,11 +542,9 @@ wikinextHelper.init().next(function () {
         });
 
         $("#editor-wysiwyg").click(function () {
-            alert("Currently WISYWIG is inactive due to changing in visualisation HTML editor part. We are sorry for inconviniance.");
-            return false;
             editorHTML.toTextArea();
-            //$("#textAreaArticle").hide();
-            //$("#textAreaArticle").show();
+            $("#textAreaArticle").hide();
+            $("#textAreaArticle").show();
             $("#textAreaArticle").wysihtml5();
         });
 
@@ -613,13 +608,13 @@ wikinextHelper.init().next(function () {
             return marker;
         }
 
-        sharejs.open(page._id, 'text', function (error, doc) {
-            doc.attach_codemirror(editorHTML, true);
-        });
-
-        sharejs.open(page._id + "app", 'text', function (error, doc) {
-            doc.attach_codemirror(editorJavaScript, true);
-        });
+//        sharejs.open(page._id, 'text', function (error, doc) {
+//            doc.attach_codemirror(editorHTML, true);
+//        });
+//
+//        sharejs.open(page._id + "app", 'text', function (error, doc) {
+//            doc.attach_codemirror(editorJavaScript, true);
+//        });
     });
 });
 </script>
@@ -645,8 +640,6 @@ wikinextHelper.init().next(function () {
                     <li><a href="/auth/facebook">Facebook</a></li>
                 </ul>
                 {{/login}}
-                {{#auth}}
-                {{#facebook}}
                 {{#user}}
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="icon-user"></i> {{name}}
@@ -658,8 +651,6 @@ wikinextHelper.init().next(function () {
                     <li><a href="/logout">Sign Out</a></li>
                 </ul>
                 {{/user}}
-                {{/facebook}}
-                {{/auth}}
 
             </div>
             <div class="nav-collapse">
@@ -679,7 +670,7 @@ wikinextHelper.init().next(function () {
 
     <div class="btn-toolbar" id="toolbar">
         <div class="btn-group">
-            <button class="btn" data-tool="save" id="save_button"><i class="icon-16x16"></i>Save</button>
+            <a class="btn" data-tool="save" id="save_button" href="#"><i class="icon-save"></i>&nbsp;Save</a>
         </div>
         <div class="btn-group">
             <button class="btn">Heading</button>
@@ -701,10 +692,10 @@ wikinextHelper.init().next(function () {
             <a class="btn add-tag" data-tag="align-justify" href="#"><i class="icon-align-justify"></i></a>
         </div>
         <div class="btn-group">
-            <button class="btn add-tag" data-tag="strong" data-tool="strong" title="Bold"><i class="icon-16x16"></i></button>
-            <button class="btn add-tag" data-tag="italic" data-tool="em" title="Italic"><i class="icon-16x16"></i></button>
-            <button class="btn add-tag" data-tag="underline" data-tool="u" title="Underline"><i class="icon-16x16"></i></button>
-            <button class="btn add-tag" data-tag="strike" data-tool="del" title="Strikethrough"><i class="icon-16x16"></i></button>
+            <a class="btn add-tag" data-tag="strong" data-tool="strong" title="Bold" href="#"><i class="icon-bold"></i></a>
+            <a class="btn add-tag" data-tag="italic" data-tool="em" title="Italic" href="#"><i class="icon-italic"></i></a>
+            <a class="btn add-tag" data-tag="underline" data-tool="u" title="Underline" href="#"><i class="icon-underline"></i></a>
+            <a class="btn add-tag" data-tag="strike" data-tool="del" title="Strikethrough" href="#"><i class="icon-strikethrough"></i></a>
         </div>
         <div class="btn-group">
             <button class="btn add-tag" data-tag="font" data-tool="font"><i class="icon-16x16"></i> <span id="currentFont">Arial Black</span></button>
@@ -714,7 +705,7 @@ wikinextHelper.init().next(function () {
         </div>
         <div class="btn-group">
             <!--<button class="btn" title="Insert link" id="insert-link">Link</button>-->
-            <button class="btn" title="Insert wiki link" id="insert-wiki-link"><i class="icon-folder-open"></i></button>
+            <button class="btn" title="Insert wiki link" id="insert-wiki-link"><i class="icon-external-link"></i></button>
         </div>
         <div class="btn-group">
             <button class="btn" id="jslint">JSLint</button>
@@ -727,7 +718,6 @@ wikinextHelper.init().next(function () {
 
 <br/><br/><br/>
 
-<div class="container-fluid">
     <div class="row-fluid">
         <div class="span12" id="main_page_module">
 
@@ -779,13 +769,13 @@ wikinextHelper.init().next(function () {
         </div>
         <div class="modal hide fade" id="preview_dialog">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
                 <h3>Preview dialog</h3>
             </div>
             <div class="modal-body">
                 <p><div id="preview_in">
 
-            </div></p>
+            </div>
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn" data-dismiss="modal">Close</a>
@@ -845,11 +835,6 @@ wikinextHelper.init().next(function () {
 
     </div>
 
-    <hr>
-
-    <footer><p>WikiNEXT © Pavel Arapov</p></footer>
-
-</div>
 </div>
 
 <div class="modal hide" id="change-title-dialog">
@@ -870,18 +855,8 @@ wikinextHelper.init().next(function () {
         <a href="#" class="btn btn-primary" id="update_title">Change</a>
     </div>
 </div>
-<script type="text/javascript">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-39822823-1']);
-    _gaq.push(['_trackPageview']);
+{{>footer}}
 
-    (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
-</script>
 </body>
 </html>

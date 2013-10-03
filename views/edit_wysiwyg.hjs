@@ -1,0 +1,561 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+<title>{{title}}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="/css/dev/bootstrap.min.css" rel="stylesheet">
+<link href="/css/dev/bootstrap-responsive.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/dev/bootstrap-wysihtml5-0.0.2.css">
+<link href="/css/dev/font-awesome.min.css" rel="stylesheet">
+<!--[if IE 7]>
+<link rel="stylesheet" href="/css/font-awesome-ie7.min.css">
+<![endif]-->
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/ICanHaz.min.js"></script>
+<script type="text/javascript" src="/js/jsdeferred.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/underscore-min.js"></script>
+<script type="text/javascript" src="/js/wikinext.helper.js"></script>
+<script type="text/javascript" src="/js/jslint.js"></script>
+<script type="text/javascript" src="/codemirror/codemirror.js"></script>
+
+<link rel="stylesheet" href="/codemirror/codemirror.css">
+<script src="/codemirror/mode/javascript/javascript.js"></script>
+<script src="/codemirror/mode/css/css.js"></script>
+<script src="/codemirror/mode/xml/xml.js"></script>
+<script src="/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+<script src="/js/wysihtml5-0.3.0_rc2.js"></script>
+<script src="/js/bootstrap-wysihtml5-0.0.2.js"></script>
+
+<link href="/css/dev/style.css" rel="stylesheet/less">
+<link href="/css/dev/treeview.css" rel="stylesheet">
+
+<link href="/css/dev/docs.css" rel="stylesheet">
+
+<script src="/js/less-1.3.0.min.js"></script>
+
+<style>
+
+        /*body {*/
+        /*padding-top: 100px;*/
+        /*padding-bottom: 40px;*/
+        /*}*/
+
+    #filedrag
+    {
+        display: none;
+        font-weight: bold;
+        text-align: center;
+        padding: 1em 0;
+        margin: 1em 0;
+        color: #555;
+        border: 2px dashed #555;
+        border-radius: 7px;
+        cursor: default;
+    }
+
+    #filedrag.hover
+    {
+        color: #f00;
+        border-color: #f00;
+        border-style: solid;
+        box-shadow: inset 0 3px 4px #888;
+    }
+
+    #preview_in {
+        border: 0px;
+    }
+
+
+    .errors {width: .8em;}
+    .error a { color: #822; }
+
+
+</style>
+
+</head>
+<body>
+<div class="container-fluid">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="/">WikiNEXT</a>
+            <div class="btn-group pull-right">
+                {{#login}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> Login
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/auth/facebook">Facebook</a></li>
+                </ul>
+                {{/login}}
+                {{#user}}
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> {{name}}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/logout">Sign Out</a></li>
+                </ul>
+                {{/user}}
+
+            </div>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="/"><i class="icon-home"></i>&nbsp;Home</a></li>
+                    <li><a href="#" onclick="return false;" id="changeParent"><i class="icon-th-list"></i>&nbsp;Change Parent</a></li>
+                    <li><a href="#" onclick="return false;" id="changeTitle"><i class="icon-pencil"></i>&nbsp;Change Title</a></li>
+                    <li class="active"><a href="#"><i class="icon-edit"></i>&nbsp;Edit</a></li>
+                    {{#page}}
+                    <li><a href="/wiki/{{_id}}"><i class="icon-check"></i>&nbsp;View</a></li>
+                    {{/page}}
+                    <li><a href="/wiki/5176580d1d20c5b055000001"><i class="icon-search"></i>&nbsp;Search</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<br/><br/>
+
+    <div class="row-fluid">
+        <div class="span12" id="main_page_module">
+            <div class="btn-group">
+                <a class="btn" data-tool="save" id="save_button" href="#"><i class="icon-save"></i>&nbsp;Save</a>
+            </div>
+            <div class="btn-group">
+                <input class="input-xxlarge" id="page_title" size="24" type="text" value="{{#page}}{{title}}{{/page}}" style="padding: 8px 8px">
+                <!--<button class="btn" title="Insert wiki link" id="insert-wiki-link"><i class="icon-external-link"></i></button>-->
+            </div>
+            <div class="btn-group">
+                <a class="btn" id="app_button" href="#" onclick="$('#application_mode').modal('show');"><i class="icon-gears"></i>&nbsp;Application Mode</a>
+            </div>
+
+            <textarea id="textAreaArticle" style="width: 100%; height: 600px;"
+                      placeholder="Enter text ...">{{#page}}{{article}}{{/page}}</textarea>
+
+        </div>
+</div><!--/row-->
+<hr>
+<div class="row-fluid">
+    <div class="tabbable">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab">Attach Files</a></li>
+            <li><a href="#tab_2" data-toggle="tab">Attached Files</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+                <p><form id="upload" action="/upload" method="POST" enctype="multipart/form-data">
+                <fieldset>
+                    <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000">
+
+                    <div class="control-group">
+                        <label for="fileselect" class="control-label">Files to upload:</label>
+                        <input type="file" id="fileselect" name="fileselect[]" multiple="multiple">
+                        <div id="filedrag" style="display: block; ">or drop files here</div>
+                    </div>
+
+                    <div id="submitbutton" style="display: none; ">
+                        <button type="submit">Upload Files</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+                <div id="progress"></div>
+                <div id="messages">
+                    <p>Status Messages</p>
+                </div>
+            </div>
+            <div class="tab-pane" id="tab_2">
+                <p id="attached_images">
+                    {{#page}}
+                    {{#attach}}
+                <div data-id="{{index}}">
+                    <span class="label label-info">{{name}} : {{type}} was uploaded by {{uploaded_by}} at {{uploaded_at}}</span><br />
+                    <img src='/{{path}}/{{name}}' draggable="true"> <br /><button class="btn btn-danger deleteattach" data-id="{{index}}">Delete {{name}}</button><hr />
+                </div>
+                {{/attach}}
+                {{/page}}
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+</div>
+
+<div class="modal hide fade" id="application_mode">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+        <h3>Change document mode</h3>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to change the document type to application? <br/>
+        There is no way to go back.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">No</a>
+        <a href="#" class="btn btn-danger" data-dismiss="modal" id="app_mode_activation">Sure</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+var page = {
+    _id: "{{#page}}{{_id}}{{/page}}"
+};
+
+var editorHTML;
+var editorJavaScript;
+
+var fontList = {
+    'Arial': 'Arial',
+    'Arial Black': 'Arial Black',
+    'Book Antiqua': 'Book Antiqua',
+    'Comic Sans MS': 'Comic Sans MS',
+    'Courier New': 'Courier New',
+    'Georgia': 'Georgia',
+    'Helvetica': 'Helvetica',
+    'Impact': 'Impact',
+    'Tahoma': 'Tahoma',
+    'Times New Roman': 'Times New Roman',
+    'Trebuchet MS': 'Trebuchet MS',
+    'Verdana': 'Verdana'
+};
+
+
+var currentFont = 'Arial';
+wikinextHelper.init();
+    $(document).ready(function () {
+
+        for (var t in fontList) {
+            $('#fontlist').append($('<li><a href="javascript:void(0)" data-tool="font" data-font="' + t + '" style="font-family:' + t + '">' + fontList[t] + '</a></li>'));
+        }
+
+        $('#currentFont').html(fontList[currentFont]);
+
+        $("#fontlist a").click(function () {
+            currentFont = $(this).data('font');
+            $('#currentFont').html(fontList[currentFont]);
+        });
+
+        (function () {
+            // getElementById
+            function $id(id) {
+                return document.getElementById(id);
+            }
+
+            // output information
+            function Output(msg) {
+                var m = $id("messages");
+                m.innerHTML = msg + m.innerHTML;
+            }
+
+            // file drag hover
+            function FileDragHover(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                e.target.className = (e.type == "dragover" ? "hover" : "");
+            }
+
+            // file selection
+            function FileSelectHandler(e) {
+
+                // cancel event and hover styling
+                FileDragHover(e);
+
+                // fetch FileList object
+                var files = e.target.files || e.dataTransfer.files;
+
+                // process all File objects
+                for (var i = 0, f; f = files[i]; i++) {
+                    ParseFile(f);
+                    UploadFile(f);
+                }
+
+            }
+
+            // output file information
+            function ParseFile(file) {
+                Output(
+                        "<p>File information: <strong>" + file.name +
+                                "</strong> type: <strong>" + file.type +
+                                "</strong> size: <strong>" + file.size +
+                                "</strong> bytes</p>"
+                );
+                // display an image
+                if (file.type.indexOf("image") == 0) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        Output(
+                                "<p><strong>" + file.name + ":</strong><br />" +
+                                        '<img src="' + e.target.result + '" /></p>'
+                        );
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                // display text
+                if (file.type.indexOf("text") == 0) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        Output(
+                                "<p><strong>" + file.name + ":</strong></p><pre>" +
+                                        e.target.result.replace(/</g, "&lt;").replace(/>/g, "&gt;") +
+                                        "</pre>"
+                        );
+                    };
+                    reader.readAsText(file);
+                }
+            }
+
+
+            // upload JPEG files
+            function UploadFile(file) {
+
+                var xhr = new XMLHttpRequest();
+                console.log(file);
+                if (xhr.upload && (file.type == "image/jpeg" || file.type == "image/gif" || file.type == "image/png") && file.size <= $id("MAX_FILE_SIZE").value) {
+                    console.log("upload");
+                    // create progress bar
+                    var o = $id("progress");
+                    var progress = o.appendChild(document.createElement("p"));
+                    progress.appendChild(document.createTextNode("upload " + file.name));
+
+
+                    // progress bar
+                    xhr.upload.addEventListener("progress", function (e) {
+                        var pc = parseInt(100 - (e.loaded / e.total * 100));
+                        progress.style.backgroundPosition = pc + "% 0";
+                    }, false);
+
+                    // file received/failed
+                    xhr.onreadystatechange = function (e) {
+                        if (xhr.readyState == 4) {
+                            progress.className = (xhr.status == 200 ? "success" : "failure");
+                        }
+                    };
+
+                    // start upload
+                    xhr.open("POST", $id("upload").action, true);
+                    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                    xhr.setRequestHeader("x-file-name", encodeURIComponent(file.name));
+                    xhr.setRequestHeader("x-file-type", file.type);
+                    xhr.setRequestHeader("x-file-size", file.size);
+                    xhr.setRequestHeader("x-page-id", page._id);
+                    xhr.setRequestHeader("Content-Type", "application/octet-stream");
+                    xhr.send(file);
+
+                }
+
+            }
+
+
+            // initialize
+            function Init() {
+
+                var fileselect = $id("fileselect"),
+                        filedrag = $id("filedrag"),
+                        submitbutton = $id("submitbutton");
+
+                // file select
+                fileselect.addEventListener("change", FileSelectHandler, false);
+
+                // is XHR2 available?
+                var xhr = new XMLHttpRequest();
+                if (xhr.upload) {
+
+                    // file drop
+                    filedrag.addEventListener("dragover", FileDragHover, false);
+                    filedrag.addEventListener("dragleave", FileDragHover, false);
+                    filedrag.addEventListener("drop", FileSelectHandler, false);
+                    filedrag.style.display = "block";
+
+                    // remove submit button
+                    submitbutton.style.display = "none";
+                }
+
+            }
+
+            // call initialization file
+            if (window.File && window.FileList && window.FileReader) {
+                Init();
+            }
+
+
+        })();
+
+        (function () {
+            var dragZone = document.querySelector('#tab_2');
+            var dropZone = document.querySelector('#tab_1');
+
+            dragZone.addEventListener('dragstart', function (event) {
+//                if (event.target.className) { // img case
+                event.dataTransfer.setData("text", '<img src="' + event.target.src + '">');
+                //event.dataTransfer.effectAllowed = event.target.className;
+                //event.target.style.border = "4px solid #cc3300";
+//                } else { // text case
+                //if (event.target.parentNode.className == 'overwrite') {
+                //event.dataTransfer.setData("text", "<strong>Overwritten Content</strong>");
+                //}
+                //event.target.parentNode.style.border = "4px solid #cc3300";
+//                }
+                return true;
+            }, true);
+
+            dragZone.addEventListener('dragend', function (event) {
+//                if (event.target.className) { // img case
+//                    event.target.style.border = "4px solid #888";
+//                } else { // text case
+//                    event.target.parentNode.style.border = "4px solid #888";
+//                }
+                return true;
+            }, true);
+
+            dropZone.addEventListener('dragenter', function (event) {
+                if (event.preventDefault) event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+//                this.className = 'hovering';
+                return false;
+            }, false);
+
+            dropZone.addEventListener('dragover', function (event) {
+                if (event.preventDefault) event.preventDefault(); // allows us to drop
+                event.dataTransfer.dropEffect = 'copy';
+                return false;
+            }, false);
+
+            dropZone.addEventListener('dragleave', function (event) {
+                if (event.preventDefault) event.preventDefault(); // allows us to drop
+//                this.className = '';
+                return false;
+            }, false);
+
+            dropZone.addEventListener('drop', function (event) {
+                if (event.preventDefault) event.preventDefault();
+                var imgPassed = null;
+                //var dropdata = document.querySelector('#drop-data');
+                var types = event.dataTransfer.types;
+//                document.querySelector('#drop-data').textContent = '';
+//                this.innerHTML = '';
+//                for (var i = 0; i < types.length; i++) {
+//                    if (types[i] == 'Files') {
+//                        var files = event.dataTransfer.files;
+//                        for (var j = 0; j < files.length; j++) {
+//                            dropdata.textContent += 'File Name: '+files[j].fileName;
+//                            dropdata.textContent += 'File Size: '+files[j].fileSize;
+//                        }
+//                    } else {
+//                        if (typeof event.dataTransfer.getData(types[i]) !== 'undefined') {
+//                            dropdata.innerHTML += '<p><em class="datatypes">'+types[i]+'</em>: <br />'+event.dataTransfer.getData(types[i]).replace(/</g, '&lt;') + '</p>';
+//                        }
+//                    }
+//
+//                    if (types[i] == 'text/uri-list') {
+//                        imgPassed = event.dataTransfer.getData('text/uri-list');
+//                    }
+//                }
+
+//                if (imgPassed) {
+//                    var cEl = document.createElement('canvas');
+//                    cEl.width = 200;
+//                    cEl.height = 100;
+//                    var ctx = cEl.getContext('2d');
+//                    var img_buffer = document.createElement('img');
+//                    img_buffer.src = imgPassed;
+//                    img_buffer.style.display = 'none';
+//                    document.body.appendChild(img_buffer); // this line only needed in safari
+//                    img_buffer.onload = function() { ctx.drawImage(img_buffer,0,0,100,100); }
+//                    this.appendChild(cEl);
+//                } else {
+                var text = "";
+                if (event.dataTransfer.getData('text')) {
+                    text = event.dataTransfer.getData('text');
+                } else if (event.dataTransfer.getData('text/plain')) {
+                    text = event.dataTransfer.getData('text/plain');
+                }
+                editorHTML.replaceSelection(text);
+//                }
+                return false;
+            }, false);
+        })();
+
+        $("#save_button").click(function () {
+            var info = {
+                title: $("#page_title").val(),
+                article: $("#textAreaArticle").val()
+            };
+            wikinextHelper.saveArticle(page._id, info).next(function (d) {
+                var m;
+                if (d.status == 'ok') {
+                    m = ich.messageSuccess({"message": "Page has been saved"});
+
+                } else {
+                    m = ich.messageFail({"message": "Page has not been saved"});
+                }
+                $(m).insertBefore("#main_page_module .tabbable");
+            });
+        });
+
+        $("#update_title").click(function () {
+            $.post("/wiki/" + page._id + "/save", {title: $("#page_title").val()}, function () {
+            });
+            $("#change-title-dialog").modal("hide");
+            return false;
+        });
+
+        $("#changeParent").click(function () {
+            // invoking select page dialog
+            wikinextHelper.selectPageDialog(function (data) {
+                // change parent function
+                wikinextHelper.changeParentPage(page._id, data['id']).next(function (status) {
+                    if (status.status == 'ok') {
+                        console.log("parent is changed successful");
+                    }
+                });
+            });
+            return false;
+        });
+
+        $("#changeTitle").click(function () {
+            $("#change-title-dialog").modal("show");
+        });
+
+        $("#insert-wiki-link").click(function () {
+            // invoking select page dialog
+            wikinextHelper.selectPageDialog(function (data) {
+                console.log("link was inserted");
+                var selection = editorHTML.getSelection();
+                var result = "<a href='" + data['url'] + "'>" + selection + "</a>";
+                editorHTML.replaceSelection(result);
+            });
+        });
+
+//        console.log('here');
+        $("#textAreaArticle").wysihtml5();
+
+        $("#app_mode_activation").click(function(){
+            // pass to server changing mode
+            wikinextHelper.http_post('/app_mode',{pageid: page._id}).next(function(result){
+                window.location = "/wiki/"+page._id+'/edit';
+            });
+            $("#application_mode").modal('hide');
+        });
+    })
+</script>
+
+{{>footer}}
+
+</body>
+</html>
