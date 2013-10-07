@@ -700,6 +700,9 @@ var wikinextHelper = (function () {
         },
         showPrompt: function (msg, callback) {
             bootbox.prompt(msg, callback);
+        },
+        showAlert: function (msg, callback) {
+            bootbox.alert(msg, callback);
         }
     }
 })();
