@@ -296,7 +296,7 @@ app.locals({
         name: 'Pavel Arapov',
         contact: 'pavel.arapov@gmail.com'
     },
-    isDev: false
+    isDev: true
 });
 
 // Routes
