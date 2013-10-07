@@ -687,6 +687,19 @@ var wikinextHelper = (function () {
                 d.call(data);
             });
             return d;
+        },
+        /**
+         * Show dialog
+         * @param params
+         */
+        showDialog: function (params) {
+            bootbox.dialog(params);
+        },
+        showConfirm: function (msg, callback) {
+            bootbox.confirm(msg, callback);
+        },
+        showPrompt: function (msg, callback) {
+            bootbox.prompt(msg, callback);
         }
     }
 })();
