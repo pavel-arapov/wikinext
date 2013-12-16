@@ -1,0 +1,1 @@
+0 0 * * * /home/apps/wikinext_github/wikinext/shell/automongobackup.sh
